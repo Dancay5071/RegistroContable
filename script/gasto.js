@@ -1,8 +1,8 @@
 class Gasto extends Dato{
     static contadorGasto = 0;
 
-    constructor(monto){
-        super(monto);
+    constructor(descripcion, monto){
+        super(descripcion, monto);
         this._id = ++Gasto.contadorGasto;
     }
     get id(){

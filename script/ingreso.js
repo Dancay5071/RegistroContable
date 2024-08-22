@@ -1,11 +1,12 @@
-class Ingreso extends Dato{
+class Ingreso extends Dato {
     static contadorIngresos = 0;
 
-    constructor(monto){
-        super(monto);
+    constructor(descripcion, monto) {
+        super(descripcion, monto);
         this._id = ++Ingreso.contadorIngresos;
     }
-    get id(){
+
+    get id() {
         return this._id;
     }
 }
