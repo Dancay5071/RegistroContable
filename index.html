@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Registro contable</title>
+    <link rel="stylesheet" href="./style.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="index.html"><i class="bi bi-house"></i></a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Gastos
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="nuevoGasto.html" >Nuevo</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="consultarGasto.html">Consultar</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Ingresos
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="nuevoIngreso.html">Nuevo</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="consultarIngreso.html">Consultar</a></li>
+                </ul>
+              </li><li class="nav-item dropdown">
+                <li class="nav-item">
+                    <a class="nav-link" href="ahorro.html">Ahorros</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="resumen.html">Resumen</a>
+              </li>
+              </li>
+            </ul>
+          
+          </div>
+        </div>
+      </nav>
+    <div>
+      <h1 id='diaDeHoy'></h1>
+      
+      <div id="fondo">
+        <img src="imagen/fondo.jpg" alt="">
+      </div>
+    </div>
+    
+    
+      
+      
+        
+    <div class="float-xl-end"><div class="text-bg-dark p-3" id="montoActual">Monto actual:  </div></div>
+
+    <script src="/script/diaDeHoy.js"> </script>
+    <script src="/script/dato.js"> </script>
+    <script src="/script/gasto.js"> </script>
+    <script src="/script/ingreso.js"> </script>
+    <script src="/script/app.js"> </script>
+    
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+
+      
+  
+</body>
+</html>
