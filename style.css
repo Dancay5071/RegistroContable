@@ -3,16 +3,22 @@ html, body {
    margin: 0;
    padding: 0;
    height: 100%;
-   overflow: hidden; /* Evita el scroll para asegurar que la imagen no se salga de la pantalla */
+   overflow: hidden;
+   place-items: center;
 }
 p{
    font-size: medium;
 }
-.card{
+.container{
 margin-top: 30px;
+justify-content: center;
+align-items: center;
+display: flex;
+
 }
 
 #diaDeHoy{
+   margin-left: 80px;
    color: #3e3e40;
    font-size: 20px;
    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -41,4 +47,18 @@ margin-top: 30px;
    color: white; 
    padding: 10px; 
    z-index: 1000; /
+}
+
+.consulta{
+   
+
+display:inline;
+
+
+}
+.tituloCard{
+   bottom: 20px;
+   right: 20px;
+   padding: 10px;
+   text-decoration: underline;
 }

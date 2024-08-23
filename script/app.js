@@ -1,6 +1,6 @@
 
 let ingresos = JSON.parse(localStorage.getItem('ingresos')) || [];
-let montoActual = parseFloat(localStorage.getItem('montoActual')) || 0;
+let montoActual = parseFloat(localStorage.getItem('montoActual'));
 let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
 
 // Función para agregar un nuevo ingreso
