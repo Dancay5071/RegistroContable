@@ -92,4 +92,31 @@ function obtenerGastosPorMes(mes) {
     return gastosPorMes[mes] || [];
 }
 
-    
+function consultarIngreso(){
+
+    let mes = document.getElementById("inputGroupSelect01").value;
+    let resultadosDiv = document.getElementById('resultadosIngresos');
+
+    if (mes === 'Selecciona el mes') {
+        alert('Por favor, selecciona un mes.');
+        return;
+    }
+
+    let ingresos = obtenerIngresosPorMes(mes);
+    resultadosDiv.innerHTML = ''; 
+
+    if (ingresos.length === 0) {
+        resultadosDiv.innerHTML = '<p>El mes seleccionado no posee ingresos registrados.</p>';
+    } else {
+        let tabla = '<table class="table table-striped table-hover"><thead><tr><th>Descripción</th><th>Monto</th></tr></thead><tbody>';
+
+        ingresos.forEach(ingreso => {
+            tabla += `<tr><td>${ingreso.descripcion}</td><td>$${ingreso.monto.toFixed(2)}</td></tr>`;
+        });
+
+        tabla += '</tbody></table>';
+        resultadosDiv.innerHTML = tabla;
+    }
+    document.getElementById("inputGroupSelect01").value = 'Selecciona el mes';
+}
+
