@@ -1,9 +1,16 @@
 class Dato {
-    constructor(descripcion, monto) {
+    constructor(mes, descripcion, monto) {
+        this.mes = mes;
         this.descripcion = descripcion; 
-        this.monto = monto;            
+        this.monto = monto;   
+                 
     }
-
+    get mes() {
+        return this._mes;
+    }
+    set mes(valor){
+        this._mes = valor;
+    }
     get descripcion() {
         return this._descripcion;
     }

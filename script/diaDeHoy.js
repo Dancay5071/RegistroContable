@@ -4,3 +4,11 @@ let d = new Date();
 let diaDeHoy = (diasSemana[d.getDay()] + ", " + d.getDate() + " de " + meses[d.getMonth()] + " del " + d.getFullYear());
 
 document.getElementById('diaDeHoy').innerHTML = 'Hoy es ' + diaDeHoy;
+
+$(document).ready(function(){
+    $('#datepicker').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        todayHighlight: true
+    }).datepicker('update', new Date()); // Opcional: Preselecciona la fecha actual
+});
