@@ -51,38 +51,39 @@ function obtenerIngresosPorMes(mes) {
 }
 
 function agregarGasto() {
-    
+
     let mes = document.getElementById("inputGroupSelect01").value;
-    
-    if (mes === 'Selecciona el mes') {
+
+    if (mes === '' || mes === 'Selecciona el mes') {
         alert('Por favor, selecciona un mes.');
         return;
     }
+
 
     let descGasto = document.getElementById("descripcionGasto").value.trim();
     let input = document.getElementById("montoGasto");
     let gasto = parseFloat(input.value);
 
+ 
+    if (isNaN(gasto) || gasto <= 0) {
+        alert('Por favor, ingresa un monto válido.');
+        return;
+    }
 
+    
     if (!gastosPorMes[mes]) {
         gastosPorMes[mes] = [];
     }
 
-    console.log(mes);
-    console.log(descGasto);
-    console.log(gasto);
-
-
     gastosPorMes[mes].push({ descripcion: descGasto, monto: gasto });
     montoActual -= gasto;
-
 
     localStorage.setItem('gastosPorMes', JSON.stringify(gastosPorMes));
     localStorage.setItem('montoActual', montoActual.toString());
 
+
     document.getElementById('montoActual').innerHTML = 'Monto actual: $' + montoActual.toFixed(2);
 
-   
     document.getElementById("inputGroupSelect01").value = 'Selecciona el mes';
     document.getElementById("descripcionGasto").value = '';
     document.getElementById("montoGasto").value = '';
@@ -120,3 +121,68 @@ function consultarIngreso(){
     document.getElementById("inputGroupSelect01").value = 'Selecciona el mes';
 }
 
+function consultarGasto() {
+
+    let mes = document.getElementById("inputGroupSelect01").value;
+    let resultadosDiv = document.getElementById('resultadosGastos');
+
+    if (mes === '' || mes === 'Selecciona el mes') {
+        alert('Por favor, selecciona un mes.');
+        return;
+    }
+
+    let gastos = obtenerGastosPorMes(mes);
+    resultadosDiv.innerHTML = '';
+
+    let contenido = `<table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th><h4>Gastos de ${mes}</h4></th>
+                            </tr>   
+                        </thead>`;
+
+    if (gastos.length === 0) {
+        resultadosDiv.innerHTML = contenido + '<p>El mes seleccionado no posee gastos registrados.</p>';
+    } else {
+        let tabla = `
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th>Descripción</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        let sumaGastos = 0;
+
+        gastos.forEach(gasto => {
+            tabla += `
+                <tr>
+                    <td><i class="bi bi-dot"></i></td>
+                    <td>${gasto.descripcion}</td>
+                    <td>$${gasto.monto.toFixed(2)}</td>
+                </tr>
+            `;
+            sumaGastos += gasto.monto; 
+        });
+
+        tabla += `
+                </tbody>
+                <tfoot class="table-dark">
+                    <tr>
+                        <td>Total</td>
+                        <td></td>
+                        <td>$${sumaGastos.toFixed(2)}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        `;
+
+        resultadosDiv.innerHTML = contenido + tabla;
+    }
+
+    document.getElementById("inputGroupSelect01").value = '';
+}

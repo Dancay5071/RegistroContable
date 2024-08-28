@@ -23,6 +23,10 @@ display: flex;
    font-size: 20px;
    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
+#calendar {
+   max-width: 900px;
+   margin: 0 auto;
+}
 
 .fondo{
    position: absolute; 
@@ -51,7 +55,7 @@ display: flex;
 
 .consulta{
    
-
+margin: 25px;
 display:inline;
 
 
@@ -62,3 +66,4 @@ display:inline;
    padding: 10px;
    text-decoration: underline;
 }
+
