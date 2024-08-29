@@ -55,21 +55,52 @@
         
       </div>
     
+
       <div class="container">
-        <div class="card" class="collapse" id="collapseExample"style="width: 25rem;">
-        <p class="tituloCard">Monto actual:</p>
         
-                  
+      <div class="card">
+        <div class="card-header" id="montoAhorro">
+          Ahorro actual:
+         <div class="d-grid gap-2 d-md-flex justify-content-md-end"><button type="button" class="btn btn-outline-secondary">?</button>
+        </div> 
+      </div> 
+        <div class="card-body">
           <div class="input-group mb-3">
-            <span class="input-group-text">Ingresar monto:</span>
-            <span class="input-group-text">$</span>
-            <input type="text" class="form-control" aria-label="Dollar amount (with dot and two decimal places)">
+            <label class="input-group-text" for="inputGroupSelect01">Ahorro del mes:</label>
+            <select class="form-select" id="inputGroupSelect01">
+              <option value="Enero">Enero</option>
+              <option value="Febrero">Febrero</option>
+              <option value="Marzo">Marzo</option>
+              <option value="Abril">Abril</option>
+              <option value="Mayo">Mayo</option>
+              <option value="Junio">Junio</option>
+              <option value="Julio">Julio</option>
+              <option value="Agosto">Agosto</option>
+              <option value="Septiembre">Septiembre</option>
+              <option value="Octubre">Octubre</option>
+              <option value="Noviembre">Noviembre</option>
+              <option value="Diciembre">Diciembre</option>
+            </select>
           </div>
+          <div class="input-group mb-3">
+            <label class="input-group-text" for="inputGroupSelect01">Porcentaje del ingreso:</label>
+            <select class="form-select" id="inputGroupSelect01">
+              <option selected>%</option>
+              <option value="5">5%</option>
+              <option value="10">10%</option>
+              <option value="15">15%</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-secondary" >Guardar</button>
+        </div>
+      </div>
+      
+        
+      
           
           
-        </ul>
-        <button type="button" class="btn btn-secondary" >Actualizar</button>
-    
+        
+        
       </div>
     
       </div>

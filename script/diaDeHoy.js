@@ -5,15 +5,3 @@ let diaDeHoy = (diasSemana[d.getDay()] + ", " + d.getDate() + " de " + meses[d.g
 
 document.getElementById('diaDeHoy').innerHTML = 'Hoy es ' + diaDeHoy;
 
-document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        }
-    });
-    calendar.render();
-});
