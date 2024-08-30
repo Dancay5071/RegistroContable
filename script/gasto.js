@@ -9,6 +9,22 @@ class Gasto extends Dato{
         return this._id;
     }
 }
+document.addEventListener('DOMContentLoaded', function() {
+    const yearSelect = document.getElementById('inputGroupSelectYear');
+    const currentYear = new Date().getFullYear();
+    const startYear = 2024;  
+    const endYear = currentYear + 2; 
+
+    for (let year = startYear; year <= endYear; year++) {
+        let option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        if (year === currentYear) {
+            option.selected = true;  
+        }
+        yearSelect.appendChild(option);
+    }
+});
 function agregarGasto() {
 
     let mes = document.getElementById("inputGroupSelect01").value;

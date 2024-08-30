@@ -61,7 +61,7 @@
       <div class="card">
         <div class="card-header" id="montoAhorro">
           Ahorro actual:
-         <div class="d-grid gap-2 d-md-flex justify-content-md-end"><button type="button" class="btn btn-outline-secondary">?</button>
+         <div class="d-grid gap-2 d-md-flex justify-content-md-end"><button type="button" class="btn btn-outline-secondary" id="consultaAhorro">?</button>
         </div> 
       </div> 
         <div class="card-body">
@@ -84,14 +84,14 @@
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text" for="inputGroupSelect01">Porcentaje del ingreso:</label>
-            <select class="form-select" id="inputGroupSelect01">
+            <select class="form-select" id="inputGroupSelectPorcentaje">
               <option selected>%</option>
               <option value="5">5%</option>
               <option value="10">10%</option>
               <option value="15">15%</option>
             </select>
           </div>
-          <button type="button" class="btn btn-secondary" >Guardar</button>
+          <button type="button" class="btn btn-secondary" id="guardarAhorro">Guardar</button>
         </div>
       </div>
       
@@ -118,6 +118,7 @@
 
     
       <script src="/script/dato.js"> </script>
+      <script src="/script/ahorro.js"> </script>
       <script src="/script/gasto.js"> </script>
       <script src="/script/ingreso.js"> </script>
       <script src="/script/app.js"> </script>
