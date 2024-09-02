@@ -55,60 +55,49 @@
         
       </div>
     
+      
+  </div>
 
+  
       <div class="container">
-        
-      <div class="card">
-        <div class="card-header" id="montoAhorro">
-          Ahorro actual:
-         <div class="d-grid gap-2 d-md-flex justify-content-md-end"><button type="button" class="btn btn-outline-secondary" id="consultaAhorro">?</button>
-        </div> 
-      </div> 
-        <div class="card-body">
-          <div class="input-group mb-3">
-            <label class="input-group-text" for="inputGroupSelect01">Ahorro del mes:</label>
-            <select class="form-select" id="inputGroupSelect01">
-              <option value="Enero">Enero</option>
-              <option value="Febrero">Febrero</option>
-              <option value="Marzo">Marzo</option>
-              <option value="Abril">Abril</option>
-              <option value="Mayo">Mayo</option>
-              <option value="Junio">Junio</option>
-              <option value="Julio">Julio</option>
-              <option value="Agosto">Agosto</option>
-              <option value="Septiembre">Septiembre</option>
-              <option value="Octubre">Octubre</option>
-              <option value="Noviembre">Noviembre</option>
-              <option value="Diciembre">Diciembre</option>
-            </select>
-          </div>
-          <div class="input-group mb-3">
-            <label class="input-group-text" for="inputGroupSelect01">Porcentaje del ingreso:</label>
-            <select class="form-select" id="inputGroupSelectPorcentaje">
-              <option selected>%</option>
-              <option value="5">5%</option>
-              <option value="10">10%</option>
-              <option value="15">15%</option>
-            </select>
-          </div>
-          <button type="button" class="btn btn-secondary" id="guardarAhorro">Guardar</button>
+      
+        <div class="card">
+            <div class="card-header" id="totalAhorros">
+                
+      <label class="input-group-text" for="inputGroupSelect01">Mes:</label>
+      <select class="form-select" id="inputGroupSelect01">
+          <option value="Enero">Enero</option>
+          <option value="Febrero">Febrero</option>
+          <option value="Marzo">Marzo</option>
+          <option value="Abril">Abril</option>
+          <option value="Mayo">Mayo</option>
+          <option value="Junio">Junio</option>
+          <option value="Julio">Julio</option>
+          <option value="Agosto">Agosto</option>
+          <option value="Septiembre">Septiembre</option>
+          <option value="Octubre">Octubre</option>
+          <option value="Noviembre">Noviembre</option>
+          <option value="Diciembre">Diciembre</option>
+      </select>
+      <div class="input-group-append" style="margin-left: 1rem;">
+          <select class="form-select" id="inputGroupSelectYear"></select>
+      </div>
+            </div>
+            <div class="d-flex justify-content-between mt-3">
+                <button class="btn btn-secondary" type="button" onclick="extraerAhorro()">
+                    Extraer
+                </button>
+            </div>
         </div>
-      </div>
+    </div>
+
       
-        
       
-          
-          
-        
-        
-      </div>
     
-      </div>
-    
-      
-      
-        
-      <div class="float-xl-end"><div class="text-bg-dark p-3" id="montoActual">Monto actual:  </div></div>
+    <div class="float-xl-end">
+
+       <div class="text-bg-dark p-3" id="montoActual"> </div>
+   </div>
 
 
       
@@ -116,16 +105,12 @@
 
 
 
-    
-      <script src="/script/dato.js"> </script>
-      <script src="/script/ahorro.js"> </script>
-      <script src="/script/gasto.js"> </script>
-      <script src="/script/ingreso.js"> </script>
-      <script src="/script/app.js"> </script>
-     
-      
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
+   <script src="/script/dato.js"></script>
+   <script src="/script/app.js"></script>
+   <script src="/script/gasto.js"></script>
+   <script src="/script/ingreso.js"></script>
+ 
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
       
   

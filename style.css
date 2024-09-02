@@ -3,71 +3,75 @@ html, body {
    margin: 0;
    padding: 0;
    height: 100%;
-   overflow: hidden;
-   place-items: center;
-}
-p{
-   font-size: medium;
-}
-.container{
-margin-top: 30px;
-justify-content: center;
-align-items: center;
-display: flex;
-
+   box-sizing: border-box; /* Incluye padding y border en el tamaño total del elemento */
 }
 
-#diaDeHoy{
-   margin-left: 80px;
-   color: #3e3e40;
-   font-size: 20px;
-   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+body {
+   display: flex;
+   flex-direction: column;
+   min-height: 100vh;
 }
 
-
-.fondo{
+.fondo {
    position: absolute; 
    top: 0;
    left: 0;
    width: 100%;
    height: 100%;
    background-image: url('imagen/fondo.jpg'); 
-    background-size: cover; 
-    background-position: center; 
-    z-index: -1;
+   background-size: cover; 
+   background-position: center; 
+   z-index: -1;
 }
-.principal {
-   position: relative; 
+
+.container {
+   display: flex;
+   flex-direction: row;
+   justify-content: center;
+   align-items: flex-start;
+   margin-top: 30px;
    padding: 20px;
- }
- #montoActual {
-   position: fixed; 
+   overflow: auto; /* Permite el scroll si el contenido excede el tamaño del contenedor */
+}
+
+.card {
+   width: 25rem;
+   margin-right: 20px;
+}
+
+.consulta {
+   flex: 1;
+   max-height: 80vh; /* Ajusta esto según el tamaño deseado */
+   overflow-y: auto; /* Permite el scroll vertical en el área de consulta si el contenido excede la altura */
+}
+
+#resultadosIngresos {
+   padding: 10px;
+}
+
+#resultadoAhorros {
+   padding: 10px;
+}
+
+.float-xl-end {
+   position: fixed;
    bottom: 20px; 
    right: 20px; 
    background-color: rgba(0, 0, 0, 0.8); 
    color: white; 
    padding: 10px; 
-   z-index: 1000; /
+   z-index: 1000;
 }
 
-.consulta{
-   
-margin: 25px;
-margin-top: 50px;
-
-
-}
-.tituloCard{
-   bottom: 20px;
-   right: 20px;
-   padding: 10px;
+.tituloCard {
+   margin-bottom: 15px;
+   font-size: 20px;
    text-decoration: underline;
 }
-#montoAhorro{
-   border-color: black;
-   float: left;
-}
-#consultaAhorro{
-   float: left;
-}
 
+input, select {
+   margin-bottom: 10px;
+}
+#diaDeHoy{
+   font-size: 30px;
+}

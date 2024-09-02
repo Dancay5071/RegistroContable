@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (year === currentYear) {
             option.selected = true;  
         }
-        yearSelect.appendChild(option);
     }
 });
 function agregarGasto() {

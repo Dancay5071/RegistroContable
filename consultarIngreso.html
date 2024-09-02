@@ -54,91 +54,53 @@
       <div class="fondo"></div>
 
       <div class="container">
-        <div class="card" class="collapse" id="collapseExample"style="width: 25rem;">
-        <p class="tituloCard">Consulta de ingreso:</p>
-        <div class="input-group mb-3">
-          <label class="input-group-text" for="inputGroupSelect01">Mes:</label>
-          <select class="form-select" id="inputGroupSelect01">
-            <option selected>Selecciona el mes</option>
-            <option value="Enero">Enero</option>
-            <option value="Febrero">Febrero</option>
-            <option value="Marzo">Marzo</option>
-            <option value="Abril">Abril</option>
-            <option value="Mayo">Mayo</option>
-            <option value="Junio">Junio</option>
-            <option value="Julio">Julio</option>
-            <option value="Agosto">Agosto</option>
-            <option value="Septiembre">Septiembre</option>
-            <option value="Octubre">Octubre</option>
-            <option value="Noviembre">Noviembre</option>
-            <option value="Diciembre">Diciembre</option>
-          </select>
+        <!-- Card de Consulta -->
+        <div class="card">
+            <p class="tituloCard">Consulta de ingreso:</p>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelect01">Mes:</label>
+                <select class="form-select" id="inputGroupSelect01">
+                    <option selected>Selecciona el mes</option>
+                    <option value="Enero">Enero</option>
+                    <option value="Febrero">Febrero</option>
+                    <option value="Marzo">Marzo</option>
+                    <option value="Abril">Abril</option>
+                    <option value="Mayo">Mayo</option>
+                    <option value="Junio">Junio</option>
+                    <option value="Julio">Julio</option>
+                    <option value="Agosto">Agosto</option>
+                    <option value="Septiembre">Septiembre</option>
+                    <option value="Octubre">Octubre</option>
+                    <option value="Noviembre">Noviembre</option>
+                    <option value="Diciembre">Diciembre</option>
+                </select>
+                <div class="input-group-append" style="margin-left: 1rem;">
+                  <select class="form-select" id="inputGroupSelectYear"></select>
+              </div>
+            </div>
+            <p>
+                <button class="btn btn-secondary" type="button" onclick="consultarIngreso()">
+                    Consultar
+                </button>
+            </p>
         </div>
-    
-        </ul>
-        <p>
-          <button class="btn btn-secondary" type="button"  onclick="consultarIngreso()">
-            Consultar
-          </button>
-        </p>
-      </div>
-      <div class="consulta">
-        <div  id="resultadosIngresos">
-          <!--table class="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Monto</th>
-              </tr>
-              
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row" id="ingreso">1</th>
-                <td id="Ingresos">Detalle 1</td>
-                <td id="ingresos">1000</td>
-              </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>Detalle 2</td>
-                <td>200</td>
-              </tr>
-              <tr>
-                <th scope="row">3</th>
-                <td>Detalle 3</td>
-                <td>200</td>
-              </tr>
-            </tbody>
-            <tfoot class="table-dark">
-              <td>Total</td>
-              <td></td>
-              <td>1400</td>
-            </tfoot>
-          
-          </table-->
+
+        <!-- Resultados de Ingresos -->
+        <div class="consulta">
+            <div id="resultadosIngresos">
+                <!-- Aquí se mostrará la tabla de resultados -->
+            </div>
         </div>
-      </div>
     </div>
-      <div class="float-xl-end"><div class="text-bg-dark p-3" id="montoActual">Monto actual:  </div></div>
 
+    <div class="float-xl-end">
+        <div id="montoActual">Monto actual: </div>
+    </div>
 
-      
-
-
-
-
-      
-      <script src="/script/dato.js"> </script>
-      <script src="/script/gasto.js"> </script>
-      <script src="/script/ingreso.js"> </script>
-      <script src="/script/ahorro.js"> </script>
-      <script src="/script/app.js"> </script>
-      
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-
-      
-  
+    <script src="/script/dato.js"></script>
+    <script src="/script/gasto.js"></script>
+    <script src="/script/ingreso.js"></script>
+    <script src="/script/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
