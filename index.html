@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="./style.css">
 </head>
-<body>
+<body id="paginaHome">
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -41,7 +41,7 @@
                         <a class="nav-link" href="ahorro.html">Ahorros</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="resumen.html">Resumen</a>
+                        <a class="nav-link" href="resumen.html" onclick="">Resumen</a>
                     </li>
                 </ul>
             </div>
@@ -53,9 +53,11 @@
         <h1 id="diaDeHoy"></h1>
         
     </div>
-    
+    <div class="float-xl-end" id="ahorro">
+        <div class="text-bg-dark p-3" id="totalAhorros"></div>
+    </div>
     <div class="float-xl-end">
-        <div class="text-bg-dark p-3" id="montoActual">Monto actual:</div>
+        <div class="text-bg-dark p-3" id="montoActual"></div>
     </div>
 
    

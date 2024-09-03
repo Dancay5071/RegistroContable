@@ -41,8 +41,8 @@ body {
 
 .consulta {
    flex: 1;
-   max-height: 80vh; /* Ajusta esto según el tamaño deseado */
-   overflow-y: auto; /* Permite el scroll vertical en el área de consulta si el contenido excede la altura */
+   max-height: 80vh; 
+   overflow-y: auto; 
 }
 
 #resultadosIngresos {
@@ -74,4 +74,10 @@ input, select {
 }
 #diaDeHoy{
    font-size: 30px;
+}
+#ahorro{
+   margin-bottom: 100px;
+}
+.tituloResumen{
+   margin-right: 400px;
 }
