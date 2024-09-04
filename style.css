@@ -3,7 +3,7 @@ html, body {
    margin: 0;
    padding: 0;
    height: 100%;
-   box-sizing: border-box; /* Incluye padding y border en el tamaño total del elemento */
+   box-sizing: border-box; 
 }
 
 body {
@@ -31,7 +31,7 @@ body {
    align-items: flex-start;
    margin-top: 30px;
    padding: 20px;
-   overflow: auto; /* Permite el scroll si el contenido excede el tamaño del contenedor */
+   overflow: auto; 
 }
 
 .card {
@@ -80,4 +80,18 @@ input, select {
 }
 .tituloResumen{
    margin-right: 400px;
+}
+.input-group-append {
+   display: flex;
+   align-items: center; 
+   margin-left: 1rem;
+}
+
+.input-group-content {
+   display: flex;
+   align-items: center;
+}
+
+h4 {
+   justify-content: center 
 }

@@ -12,45 +12,59 @@ let yearSeleccionado = new Date().getFullYear();
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    
     const pageId = document.body.id;
 
-    if (pageId === 'paginaAhorro' || pageId === 'paginaHome') {
-        document.getElementById('totalAhorros').textContent = 'Total de ahorros: $' + totalAhorros.toFixed(2);
-        actualizarMontoActual(); 
-     }else{
-        const yearSelect = document.getElementById('inputGroupSelectYear');
-        const currentYear = new Date().getFullYear();
-        const startYear = 2024;
-        const endYear = currentYear + 2;
+    // Establece el año actual en el <select> de años
+    const yearSelect = document.getElementById('inputGroupSelectYear');
+    const currentYear = new Date().getFullYear();
+    const startYear = 2024;
+    const endYear = currentYear + 2;
 
-        
-        for (let year = startYear; year <= endYear; year++) {
-            let option = document.createElement('option');
-            option.value = year;
-            option.textContent = year;
-            if (year === currentYear) {
-                option.selected = true;
-            }
-            yearSelect.appendChild(option);
+    for (let year = startYear; year <= endYear; year++) {
+        let option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        if (year === currentYear) {
+            option.selected = true;
         }
+        yearSelect.appendChild(option);
+    }
 
-        yearSelect.addEventListener('change', function() {
-            yearSeleccionado = parseInt(yearSelect.value, 10);
-            actualizarMontoActual();
-            
-            if (pageId === 'paginaResumen') {
-                resumenAnual(); 
-            }
-        });
-
+    yearSelect.addEventListener('change', function() {
         yearSeleccionado = parseInt(yearSelect.value, 10);
         actualizarMontoActual();
-
         
         if (pageId === 'paginaResumen') {
             resumenAnual(); 
         }
+    });
+
+    yearSeleccionado = parseInt(yearSelect.value, 10);
+    actualizarMontoActual();
+
+    if (pageId === 'paginaResumen') {
+        resumenAnual(); 
+    }
+
+    // Establece el mes actual en el <select> de meses
+    const mesSelect = document.getElementById('inputGroupSelect01');
+    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    const currentMonthIndex = new Date().getMonth(); // Obtiene el índice del mes actual
+
+    meses.forEach((mes, index) => {
+        let option = document.createElement('option');
+        option.value = mes;
+        option.textContent = mes;
+        if (index === currentMonthIndex) {
+            option.selected = true;
+        }
+        mesSelect.appendChild(option);
+    });
+
+    // Selecciona el mes guardado en localStorage si está disponible
+    const mesGuardado = localStorage.getItem('mesSeleccionado');
+    if (mesGuardado) {
+        mesSelect.value = mesGuardado;
     }
 });
 
@@ -73,7 +87,7 @@ function agregarIngreso() {
     }
 
     let ahorro = (ingreso * porcentajeAhorro) / 100;
-    let ingresoNeto = ingreso - ahorro; 
+    let ingresoNeto = ingreso - ahorro;
 
     let claveMesAño = `${mes}-${yearSeleccionado}`;
     if (!ingresosPorMes[claveMesAño]) {
@@ -81,7 +95,7 @@ function agregarIngreso() {
     }
 
     ingresosPorMes[claveMesAño].push({ descripcion: descIngreso, monto: ingresoNeto });
-    montoActual += ingresoNeto; 
+    montoActual += ingresoNeto;
 
     if (!ahorrosPorMes[claveMesAño]) {
         ahorrosPorMes[claveMesAño] = 0;
@@ -93,17 +107,65 @@ function agregarIngreso() {
     localStorage.setItem('montoActual', montoActual.toString());
     localStorage.setItem('totalAhorros', (totalAhorros + ahorro).toString());
     localStorage.setItem('ahorrosPorMes', JSON.stringify(ahorrosPorMes));
+    localStorage.setItem('mesSeleccionado', mes); // Guarda el mes seleccionado
 
-    actualizarMontoActual(); 
+    actualizarMontoActual();
     document.getElementById("inputGroupSelect01").value = 'Selecciona el mes';
     document.getElementById("descripcionIngreso").value = '';
     document.getElementById("montoIngreso").value = '';
     document.getElementById("inputGroupSelectPorcentaje").value = '0';
-
- }
+}
 
 function obtenerIngresosPorMes(mes) {
     return ingresosPorMes[`${mes}-${yearSeleccionado}`] || [];
+}
+
+function agregarIngreso() {
+    let mes = document.getElementById("inputGroupSelect01").value;
+    let porcentajeAhorro = parseFloat(document.getElementById("inputGroupSelectPorcentaje").value);
+
+    if (mes === '' || mes === 'Selecciona el mes') {
+        alert('Por favor, selecciona un mes.');
+        return;
+    }
+
+    let descIngreso = document.getElementById("descripcionIngreso").value.trim();
+    let input = document.getElementById("montoIngreso");
+    let ingreso = parseFloat(input.value);
+
+    if (isNaN(ingreso) || ingreso <= 0) {
+        alert('Por favor, ingresa un monto válido.');
+        return;
+    }
+
+    let ahorro = (ingreso * porcentajeAhorro) / 100;
+    let ingresoNeto = ingreso - ahorro;
+
+    let claveMesAño = `${mes}-${yearSeleccionado}`;
+    if (!ingresosPorMes[claveMesAño]) {
+        ingresosPorMes[claveMesAño] = [];
+    }
+
+    ingresosPorMes[claveMesAño].push({ descripcion: descIngreso, monto: ingresoNeto });
+    montoActual += ingresoNeto;
+
+    if (!ahorrosPorMes[claveMesAño]) {
+        ahorrosPorMes[claveMesAño] = 0;
+    }
+    ahorrosPorMes[claveMesAño] += ahorro;
+    document.getElementById('totalAhorros').textContent = 'Total de ahorros: $' + totalAhorros.toFixed(2);
+
+    localStorage.setItem('ingresosPorMes', JSON.stringify(ingresosPorMes));
+    localStorage.setItem('montoActual', montoActual.toString());
+    localStorage.setItem('totalAhorros', (totalAhorros + ahorro).toString());
+    localStorage.setItem('ahorrosPorMes', JSON.stringify(ahorrosPorMes));
+    localStorage.setItem('mesSeleccionado', mes); // Guarda el mes seleccionado
+
+    actualizarMontoActual();
+    document.getElementById("inputGroupSelect01").value = 'Selecciona el mes';
+    document.getElementById("descripcionIngreso").value = '';
+    document.getElementById("montoIngreso").value = '';
+    document.getElementById("inputGroupSelectPorcentaje").value = '0';
 }
 
 function consultarIngreso() {
@@ -139,6 +201,7 @@ function consultarIngreso() {
                         <th scope="col"></th>
                         <th>Descripción</th>
                         <th>Monto</th>
+                        <th></th> 
                     </tr>
                 </thead>
                 <tbody>
@@ -146,15 +209,19 @@ function consultarIngreso() {
 
         let sumaIngresos = 0;
 
-        ingresosMes.forEach(ingreso => {
+        ingresosMes.forEach((ingreso, index) => {
             tabla += `
                 <tr>
                     <td><i class="bi bi-dot"></i></td>
                     <td>${ingreso.descripcion}</td>
                     <td>$${ingreso.monto.toFixed(2)}</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-dark" onclick="editarIngreso(${index})"><i class="bi bi-pencil-fill"></i></button>
+                        <button type="button" class="btn btn-outline-dark" onclick="eliminarIngreso(${index})"><i class="bi bi-x"></i></button>
+                    </td>
                 </tr>
             `;
-            sumaIngresos += ingreso.monto; 
+            sumaIngresos += ingreso.monto;
         });
 
         tabla += `
@@ -164,6 +231,7 @@ function consultarIngreso() {
                         <td>Total</td>
                         <td></td>
                         <td>$${sumaIngresos.toFixed(2)}</td>
+                        <td></td>
                     </tr>
                 </tfoot>
             </table>
@@ -172,9 +240,64 @@ function consultarIngreso() {
         resultadosDiv.innerHTML = contenido + tabla;
     }
 
-    document.getElementById("inputGroupSelect01").value = '';
+    document.getElementById("inputGroupSelect01").value = mes;
 }
 
+
+function editarIngreso(index) {
+    let mes = document.getElementById("inputGroupSelect01").value;
+    let ingresosMes = obtenerIngresosPorMes(mes);
+    let ingreso = ingresosMes[index];
+
+    // Rellena el formulario con los datos del ingreso
+    document.getElementById('editarDescripcion').value = ingreso.descripcion;
+    document.getElementById('editarMonto').value = ingreso.monto.toFixed(2);
+    document.getElementById('editarIndex').value = index;
+    
+    // Muestra el modal
+    let editarIngresoModal = new bootstrap.Modal(document.getElementById('editarIngresoModal'));
+    editarIngresoModal.show();
+}
+function guardarEdicion() {
+    let mes = document.getElementById("inputGroupSelect01").value;
+    let index = parseInt(document.getElementById('editarIndex').value, 10);
+    let descripcion = document.getElementById('editarDescripcion').value.trim();
+    let monto = parseFloat(document.getElementById('editarMonto').value);
+
+    if (isNaN(monto) || monto <= 0) {
+        alert('Por favor, ingresa un monto válido.');
+        return;
+    }
+
+    let ingresosMes = obtenerIngresosPorMes(mes);
+
+    if (index >= 0 && index < ingresosMes.length) {
+        // Actualiza el ingreso
+        ingresosMes[index] = { descripcion: descripcion, monto: monto };
+
+        // Guarda los datos actualizados en localStorage
+        let claveMesAño = `${mes}-${yearSeleccionado}`;
+        ingresosPorMes[claveMesAño] = ingresosMes;
+        localStorage.setItem('ingresosPorMes', JSON.stringify(ingresosPorMes));
+
+        // Actualiza la vista
+        consultarIngreso();
+        
+        // Oculta el modal
+        let editarIngresoModal = bootstrap.Modal.getInstance(document.getElementById('editarIngresoModal'));
+        editarIngresoModal.hide();
+    } else {
+        alert('Índice de ingreso no válido.');
+    }
+}
+
+function eliminarIngreso(index) {
+    let ingresosMes = obtenerIngresosPorMes(document.getElementById("inputGroupSelect01").value);
+    if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {
+        ingresosMes.splice(index, 1);
+        consultarIngreso();
+    }
+}
 function actualizarMontoActual() {
     montoActual = parseFloat(localStorage.getItem('montoActual')) || 0;
     totalAhorros = parseFloat(localStorage.getItem('totalAhorros')) || 0;
@@ -334,12 +457,7 @@ function resumenAnual() {
 
     
     let resumenDiv = document.getElementById('resumenAnual');
-    resumenDiv.innerHTML = `<table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <td><h4> Resumen Anual ${yearSeleccionado}</h4></td>
-                            </tr>   
-                        </thead>
+    resumenDiv.innerHTML = `
        <table class="table table-striped table-hover">
             <thead>
                 <tr>
