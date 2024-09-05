@@ -208,16 +208,20 @@ function editarIngreso(index) {
     let ingresosMes = obtenerIngresosPorMes(mes);
     let ingreso = ingresosMes[index];
 
-  
+    if (!ingreso) {
+        alert('Ingreso no encontrado.');
+        return;
+    }
+
     document.getElementById('editarDescripcion').value = ingreso.descripcion;
     document.getElementById('editarMonto').value = ingreso.monto.toFixed(2);
     document.getElementById('editarIndex').value = index;
     
-   
     let editarIngresoModal = new bootstrap.Modal(document.getElementById('editarIngresoModal'));
     editarIngresoModal.show();
 }
-function guardarEdicion() {
+
+function guardarEdicionIngreso() {
     let mes = document.getElementById("inputGroupSelect01").value;
     let index = parseInt(document.getElementById('editarIndex').value, 10);
     let descripcion = document.getElementById('editarDescripcion').value.trim();
@@ -231,31 +235,28 @@ function guardarEdicion() {
     let ingresosMes = obtenerIngresosPorMes(mes);
 
     if (index >= 0 && index < ingresosMes.length) {
-       
         let ingresoAntiguo = ingresosMes[index];
-        montoActual -= ingresoAntiguo.monto;
-        montoActual += monto;
+        montoActual = montoActual - ingresoAntiguo.monto + monto;
 
-        
         ingresosMes[index] = { descripcion: descripcion, monto: monto };
 
-       
         let claveMesAño = `${mes}-${yearSeleccionado}`;
         ingresosPorMes[claveMesAño] = ingresosMes;
         localStorage.setItem('ingresosPorMes', JSON.stringify(ingresosPorMes));
         localStorage.setItem('montoActual', montoActual.toString());
 
-      
+        // Actualizar la interfaz de usuario
         consultarIngreso();
         actualizarMontoActual();
 
-      
+        // Ocultar el modal
         let editarIngresoModal = bootstrap.Modal.getInstance(document.getElementById('editarIngresoModal'));
         editarIngresoModal.hide();
     } else {
         alert('Índice de ingreso no válido.');
     }
 }
+
 
 
 function eliminarIngreso(index) {
@@ -450,7 +451,7 @@ function editarGasto(index) {
     editarGastoModal.show();
 }
 
-function guardarEdicion() {
+function guardarEdicionGasto() {
     let mes = document.getElementById("inputGroupSelect01").value;
     let index = parseInt(document.getElementById('editarIndex').value, 10);
     let descripcion = document.getElementById('editarDescripcion').value.trim();
