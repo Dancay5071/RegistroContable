@@ -231,21 +231,21 @@ function guardarEdicion() {
     let ingresosMes = obtenerIngresosPorMes(mes);
 
     if (index >= 0 && index < ingresosMes.length) {
-        // Recalcular el monto actual antes de actualizar el ingreso
+       
         let ingresoAntiguo = ingresosMes[index];
         montoActual -= ingresoAntiguo.monto;
         montoActual += monto;
 
-        // Actualizar el ingreso en el array
+        
         ingresosMes[index] = { descripcion: descripcion, monto: monto };
 
-        // Actualizar el localStorage
+       
         let claveMesAño = `${mes}-${yearSeleccionado}`;
         ingresosPorMes[claveMesAño] = ingresosMes;
         localStorage.setItem('ingresosPorMes', JSON.stringify(ingresosPorMes));
         localStorage.setItem('montoActual', montoActual.toString());
 
-        // Actualizar la interfaz de usuario
+      
         consultarIngreso();
         actualizarMontoActual();
 
@@ -394,6 +394,7 @@ function consultarGasto() {
                         <th scope="col"></th>
                         <th>Descripción</th>
                         <th>Monto</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -401,12 +402,16 @@ function consultarGasto() {
 
         let sumaGastos = 0;
 
-        gastosMes.forEach(gasto => {
+        gastosMes.forEach((gasto, index) => {
             tabla += `
                 <tr>
                     <td><i class="bi bi-dot"></i></td>
                     <td>${gasto.descripcion}</td>
                     <td>$${gasto.monto.toFixed(2)}</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-dark" onclick="editarGasto(${index})"><i class="bi bi-pencil-fill"></i></button>
+                        <button type="button" class="btn btn-outline-dark" onclick="eliminarGasto(${index})"><i class="bi bi-x"></i></button>
+                    </td>
                 </tr>
             `;
             sumaGastos += gasto.monto; 
@@ -419,6 +424,7 @@ function consultarGasto() {
                         <td>Total</td>
                         <td></td>
                         <td>$${sumaGastos.toFixed(2)}</td>
+                        <td></td>
                     </tr>
                 </tfoot>
             </table>
@@ -427,10 +433,87 @@ function consultarGasto() {
         resultadosDiv.innerHTML = contenido + tabla;
     }
 
-    document.getElementById("inputGroupSelect01").value = '';
+    
     actualizarMontoActual();
 }
+function editarGasto(index) {
+    let mes = document.getElementById("inputGroupSelect01").value;
+    let gastosMes = obtenerGastosPorMes(mes);
+    let gasto = gastosMes[index];
 
+    document.getElementById('editarDescripcion').value = gasto.descripcion;
+    document.getElementById('editarMonto').value = gasto.monto.toFixed(2);
+    document.getElementById('editarIndex').value = index;
+    
+   
+    let editarGastoModal = new bootstrap.Modal(document.getElementById('editarGastoModal'));
+    editarGastoModal.show();
+}
+
+function guardarEdicion() {
+    let mes = document.getElementById("inputGroupSelect01").value;
+    let index = parseInt(document.getElementById('editarIndex').value, 10);
+    let descripcion = document.getElementById('editarDescripcion').value.trim();
+    let monto = parseFloat(document.getElementById('editarMonto').value);
+
+    if (isNaN(monto) || monto <= 0) {
+        alert('Por favor, ingresa un monto válido.');
+        return;
+    }
+
+    let gastosMes = obtenerGastosPorMes(mes);
+
+    if (index >= 0 && index < gastosMes.length) {
+       
+        let gastoAntiguo = gastosMes[index];
+        montoActual -= gastoAntiguo.monto;
+        montoActual += monto;
+
+        
+        gastosMes[index] = { descripcion: descripcion, monto: monto };
+
+       
+        let claveMesAño = `${mes}-${yearSeleccionado}`;
+        gastosPorMes[claveMesAño] = gastosMes;
+        localStorage.setItem('gastosPorMes', JSON.stringify(gastosPorMes));
+        localStorage.setItem('montoActual', montoActual.toString());
+
+      
+        consultarGasto();
+        actualizarMontoActual();
+
+      
+        let editarGastoModal = bootstrap.Modal.getInstance(document.getElementById('editarGastoModal'));
+        editarGastoModal.hide();
+    } else {
+        alert('Índice de ingreso no válido.');
+    }
+}
+
+
+function eliminarGasto(index) {
+    let mes = document.getElementById("inputGroupSelect01").value;
+    let gastosMes = obtenerGastosPorMes(mes);
+
+    if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {
+      
+        let gastoEliminado = gastosMes[index];
+        montoActual -= gastoEliminado.monto;
+
+      
+        gastosMes.splice(index, 1);
+
+        
+        let claveMesAño = `${mes}-${yearSeleccionado}`;
+        gastosPorMes[claveMesAño] = gastosMes;
+        localStorage.setItem('gastosPorMes', JSON.stringify(gastosPorMes));
+        localStorage.setItem('montoActual', montoActual.toString());
+
+    
+        consultarGasto();
+        actualizarMontoActual();
+    }
+}
 function resumenAnual() {
     const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
     
