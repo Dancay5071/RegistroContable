@@ -37,7 +37,19 @@ body {
    padding: 20px;
    overflow: auto; 
 }
-
+@keyframes fadeIn {
+   from {
+     opacity: 0;
+   }
+   to {
+     opacity: 1;
+   }
+ }
+ 
+ .fade-in {
+   opacity: 0; 
+   animation: fadeIn 0.5s ease-in-out forwards; 
+ }
 .card {
    width: 25rem;
    margin-right: 20px;
