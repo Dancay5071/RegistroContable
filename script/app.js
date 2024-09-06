@@ -8,6 +8,13 @@ let totalAhorros = parseFloat(localStorage.getItem('totalAhorros')) || 0;
 let ahorrosPorMes = JSON.parse(localStorage.getItem('ahorrosPorMes')) || {};
 let yearSeleccionado = new Date().getFullYear();
 
+fetch("navbar.html")
+.then(response => response.text())
+.then(data => {
+    const navbarContainer =
+    document.getElementById('navbar-container');
+    navbarContainer.innerHTML = data;
+})
 
 
  document.addEventListener('DOMContentLoaded', function() {
