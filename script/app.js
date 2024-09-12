@@ -1,4 +1,4 @@
-
+//localStorage.clear();
 let ingresos = JSON.parse(localStorage.getItem('ingresos')) || [];
 let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
 let montoActual = parseFloat(localStorage.getItem('montoActual')) || 0;
@@ -17,66 +17,68 @@ fetch("navbar.html")
 })
 
 
- document.addEventListener('DOMContentLoaded', function() {
-        const pageId = document.body.id;
+document.addEventListener('DOMContentLoaded', function() {
+    const pageId = document.body.id;
     
-        if (pageId !== 'paginaHome' && pageId !== 'paginaAhorro') {
-            const yearSelect = document.getElementById('inputGroupSelectYear');
-    const currentYear = new Date().getFullYear();
-    const startYear = 2024;
-    const endYear = currentYear + 2;
+    if (pageId !== 'paginaHome' && pageId !== 'paginaAhorro') {
+        const yearSelect = document.getElementById('inputGroupSelectYear');
+        const currentYear = new Date().getFullYear();
+        const startYear = 2024;
+        const endYear = currentYear + 2;
 
-    for (let year = startYear; year <= endYear; year++) {
-        let option = document.createElement('option');
-        option.value = year;
-        option.textContent = year;
-        if (year === currentYear) {
-            option.selected = true;
+        for (let year = startYear; year <= endYear; year++) {
+            let option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            if (year === currentYear) {
+                option.selected = true;
+            }
+            yearSelect.appendChild(option);
         }
-        yearSelect.appendChild(option);
-    }
 
-    yearSelect.addEventListener('change', function() {
+        yearSelect.addEventListener('change', function() {
+            yearSeleccionado = parseInt(yearSelect.value, 10);
+            actualizarMontoActual();
+        
+            if (pageId === 'paginaResumen') {
+                resumenAnual(); 
+            }
+        });
+
         yearSeleccionado = parseInt(yearSelect.value, 10);
         actualizarMontoActual();
-        
+
         if (pageId === 'paginaResumen') {
             resumenAnual(); 
         }
-    });
-
-    yearSeleccionado = parseInt(yearSelect.value, 10);
-    actualizarMontoActual();
-
-    if (pageId === 'paginaResumen') {
-        resumenAnual(); 
-    }
 
 
-    const mesSelect = document.getElementById('inputGroupSelect01');
-    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-    const currentMonthIndex = new Date().getMonth(); 
+        const mesSelect = document.getElementById('inputGroupSelect01');
+        const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        const currentMonthIndex = new Date().getMonth(); 
 
-    meses.forEach((mes, index) => {
-        let option = document.createElement('option');
-        option.value = mes;
-        option.textContent = mes;
-        if (index === currentMonthIndex) {
-            option.selected = true;
-        }
-        mesSelect.appendChild(option);
-    });
+        meses.forEach((mes, index) => {
+            let option = document.createElement('option');
+            option.value = mes;
+            option.textContent = mes;
+
+            if (index === currentMonthIndex) {
+                option.selected = true;
+            }
+            mesSelect.appendChild(option);
+        });
 
     
-    const mesGuardado = localStorage.getItem('mesSeleccionado');
-    if (mesGuardado) {
-        mesSelect.value = mesGuardado;
-    }
-        }else{
-            actualizarAhorro()
-            actualizarMontoActual();
+        const mesGuardado = localStorage.getItem('mesSeleccionado');
 
+        if (mesGuardado) {
+            mesSelect.value = mesGuardado;
         }
+
+    }else{
+        actualizarAhorro()
+        actualizarMontoActual();
+    }
     
 });
 
@@ -123,6 +125,7 @@ function agregarIngreso() {
     localStorage.setItem('mesSeleccionado', mes);
 
     actualizarMontoActual();
+
     document.getElementById("inputGroupSelect01").value = 'Selecciona el mes';
     document.getElementById("descripcionIngreso").value = '';
     document.getElementById("montoIngreso").value = '';
@@ -182,8 +185,8 @@ function consultarIngreso() {
                     <td>${ingreso.descripcion}</td>
                     <td>$${ingreso.monto.toFixed(2)}</td>
                     <td>
-                        <button type="button" class="btn btn-outline-dark" onclick="editarIngreso(${index})"><i class="bi bi-pencil-fill"></i></button>
-                        <button type="button" class="btn btn-outline-dark" onclick="eliminarIngreso(${index})"><i class="bi bi-x"></i></button>
+                        <button type="button" class="btn btn-outline-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar" onclick="editarIngreso(${index})"><i class="bi bi-pencil-fill"></i></button>
+                        <button type="button" class="btn btn-outline-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar" onclick="eliminarIngreso(${index})"><i class="bi bi-x"></i></button>
                     </td>
                 </tr>
             `;
@@ -205,6 +208,10 @@ function consultarIngreso() {
 
         resultadosDiv.innerHTML = contenido + tabla;
     }
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(tooltipTriggerEl => {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 
     document.getElementById("inputGroupSelect01").value = mes;
 }
@@ -252,11 +259,9 @@ function guardarEdicionIngreso() {
         localStorage.setItem('ingresosPorMes', JSON.stringify(ingresosPorMes));
         localStorage.setItem('montoActual', montoActual.toString());
 
-        // Actualizar la interfaz de usuario
         consultarIngreso();
         actualizarMontoActual();
 
-        // Ocultar el modal
         let editarIngresoModal = bootstrap.Modal.getInstance(document.getElementById('editarIngresoModal'));
         editarIngresoModal.hide();
     } else {
@@ -292,20 +297,14 @@ function eliminarIngreso(index) {
 
 function actualizarMontoActual() {
     montoActual = parseFloat(localStorage.getItem('montoActual')) || 0;
-    document.getElementById('montoActual').textContent = 'Monto actual: $' + montoActual.toFixed(2);
+    document.getElementById('montoActual').textContent = 'Monto actual: $' + formatoNumber(montoActual);
     
 }
 function actualizarAhorro(){
     totalAhorros = parseFloat(localStorage.getItem('totalAhorros')) || 0;
-    document.getElementById('totalAhorros').textContent = 'Ahorro: $' + totalAhorros.toFixed(2);
+    document.getElementById('totalAhorros').textContent = 'Ahorro: $' + formatoNumber(totalAhorros);
     
 }
-
-function actualizarAhorro(){
-    totalAhorros = parseFloat(localStorage.getItem('totalAhorros')) || 0;
-    document.getElementById('totalAhorros').textContent = 'Ahorro: $' + totalAhorros.toFixed(2);
-}
-
 function extraerAhorro() {
     let cantidadAextraer = prompt("¿Cuánto deseas extraer del ahorro?", "0");
     cantidadAextraer = parseFloat(cantidadAextraer);
@@ -415,10 +414,10 @@ function consultarGasto() {
                 <tr>
                     <td><i class="bi bi-dot"></i></td>
                     <td>${gasto.descripcion}</td>
-                    <td>$${gasto.monto.toFixed(2)}</td>
+                    <td>$${formatoNumber(gasto.monto)}</td>
                     <td>
-                        <button type="button" class="btn btn-outline-dark" onclick="editarGasto(${index})"><i class="bi bi-pencil-fill"></i></button>
-                        <button type="button" class="btn btn-outline-dark" onclick="eliminarGasto(${index})"><i class="bi bi-x"></i></button>
+                        <button type="button" class="btn btn-outline-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar" onclick="editarGasto(${index})"><i class="bi bi-pencil-fill"></i></button>
+                        <button type="button" class="btn btn-outline-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar" onclick="eliminarGasto(${index})"><i class="bi bi-x"></i></button>
                     </td>
                 </tr>
             `;
@@ -431,7 +430,7 @@ function consultarGasto() {
                     <tr>
                         <td>Total</td>
                         <td></td>
-                        <td>$${sumaGastos.toFixed(2)}</td>
+                        <td>$${formatoNumber(sumaGastos)}</td>
                         <td></td>
                     </tr>
                 </tfoot>
@@ -441,7 +440,11 @@ function consultarGasto() {
         resultadosDiv.innerHTML = contenido + tabla;
     }
 
-    
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(tooltipTriggerEl => {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
     actualizarMontoActual();
 }
 function editarGasto(index) {
@@ -525,7 +528,8 @@ function eliminarGasto(index) {
 function resumenAnual() {
     const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
     
-    let resumenMeses = meses.map(mes => {
+    let restoMesAnterior = 0;  
+    let resumenMeses = meses.map((mes, index) => {
         let claveMesAño = `${mes}-${yearSeleccionado}`;
         
         let ingresosMes = obtenerIngresosPorMes(mes);
@@ -535,13 +539,29 @@ function resumenAnual() {
         let totalIngresosMes = ingresosMes.reduce((acc, ingreso) => acc + ingreso.monto, 0);
         let totalGastosMes = gastosMes.reduce((acc, gasto) => acc + gasto.monto, 0);
 
-        return {
+        let restoTotal = totalIngresosMes - totalGastosMes + restoMesAnterior;
+
+        let resultadoMes = {
             mes,
             ingresos: totalIngresosMes,
             gastos: totalGastosMes,
             ahorros: ahorrosMes,
-            restoTotal: totalIngresosMes - totalGastosMes
+            restoTotal: restoTotal,
+            restoMesAnterior: restoMesAnterior
         };
+
+        console.log(`Mes: ${mes}`);
+        console.log(`Ingresos: ${totalIngresosMes}`);
+        console.log(`Gastos: ${totalGastosMes}`);
+        console.log(`Resto del Mes Anterior: ${restoMesAnterior}`);
+        console.log(`Resto Total Calculado: ${restoTotal}`);
+
+        restoMesAnterior = restoTotal;
+        
+
+        return resultadoMes;
+
+       
     });
 
     
@@ -555,24 +575,41 @@ function resumenAnual() {
                 </tr>
             </thead>
             <tbody>
+            <tr>
+                <tr>
+                    <td>Mes anterior</td>
+                    ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.restoMesAnterior)}</td>`).join('')}
+                </tr>
                 <tr>
                     <td>Ingresos</td>
-                    ${resumenMeses.map(mesResumen => `<td>$${mesResumen.ingresos.toFixed(2)}</td>`).join('')}
+                    ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.ingresos)}</td>`).join('')}
                 </tr>
                 <tr>
                     <td>Gastos</td>
-                    ${resumenMeses.map(mesResumen => `<td>$${mesResumen.gastos.toFixed(2)}</td>`).join('')}
+                    ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.gastos)}</td>`).join('')}
                 </tr>
                 <tr>
                     <td>Ahorros</td>
-                    ${resumenMeses.map(mesResumen => `<td>$${mesResumen.ahorros.toFixed(2)}</td>`).join('')}
+                    ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.ahorros)}</td>`).join('')}
                 </tr>
-                <tr>
+               
+                 <tr>
                     <td>Resto del mes</td>
-                    ${resumenMeses.map(mesResumen => `<td>$${mesResumen.restoTotal.toFixed(2)}</td>`).join('')}
+                  ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.restoTotal)}</td>`).join('')}
                 </tr>
             </tbody>
         </table>
     `;
+
+   
 }
 
+function formatoNumber(number) {
+    if (isNaN(number)) return number;
+  
+    let [integerPart, decimalPart] = number.toFixed(2).split('.');
+    
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  
+    return `${integerPart},${decimalPart}`;
+}
