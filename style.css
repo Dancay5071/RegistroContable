@@ -119,3 +119,9 @@ input, select {
 h4 {
    justify-content: center 
 }
+.table th:first-child,
+.table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 10; 
+}

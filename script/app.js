@@ -51,30 +51,30 @@ document.addEventListener('DOMContentLoaded', function() {
         if (pageId === 'paginaResumen') {
             resumenAnual(); 
         }
+        if (pageId !== 'paginaResumen') {
 
+            const mesSelect = document.getElementById('inputGroupSelect01');
+            const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            const currentMonthIndex = new Date().getMonth(); 
 
-        const mesSelect = document.getElementById('inputGroupSelect01');
-        const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-        const currentMonthIndex = new Date().getMonth(); 
+            meses.forEach((mes, index) => {
+                let option = document.createElement('option');
+                option.value = mes;
+                option.textContent = mes;
 
-        meses.forEach((mes, index) => {
-            let option = document.createElement('option');
-            option.value = mes;
-            option.textContent = mes;
-
-            if (index === currentMonthIndex) {
-                option.selected = true;
-            }
-            mesSelect.appendChild(option);
-        });
-
+                if (index === currentMonthIndex) {
+                    option.selected = true;
+                }
+                mesSelect.appendChild(option);
+            });
+        
     
-        const mesGuardado = localStorage.getItem('mesSeleccionado');
+            const mesGuardado = localStorage.getItem('mesSeleccionado');
 
-        if (mesGuardado) {
-            mesSelect.value = mesGuardado;
+            if (mesGuardado) {
+                mesSelect.value = mesGuardado;
+            }
         }
-
     }else{
         actualizarAhorro()
         actualizarMontoActual();
@@ -321,11 +321,24 @@ function extraerAhorro() {
 
     totalAhorros -= cantidadAextraer;
 
+    let mesExtraccion = new Date().toLocaleString('default', { month: 'long' });
+    let claveMesAño = `${mesExtraccion}-${yearSeleccionado}`;
+    if (!ahorrosPorMes[claveMesAño]) {
+        ahorrosPorMes[claveMesAño] = 0;
+    }
+    ahorrosPorMes[claveMesAño] -= cantidadAextraer;
+
+    console.log(totalAhorros);
+    console.log(ahorrosPorMes);
+
     localStorage.setItem('totalAhorros', totalAhorros.toString());
+    localStorage.setItem('ahorrosPorMes', JSON.stringify(ahorrosPorMes));
 
     actualizarMontoActual();
     actualizarAhorro();
 }
+
+
 
 
 
@@ -456,7 +469,6 @@ function editarGasto(index) {
     document.getElementById('editarMonto').value = gasto.monto.toFixed(2);
     document.getElementById('editarIndex').value = index;
     
-   
     let editarGastoModal = new bootstrap.Modal(document.getElementById('editarGastoModal'));
     editarGastoModal.show();
 }
@@ -480,28 +492,22 @@ function guardarEdicionGasto() {
         montoActual -= gastoAntiguo.monto;
         montoActual += monto;
 
-        
         gastosMes[index] = { descripcion: descripcion, monto: monto };
-
        
         let claveMesAño = `${mes}-${yearSeleccionado}`;
         gastosPorMes[claveMesAño] = gastosMes;
         localStorage.setItem('gastosPorMes', JSON.stringify(gastosPorMes));
         localStorage.setItem('montoActual', montoActual.toString());
 
-      
         consultarGasto();
         actualizarMontoActual();
 
-      
         let editarGastoModal = bootstrap.Modal.getInstance(document.getElementById('editarGastoModal'));
         editarGastoModal.hide();
     } else {
         alert('Índice de ingreso no válido.');
     }
 }
-
-
 function eliminarGasto(index) {
     let mes = document.getElementById("inputGroupSelect01").value;
     let gastosMes = obtenerGastosPorMes(mes);
@@ -509,12 +515,10 @@ function eliminarGasto(index) {
     if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {
       
         let gastoEliminado = gastosMes[index];
-        montoActual -= gastoEliminado.monto;
+        montoActual += gastoEliminado.monto;
 
-      
         gastosMes.splice(index, 1);
 
-        
         let claveMesAño = `${mes}-${yearSeleccionado}`;
         gastosPorMes[claveMesAño] = gastosMes;
         localStorage.setItem('gastosPorMes', JSON.stringify(gastosPorMes));
@@ -527,11 +531,15 @@ function eliminarGasto(index) {
 }
 function resumenAnual() {
     const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-    
-    let restoMesAnterior = 0;  
+
+    let restoMesAnterior = 0;
+    let totalIngresosAnual = 0;
+    let totalGastosAnual = 0;
+    let totalAhorrosAnual = 0;
+
     let resumenMeses = meses.map((mes, index) => {
         let claveMesAño = `${mes}-${yearSeleccionado}`;
-        
+
         let ingresosMes = obtenerIngresosPorMes(mes);
         let gastosMes = obtenerGastosPorMes(mes);
         let ahorrosMes = ahorrosPorMes[claveMesAño] || 0;
@@ -540,6 +548,10 @@ function resumenAnual() {
         let totalGastosMes = gastosMes.reduce((acc, gasto) => acc + gasto.monto, 0);
 
         let restoTotal = totalIngresosMes - totalGastosMes + restoMesAnterior;
+
+        totalIngresosAnual += totalIngresosMes;
+        totalGastosAnual += totalGastosMes;
+        totalAhorrosAnual += ahorrosMes;
 
         let resultadoMes = {
             mes,
@@ -550,58 +562,50 @@ function resumenAnual() {
             restoMesAnterior: restoMesAnterior
         };
 
-        console.log(`Mes: ${mes}`);
-        console.log(`Ingresos: ${totalIngresosMes}`);
-        console.log(`Gastos: ${totalGastosMes}`);
-        console.log(`Resto del Mes Anterior: ${restoMesAnterior}`);
-        console.log(`Resto Total Calculado: ${restoTotal}`);
-
         restoMesAnterior = restoTotal;
-        
 
         return resultadoMes;
-
-       
     });
 
-    
     let resumenDiv = document.getElementById('resumenAnual');
     resumenDiv.innerHTML = `
        <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Concepto</th>
+                    <th></th>
                     ${meses.map(mes => `<th>${mes}</th>`).join('')}
+                    <th>Total</th>
                 </tr>
             </thead>
             <tbody>
             <tr>
-                <tr>
-                    <td>Mes anterior</td>
-                    ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.restoMesAnterior)}</td>`).join('')}
-                </tr>
-                <tr>
-                    <td>Ingresos</td>
-                    ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.ingresos)}</td>`).join('')}
-                </tr>
-                <tr>
-                    <td>Gastos</td>
-                    ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.gastos)}</td>`).join('')}
-                </tr>
-                <tr>
-                    <td>Ahorros</td>
-                    ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.ahorros)}</td>`).join('')}
-                </tr>
-               
-                 <tr>
-                    <td>Resto del mes</td>
-                  ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.restoTotal)}</td>`).join('')}
-                </tr>
+                <td>Mes anterior</td>
+                ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.restoMesAnterior)}</td>`).join('')}
+                <td></td>
+            </tr>
+            <tr>
+                <td>Ingresos</td>
+                ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.ingresos)}</td>`).join('')}
+                <td>$${formatoNumber(totalIngresosAnual)}</td>
+            </tr>
+            <tr>
+                <td>Gastos</td>
+                ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.gastos)}</td>`).join('')}
+                <td>$${formatoNumber(totalGastosAnual)}</td>
+            </tr>
+            <tr>
+                <td>Ahorros</td>
+                ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.ahorros)}</td>`).join('')}
+                <td>$${formatoNumber(totalAhorros)}</td>
+            </tr>
+            <tr>
+                <td>Resto del mes</td>
+                ${resumenMeses.map(mesResumen => `<td>$${formatoNumber(mesResumen.restoTotal)}</td>`).join('')}
+                <td>$${formatoNumber(restoMesAnterior)}</td>
+            </tr>
             </tbody>
         </table>
     `;
-
-   
 }
 
 function formatoNumber(number) {
