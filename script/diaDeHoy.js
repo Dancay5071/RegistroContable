@@ -1,7 +1,19 @@
-let meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Dieciembre");
-let diasSemana = new Array ("Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado");
+let meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+let diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 let d = new Date();
-let diaDeHoy = (diasSemana[d.getDay()] + ", " + d.getDate() + " de " + meses[d.getMonth()] + " del " + d.getFullYear());
 
-document.getElementById('diaDeHoy').innerHTML = 'Hoy es ' + diaDeHoy;
+function actualizarFecha() {
+    let formatoCompleto = diasSemana[d.getDay()] + ", " + d.getDate() + " de " + meses[d.getMonth()] + " del " + d.getFullYear();
+    let formatoCorto = d.getDate() + " de " + meses[d.getMonth()] + " de " + d.getFullYear(); 
+
+    if (window.innerWidth < 768) { // Cambiar el tamaño según lo necesites
+        document.getElementById('diaDeHoy').innerHTML =  formatoCorto;
+    } else {
+        document.getElementById('diaDeHoy').innerHTML =  formatoCompleto;
+    }
+}
+
+actualizarFecha();
+
+window.addEventListener('resize', actualizarFecha);
 

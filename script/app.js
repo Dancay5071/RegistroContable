@@ -16,7 +16,6 @@ fetch("navbar.html")
     navbarContainer.innerHTML = data;
 })
 
-
 document.addEventListener('DOMContentLoaded', function() {
     const pageId = document.body.id;
     
