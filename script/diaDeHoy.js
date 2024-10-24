@@ -17,3 +17,4 @@ actualizarFecha();
 
 window.addEventListener('resize', actualizarFecha);
 
+
