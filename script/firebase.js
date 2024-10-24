@@ -20,10 +20,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-const navbar = document.getElementById('navbar');
-const loginBtn = document.getElementById('login-btn');
-const logoutBtn = document.getElementById('logout-btn');
-const loginForm = document.querySelector('#loginForm');
 
 //Colecciones
 
@@ -34,41 +30,48 @@ const ahorrosCollection = collection(db,'ahorros');
 //Login
 
 document.addEventListener('DOMContentLoaded', function () {
-onAuthStateChanged(auth, (user) => {
-  if (user) {
+  const navbar = document.getElementById('navbar');
+  const loginBtn = document.getElementById('login-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  const loginForm = document.querySelector('#loginForm');
+
+
+  
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
       navbar.classList.remove('d-none');
       loginBtn.classList.add('d-none');
-  } else {
+    } else {
       navbar.classList.add('d-none');
       loginBtn.classList.remove('d-none');
-  }
-});
+    }
+  });
 
+  
+  document.getElementById('loginSubmit').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = loginForm['email'].value;
+    const password = loginForm['password'].value;
 
-document.getElementById('#loginSubmit').addEventListener('click', async (e) => {
-  e.preventDefault();
-  const email = loginForm['email'].value;
-  const password = loginForm['password'].value;
-  try {
+    try {
       await signInWithEmailAndPassword(auth, email, password);
-      
       const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
       modal.hide();
-  } catch (error) {
+    } catch (error) {
       console.error('Error al iniciar sesión:', error.message);
       alert('Error al iniciar sesión');
-  }
-});
+    }
+  });
 
-
-logoutBtn.addEventListener('click', async () => {
-  try {
+  
+  logoutBtn.addEventListener('click', async () => {
+    try {
       await signOut(auth);
       alert('Sesión cerrada');
-  } catch (error) {
+    } catch (error) {
       console.error('Error al cerrar sesión:', error.message);
-  }
-});
+    }
+  });
 });
 
 //Seleccion de año
