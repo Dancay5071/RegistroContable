@@ -8,6 +8,11 @@ export function initAuthUI() {
   const logoutBtn = document.getElementById("logout-btn");
   const loginForm = document.getElementById("loginForm");
 
+  const montoActual = document.getElementById("montoActual");
+  const ahorro = document.getElementById("ahorro");
+  const totalAhorros = document.getElementById("totalAhorros");
+
+
   if (!navbar) console.error("Navbar no encontrado.");
   if (!loginBtn) console.error("Botón de inicio de sesión no encontrado.");
   if (!logoutBtn) console.error("Botón de cerrar sesión no encontrado.");
@@ -22,9 +27,17 @@ export function initAuthUI() {
     if (user) {
       navbar.classList.remove('d-none');
       loginBtn.classList.add('d-none');
+
+      montoActual.classList.remove('d-none');
+      ahorro.classList.remove('d-none');
+      totalAhorros.classList.remove('d-none');
     } else {
       navbar.classList.add('d-none');
       loginBtn.classList.remove('d-none');
+
+      montoActual.classList.add('d-none');
+      ahorro.classList.add('d-none');
+      totalAhorros.classList.add('d-none');
     }
   });
 

@@ -18,6 +18,12 @@
     <div class="container">
         <div class="principal">
             <h1 id="diaDeHoy"></h1>
+            <div class="container text-center mt-3">
+                <button class="btn btn-success" id="login-btn" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    Iniciar sesión
+                </button>  
+            </div>
+
             <div class="container">
                 <div class="float-xl-start">
                     <div class="text-bg-dark p-3 d-none" id="montoActual"></div>
@@ -25,6 +31,86 @@
                 <div class="float-xl-start d-none" id="ahorro"></div>
                 <div class="text-bg-dark p-3 d-none" id="totalAhorros"></div>
             </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary d-none" id="navbar">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="../../index.html"><i class="bi bi-house"></i></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Gastos
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/componentes/gastos/nuevoGasto.html">Nuevo</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/componentes/gastos/consultarGasto.html">Consultar</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Ingresos
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/componentes/ingresos/nuevoIngreso.html">Nuevo</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/componentes/ingresos/consultarIngreso.html">Consultar</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/componentes/ahorro/ahorro.html">Ahorros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/componentes/resumen/resumen.html">Resumen</a>
+                    </li>
+                </ul>
+                
+                <!-- Botón de cerrar sesión -->
+                <button class="btn btn-outline-danger ms-auto" id="logout-btn" type="button">
+                    Cerrar sesión
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal de inicio de sesión -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Contenido del modal -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Iniciar Sesión</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulario de login -->
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="email" placeholder="email@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password" placeholder="Contraseña">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-outline-success" id="loginSubmit">Iniciar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
         </div>
     </div>
 
