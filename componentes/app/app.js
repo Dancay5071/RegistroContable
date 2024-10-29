@@ -1,19 +1,15 @@
 /// app.js
-import { initAuthUI } from "../servicios/auth.js"; // Importa tu lógica de autenticación desde el módulo auth.js
-import { db, auth } from "../utilidades/firebase.js"; // Importa Firebase si lo necesitas
+import { initAuthUI } from "../servicios/auth.js";
+import { db, auth } from "../utilidades/firebase.js";
 
-const navbarContainer = document.getElementById("navbar-container");
+const appContainer = document.getElementById("navbar-container");
 
+// Cargar y renderizar el navbar
 async function loadNavbar() {
   const { renderNavbar } = await import("../navbar/navbar.js");
-  renderNavbar(navbarContainer);
+  await renderNavbar(appContainer); // Espera a que el navbar se cargue completamente
+
+  initAuthUI(); 
 }
 
-
-// Llamar a las funciones de inicialización
-document.addEventListener("DOMContentLoaded", async () => {
-  initAuthUI(); // Configura la interfaz de autenticación
-  
-  // Cargar y renderizar el navbar
-  await loadNavbar();
-});
+document.addEventListener("DOMContentLoaded", loadNavbar);

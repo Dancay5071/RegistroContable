@@ -1,4 +1,4 @@
-// auth.js
+// auth.js (sin el DOMContentLoaded)
 import { auth } from "../utilidades/firebase.js";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
@@ -6,10 +6,15 @@ export function initAuthUI() {
   const navbar = document.getElementById("navbar");
   const loginBtn = document.getElementById("login-btn");
   const logoutBtn = document.getElementById("logout-btn");
-  const loginForm = document.getElementById("#loginForm"); // Asegúrate de que este ID sea correcto
+  const loginForm = document.getElementById("loginForm");
+
+  if (!navbar) console.error("Navbar no encontrado.");
+  if (!loginBtn) console.error("Botón de inicio de sesión no encontrado.");
+  if (!logoutBtn) console.error("Botón de cerrar sesión no encontrado.");
+  if (!loginForm) console.error("Formulario de inicio de sesión no encontrado.");
 
   if (!navbar || !loginBtn || !logoutBtn || !loginForm) {
-    console.error("Elementos no encontrados en el DOM.");
+    console.error("Algunos elementos no fueron encontrados en el DOM.");
     return;
   }
 
@@ -25,7 +30,7 @@ export function initAuthUI() {
 
   document.getElementById('loginSubmit').addEventListener('click', async (e) => {
     e.preventDefault();
-    const email = loginForm['email'].value; // Asegúrate de que estos nombres de campo sean correctos
+    const email = loginForm['email'].value;
     const password = loginForm['password'].value;
 
     try {
@@ -34,7 +39,7 @@ export function initAuthUI() {
       modal.hide();
     } catch (error) {
       console.error('Error al iniciar sesión:', error.message);
-      alert('Error al iniciar sesión: ' + error.message); // Muestra el mensaje de error específico
+      alert('Error al iniciar sesión: ' + error.message);
     }
   });
 
@@ -44,10 +49,7 @@ export function initAuthUI() {
       alert('Sesión cerrada');
     } catch (error) {
       console.error('Error al cerrar sesión:', error.message);
-      alert('Error al cerrar sesión: ' + error.message); // Muestra el mensaje de error específico
+      alert('Error al cerrar sesión: ' + error.message);
     }
   });
 }
-
-// Asegúrate de llamar a esta función después de que el DOM esté listo
-document.addEventListener('DOMContentLoaded', initAuthUI);
