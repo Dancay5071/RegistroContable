@@ -6,6 +6,7 @@ const appContainer = document.getElementById("navbar-container");
 
 // Cargar y renderizar el navbar
 async function loadNavbar() {
+  
   const { renderNavbar } = await import("../navbar/navbar.js");
   await renderNavbar(appContainer); // Espera a que el navbar se cargue completamente
 
