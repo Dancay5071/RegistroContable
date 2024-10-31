@@ -13,7 +13,6 @@ async function cargarNavbarYAuth() {
 
   await renderNavbar(navbarContainer);
 
-  // Verifica si todos los elementos necesarios están en el DOM antes de inicializar la autenticación
   const checkElementsLoaded = () => {
     const navbar = document.getElementById("navbar");
     const loginBtn = document.getElementById("login-btn");
@@ -24,7 +23,7 @@ async function cargarNavbarYAuth() {
       initAuthUI();
     } else {
       console.warn("Algunos elementos no fueron encontrados en el DOM, reintentando...");
-      setTimeout(checkElementsLoaded, 100); // Vuelve a intentar en 100ms
+      setTimeout(checkElementsLoaded, 100); 
     }
   };
 

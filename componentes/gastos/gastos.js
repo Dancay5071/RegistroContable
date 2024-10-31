@@ -17,9 +17,9 @@ function setupYearSelect() {
   }
 }
 
-// cerrar sesión
+// Función para cerrar sesión
 function setupLogoutListener() {
-  const logoutBtn = document.getElementById("logout-btn");
+  const logoutBtn = document.getElementById("logout-btn"); 
   if (logoutBtn) {
     logoutBtn.addEventListener("click", cerrarSesion);
   } else {
@@ -27,10 +27,12 @@ function setupLogoutListener() {
   }
 }
 
+// Función para cerrar sesión
 function cerrarSesion() {
   signOut(auth)
     .then(() => {
       console.log("Sesión cerrada con éxito");
+      
       window.location.href = "/index.html";
     })
     .catch((error) => {

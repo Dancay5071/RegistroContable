@@ -14,7 +14,7 @@ async function agregarIngreso() {
   try {
     await addDoc(ingresosCollection, data);
 
-    // Muestra el cartel de éxito y oculta después de 5 segundos
+    // cartel de éxito y oculta después de 5 segundos
     alertaDiv.className = "alert alert-success";
     alertaDiv.textContent = "Ingreso agregado con éxito.";
     alertaDiv.classList.remove("d-none");
@@ -25,7 +25,7 @@ async function agregarIngreso() {
   } catch (error) {
     console.error("Error al agregar ingreso:", error);
 
-    // Muestra el cartel de error y oculta después de 5 segundos
+    // cartel de error y oculta después de 5 segundos
     alertaDiv.className = "alert alert-danger";
     alertaDiv.textContent = "Error al agregar ingreso. Inténtalo de nuevo.";
     alertaDiv.classList.remove("d-none");
@@ -43,7 +43,7 @@ async function agregarIngreso() {
 
 
 
-  // Agregar el evento de clic para el botón de actualizar
+  // botón de actualizar
   const actualizarIngreso = document.getElementById("actualizarIngreso");
   if (actualizarIngreso) {
     actualizarIngreso.addEventListener("click", agregarIngreso);
