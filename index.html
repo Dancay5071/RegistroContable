@@ -22,14 +22,13 @@
                 <button class="btn btn-success" id="login-btn" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">
                     Iniciar sesión
                 </button>  
+                <div class="float-xl-start">
+                    <div class="text-bg-dark p-3 d-none" id="montoActual">Monto actual:</div>
+                </div>
+                <div class="float-xl-start d-none" id="ahorro"> </div>
+                <div class="text-bg-dark p-3 d-none" id="totalAhorros">Ahorros:</div>
             </div>
 
-            <div class="container">
-                <div class="float-xl-start">
-                    <div class="text-bg-dark p-3 d-none" id="montoActual"></div>
-                </div>
-                <div class="float-xl-start d-none" id="ahorro"></div>
-                <div class="text-bg-dark p-3 d-none" id="totalAhorros"></div>
             </div>
         </div>
     </div>
@@ -117,6 +116,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="/componentes/utilidades/diaDeHoy.js"></script>
     <script type="module" src="/componentes/app/app.js"></script>
+    <script type="module" src="/componentes/utilidades/firebase.js"></script>
+
     
 
 </body>

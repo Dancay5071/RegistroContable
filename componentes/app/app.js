@@ -1,5 +1,11 @@
 /// app.js
 import { initAuthUI } from "../servicios/auth.js";
+import { escucharMontoActual } from "../app/escucharMonto.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOMContentLoaded disparado"); 
+  escucharMontoActual();
+});
 
 
 const appContainer = document.getElementById("navbar-container");

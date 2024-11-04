@@ -1,5 +1,6 @@
+//firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getFirestore, collection } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { getFirestore, collection, doc, getDoc, setDoc, updateDoc} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -17,5 +18,39 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const ingresosCollection = collection(db, 'ingresos');
 const gastosCollection = collection(db, 'gastos');
+const ingresosPorMes = collection(db, 'ingresosPorMes');
+const gastosPorMes = collection(db, 'gastosPorMes');
+const ahorrosPorMes = collection(db, 'ahorrosPorMes');
+const settingsDoc = doc(db, "settings", "montoActual");
 
-export { app, db, auth, ingresosCollection, gastosCollection};
+async function inicializarMontoActual() {
+  const settingsSnapshot = await getDoc(settingsDoc);
+  if (!settingsSnapshot.exists()) {
+    await setDoc(settingsDoc, { montoActual: 0 });
+  }
+}
+
+// Actualizar el montoActual en Firebase
+async function actualizarMontoActual(nuevoMonto) {
+  try {
+    if (isNaN(nuevoMonto)) {
+      console.error("Error: nuevoMonto no es un número válido");
+      return;
+    }
+    
+    const montoDoc = await getDoc(settingsDoc);
+    const montoActual = montoDoc.exists() && !isNaN(montoDoc.data().montoActual) 
+                        ? montoDoc.data().montoActual 
+                        : 0;
+    
+    await updateDoc(settingsDoc, { montoActual: montoActual + nuevoMonto });
+  } catch (error) {
+    console.error("Error al actualizar monto actual:", error);
+  }
+}
+
+// Llamada inicial
+inicializarMontoActual();
+
+
+export { app, db, auth, ingresosCollection, gastosCollection, ingresosPorMes, ahorrosPorMes, settingsDoc, actualizarMontoActual };

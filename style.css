@@ -34,9 +34,21 @@ body {
    justify-content: center;
    align-items: flex-start;
    margin-top: 70px;
+   margin-bottom: 40px;
    padding: 20px;
    overflow: auto; 
 
+
+}
+
+.float-xl-end {
+   position: fixed;
+   bottom: 20px; 
+   right: 20px; 
+   background-color: rgba(0, 0, 0, 0.8); 
+   color: white; 
+   padding: 10px; 
+   z-index: 1000;
 }
 @keyframes fadeIn {
    from {
@@ -69,16 +81,6 @@ body {
 
 #resultadoAhorros {
    padding: 10px;
-}
-
-.float-xl-end {
-   position: fixed;
-   bottom: 20px; 
-   right: 20px; 
-   background-color: rgba(0, 0, 0, 0.8); 
-   color: white; 
-   padding: 10px; 
-   z-index: 1000;
 }
 
 .tituloCard {
