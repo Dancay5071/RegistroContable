@@ -35,19 +35,19 @@ async function inicializarMontoActual() {
 
 async function actualizarMontoActual(nuevoMonto) {
   try {
-    if (isNaN(nuevoMonto)) {
-      console.error("Error: nuevoMonto no es un número válido");
-      return;
-    }
-    
-    const montoDoc = await getDoc(settingsDoc);
-    const montoActual = montoDoc.exists() && !isNaN(montoDoc.data().montoActual) 
-                        ? montoDoc.data().montoActual 
-                        : 0;
-    
-    await updateDoc(settingsDoc, { montoActual: montoActual + nuevoMonto });
+      if (isNaN(nuevoMonto)) {
+          console.error("Error: nuevoMonto no es un número válido");
+          return;
+      }
+
+      const montoDoc = await getDoc(settingsDoc);
+      const montoActual = montoDoc.exists() && !isNaN(montoDoc.data().montoActual) 
+                          ? montoDoc.data().montoActual 
+                          : 0;
+      
+      await updateDoc(settingsDoc, { montoActual: montoActual + nuevoMonto });
   } catch (error) {
-    console.error("Error al actualizar monto actual:", error);
+      console.error("Error al actualizar monto actual:", error);
   }
 }
 //Inicializar y actualizar totalAhorros en Firebase

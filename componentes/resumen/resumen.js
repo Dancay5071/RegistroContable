@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (navbarContainer) {
     await renderNavbar(navbarContainer);
-    
+    setupYearSelect();
     setupLogoutListener();
   } else {
     console.warn("No se encontró el contenedor del navbar en el DOM");
