@@ -1,13 +1,7 @@
 //nuevoIngreso.js
 import { addDoc, arrayUnion, increment, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { actualizarMontoActual, actualizarAhorroActual, ingresosCollection, ingresosPorMes, ahorrosPorMes  } from "../utilidades/firebase.js";
-import { escucharMontoActual } from "../app/escucharMonto.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOMContentLoaded disparado"); 
-  escucharMontoActual();
-  
-});
 
 async function agregarIngreso() {
   const descripcion = document.getElementById("descripcionIngreso").value;

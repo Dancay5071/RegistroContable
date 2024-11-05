@@ -32,7 +32,6 @@ async function inicializarMontoActual() {
   }
 }
 
-
 async function actualizarMontoActual(nuevoMonto) {
   try {
       if (isNaN(nuevoMonto)) {

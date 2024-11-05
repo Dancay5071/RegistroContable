@@ -46,7 +46,7 @@ async function agregarGasto() {
     await setDoc(gastosMesDoc, { gastos: arrayUnion(data) }, { merge: true });
 
     alertaDiv.className = "alert alert-success";
-    alertaDiv.textContent = "gasto agregado con éxito.";
+    alertaDiv.textContent = "Gasto agregado con éxito.";
     alertaDiv.classList.remove("d-none");
     setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
   } catch (error) {

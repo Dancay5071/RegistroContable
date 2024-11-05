@@ -157,9 +157,9 @@ async function guardarEdicionGasto() {
           // Si el nuevo monto es mayor que el antiguo, resta de monto actual
           // Si el nuevo monto es menor, suma al monto actual
           if (diferencia > 0) {
-              actualizarMontoActual(-diferencia);  // Resta al monto actual
+              actualizarMontoActual(-diferencia);  
           } else {
-              actualizarMontoActual(-diferencia);  // Suma al monto actual
+              actualizarMontoActual(-diferencia);  
           }
 
           consultarGasto();

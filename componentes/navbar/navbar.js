@@ -24,7 +24,7 @@ export async function renderNavbar(container) {
 
 // Función para configurar el evento de cerrar sesión
 export function setupLogoutListener() {
-  const logoutBtn = document.getElementById("logout-btn"); // Asegúrate de que el botón exista en el HTML
+  const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", cerrarSesion);
   } else {
@@ -39,7 +39,7 @@ function cerrarSesion() {
   signOut(auth)
     .then(() => {
       console.log("Sesión cerrada con éxito");
-      // Opcional: Redirige al usuario a la página de inicio después de cerrar sesión
+      
       window.location.href = "/index.html";
     })
     .catch((error) => {

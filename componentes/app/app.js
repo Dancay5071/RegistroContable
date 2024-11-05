@@ -1,4 +1,4 @@
-/// app.js
+// app.js
 import { initAuthUI } from "../servicios/auth.js";
 import { escucharAhorro, escucharMontoActual } from "../app/escucharMonto.js";
 
@@ -8,9 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   escucharAhorro();
 });
 
-
 const appContainer = document.getElementById("navbar-container");
-
 
 async function loadNavbar() {
   

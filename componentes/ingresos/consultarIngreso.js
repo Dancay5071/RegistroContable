@@ -1,13 +1,6 @@
 //consultarIngreso.js
 import { doc, getDoc, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { ingresosPorMes, actualizarMontoActual } from "../utilidades/firebase.js";
-import { escucharMontoActual } from "../app/escucharMonto.js";
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOMContentLoaded disparado"); 
-  escucharMontoActual();
-});
 
 window.consultarIngreso = consultarIngreso;
 
@@ -96,7 +89,7 @@ async function consultarIngreso() {
     }
 }
 
-// Actualiza la función editarIngreso() para trabajar con Firestore
+// Actualiza la función editarIngreso para trabajar con Firestore
 window.editarIngreso = editarIngreso;
 async function editarIngreso(index) {
     let mes = document.getElementById("inputGroupSelect01").value;
