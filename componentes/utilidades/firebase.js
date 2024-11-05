@@ -22,7 +22,9 @@ const ingresosPorMes = collection(db, 'ingresosPorMes');
 const gastosPorMes = collection(db, 'gastosPorMes');
 const ahorrosPorMes = collection(db, 'ahorrosPorMes');
 const settingsDoc = doc(db, "settings", "montoActual");
+const settingDoc = doc(db, "setting", "totalAhorros");
 
+// Inicializar y actualizar el montoActual en Firebase
 async function inicializarMontoActual() {
   const settingsSnapshot = await getDoc(settingsDoc);
   if (!settingsSnapshot.exists()) {
@@ -30,7 +32,7 @@ async function inicializarMontoActual() {
   }
 }
 
-// Actualizar el montoActual en Firebase
+
 async function actualizarMontoActual(nuevoMonto) {
   try {
     if (isNaN(nuevoMonto)) {
@@ -48,9 +50,34 @@ async function actualizarMontoActual(nuevoMonto) {
     console.error("Error al actualizar monto actual:", error);
   }
 }
+//Inicializar y actualizar totalAhorros en Firebase
+async function inicializarAhorroActual() {
+  const settingSnapshot = await getDoc(settingDoc);
+  if (!settingSnapshot.exists()) {
+    await setDoc(settingDoc, { totalAhorros: 0 });
+  }
+}
 
+async function actualizarAhorroActual(ahorro) {
+  try {
+    if (isNaN(ahorro)) {
+      console.error("Error: nuevoAhorro no es un número válido");
+      return;
+    }
+    
+    const ahorroDoc = await getDoc(settingDoc);
+    const ahorroActual = ahorroDoc.exists() && !isNaN(ahorroDoc.data().totalAhorros) 
+                        ? ahorroDoc.data().totalAhorros
+                        : 0;
+
+    await updateDoc(settingDoc, { totalAhorros: ahorroActual + ahorro });
+  } catch (error) {
+    console.error("Error al actualizar ahorro actual:", error);
+  }
+}
 // Llamada inicial
 inicializarMontoActual();
+inicializarAhorroActual()
 
 
-export { app, db, auth, ingresosCollection, gastosCollection, ingresosPorMes, ahorrosPorMes, settingsDoc, actualizarMontoActual };
+export { app, db, auth, ingresosCollection, gastosCollection, gastosPorMes, ingresosPorMes, ahorrosPorMes, settingsDoc, settingDoc, actualizarMontoActual, actualizarAhorroActual };
