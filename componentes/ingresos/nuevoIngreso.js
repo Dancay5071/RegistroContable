@@ -63,3 +63,4 @@ async function agregarIngreso() {
 }
 
 document.getElementById("actualizarIngreso").addEventListener("click", agregarIngreso);
+ 
