@@ -91,12 +91,14 @@ async function resumenAnual() {
 for (let i = 0; i < meses.length; i++) {
   let ingresoMes = ingresosMensuales[i] || 0;
   let gastoMes = gastosMensuales[i] || 0;
+  
   let restoMesAnterior = i === 0 
-    ? restosMensuales[0] // Primer mes: usar valor inicial de 0
+    ? restosMensuales[0] 
     : ingresosMensuales[i - 1] - gastosMensuales[i - 1] + restosMensuales[i - 1];
-
-  restosMensuales.push(restoMesAnterior); // Actualizar resto mensual para los meses siguientes
-  console.log(restoMesAnterior);
+    console.log(restoMesAnterior);
+  restosMensuales[i] = restoMesAnterior;
+  
+  
   contenido += `<td>$${formatoNumber(restoMesAnterior)}</td>`;
 }
 contenido += `<td>-</td></tr>`;
@@ -116,6 +118,12 @@ contenido += `<td>-</td></tr>`;
     contenido += `<td>$${formatoNumber(gastosMensuales[i])}</td>`;
   }
   contenido += `<td>$${formatoNumber(totalAnualGastos)}</td></tr>`;
+  // Fila de "Ahorros"
+  contenido += `<tr><td>Ahorros</td>`;
+  for (let i = 0; i < meses.length; i++) {
+    contenido += `<td>$${formatoNumber(ahorrosMensuales[i])}</td>`;
+  }
+  contenido += `<td>$${formatoNumber(totalAnualAhorros)}</td></tr>`;
 
   contenido += `<tr><td>Resto Total</td>`;
 for (let i = 0; i < meses.length; i++) {
