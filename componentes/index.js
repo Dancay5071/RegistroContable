@@ -3,6 +3,8 @@ import { renderNavbar } from "../componentes/navbar/navbar.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { escucharMontoActual} from "../componentes/app/escucharMonto.js";
 
+
+
 document.addEventListener("DOMContentLoaded", async () => {
   const navbarContainer = document.getElementById("navbar-container");
 

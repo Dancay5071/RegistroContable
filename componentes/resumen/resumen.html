@@ -18,7 +18,15 @@
             <h4>Resumen</h4>
             <select class="form-select" id="inputGroupSelectYear"></select>
         </div>
-        
+        <button class="btn btn-secondary" type="button" onclick="resumenAnual()">
+          Consultar
+      </button>
+      </div>
+      <div id="loader" style="display: none; text-align: center;">
+        <p>Cargando datos...</p>
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
       </div>
       <div class="table-responsive" id="resumenAnual">
         

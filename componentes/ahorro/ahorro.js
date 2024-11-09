@@ -1,5 +1,5 @@
 import { escucharAhorro } from "../app/escucharMonto.js";
-import { db, actualizarAhorroActual, ahorrosPorMes, gastosPorMes, settingDoc } from "../utilidades/firebase.js";
+import { actualizarAhorroActual, ahorrosPorMes, settingDoc } from "../utilidades/firebase.js";
 import { doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -79,4 +79,4 @@ inicializarMontoActual();
 inicializarAhorroActual()
 
 
-export { app, db, auth, ingresosCollection, gastosCollection, gastosPorMes, ingresosPorMes, ahorrosPorMes, settingsDoc, settingDoc, actualizarMontoActual, actualizarAhorroActual };
+export { app, db, auth, settingsDoc, settingDoc, gastosPorMes, ingresosPorMes, actualizarMontoActual, actualizarAhorroActual, ahorrosPorMes };
