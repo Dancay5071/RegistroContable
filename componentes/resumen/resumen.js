@@ -50,10 +50,12 @@ async function resumenAnual() {
 
   let totalAnualIngresos = 0;
   let totalAnualGastos = 0;
+  let totalAnualAhorros = 0;
   let totalRestoMensual = 0;
 
   let ingresosMensuales = [];
   let gastosMensuales = [];
+  let ahorrosMensuales = [];
   let restosMensuales = [0]; // Inicialización del resto del mes anterior (primer mes como 0)
 
   // Primero, obtener los ingresos y gastos para cada mes
@@ -61,7 +63,8 @@ async function resumenAnual() {
      let claveMesAño = `${mes}_${year}`;
      let ingresosMesDoc = doc(ingresosPorMes, claveMesAño); 
      let gastosMesDoc = doc(gastosPorMes, claveMesAño); 
-     
+     let ahorrosMesDoc = doc(ahorrosPorMes, claveMesAño);
+
      // Obtener ingresos para cada mes
      try { 
       const ingresosSnap = await getDoc(ingresosMesDoc); 
@@ -85,6 +88,17 @@ async function resumenAnual() {
       console.error(`Error al obtener gastos para ${mes}:`, error); 
       gastosMensuales.push(0); 
     }
+
+    try { 
+      const ahorrosSnap = await getDoc(ahorrosMesDoc); 
+      let totalAhorrosMes = ahorrosSnap.exists() ? ahorrosSnap.data().totalAhorros || 0 : 0; 
+      ahorrosMensuales.push(totalAhorrosMes); 
+      totalAnualAhorros += totalAhorrosMes; 
+    } catch (error) { 
+      console.error(`Error al obtener ahorros para ${mes}:`, error); 
+      ahorrosMensuales.push(0); 
+    }
+    
   }
 
   contenido += `<tr><td>Resto Mes Anterior</td>`;
@@ -120,10 +134,10 @@ contenido += `<td>-</td></tr>`;
   contenido += `<td>$${formatoNumber(totalAnualGastos)}</td></tr>`;
   // Fila de "Ahorros"
   contenido += `<tr><td>Ahorros</td>`;
-  for (let i = 0; i < meses.length; i++) {
-    contenido += `<td>$${formatoNumber(ahorrosMensuales[i])}</td>`;
-  }
-  contenido += `<td>$${formatoNumber(totalAnualAhorros)}</td></tr>`;
+for (let i = 0; i < meses.length; i++) {
+  contenido += `<td>$${formatoNumber(ahorrosMensuales[i])}</td>`;
+}
+contenido += `<td>$${formatoNumber(totalAnualAhorros)}</td></tr>`;
 
   contenido += `<tr><td>Resto Total</td>`;
 for (let i = 0; i < meses.length; i++) {
