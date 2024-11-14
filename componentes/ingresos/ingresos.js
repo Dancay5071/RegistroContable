@@ -1,3 +1,4 @@
+//ingresos.js
 import { auth } from '../utilidades/firebase.js';
 import { renderNavbar } from "../navbar/navbar.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";

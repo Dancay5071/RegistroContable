@@ -18,9 +18,11 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const ingresosCollection = collection(db, 'ingresos');
 const gastosCollection = collection(db, 'gastos');
+const extraccionCollection = collection(db, 'extaccion');
 const ingresosPorMes = collection(db, 'ingresosPorMes');
 const gastosPorMes = collection(db, 'gastosPorMes');
 const ahorrosPorMes = collection(db, 'ahorrosPorMes');
+const extraccionPorMes = collection(db, 'extraccionPorMes');
 const settingsDoc = doc(db, "settings", "montoActual");
 const settingDoc = doc(db, "setting", "totalAhorros");
 
@@ -79,4 +81,4 @@ inicializarMontoActual();
 inicializarAhorroActual()
 
 
-export { app, db, auth, settingsDoc, settingDoc, gastosPorMes, ingresosPorMes, actualizarMontoActual, actualizarAhorroActual, ahorrosPorMes };
+export { app, db, auth, settingsDoc, settingDoc, gastosPorMes, ingresosPorMes, extraccionPorMes, extraccionCollection, actualizarMontoActual, actualizarAhorroActual, ahorrosPorMes };

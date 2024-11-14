@@ -15,15 +15,121 @@
       <div class="fondo">
       </div>
   </div>
-        <div class="container">
-            <div class="card">
-               
-                <div class="card-header" id="totalAhorros"></div>
-                <button class="btn btn-secondary" type="button" onclick="extraerAhorro()">
-                    Extraer
-                </button>
+  <div class="container">
+    <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 id="totalAhorros">Ahorro Actual: </h5>
+            <select class="form-select form-select-sm w-auto" id="inputGroupSelectYear">
+            </select>
+        </div>
+
+        <div class="card-body text-center">
+            <button class="btn btn-secondary mx-2" type="button" onclick="consultarAhorro(['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'])">Consultar</button>
+            <button class="btn btn-secondary mx-2" type="button" data-bs-toggle="modal" data-bs-target="#modalExtraccion">Extraer</button>
+            <button class="btn btn-secondary mx-2" type="button" data-bs-toggle="modal" data-bs-target="#modalAgregarAhorro">Agregar ahorro</button>
+        </div>
+    </div>
+
+   
+    
+</div>
+<div id="loader" style="display: none; text-align: center;" class="mt-3">
+  <p>Cargando datos...</p>
+  <div class="spinner-border" role="status">
+      <span class="visually-hidden">Cargando...</span>
+  </div>
+</div>
+
+<div class="table-responsive mt-3" id="tabla-ahorro"></div>
+
+
+
+<!-- Modal de Extracción -->
+<div class="modal fade" id="modalExtraccion" tabindex="-1" aria-labelledby="modalExtraccionLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalExtraccionLabel">Registrar Extracción</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="montoExtraccion" class="form-label">Monto</label>
+          <input type="number" id="montoExtraccion" class="form-control" placeholder="Monto a extraer">
+        </div>
+        <div class="mb-3">
+          <label for="inputGroupSelect01" class="form-label">Mes</label>
+          <select id="inputGroupSelect01" class="form-select">
+            <option>Selecciona el mes</option>
+            <option value="Enero">Enero</option>
+            <option value="Febrero">Febrero</option>
+            <option value="Marzo">Marzo</option>
+            <option value="Abril">Abril</option>
+            <option value="Mayo">Mayo</option>
+            <option value="Junio">Junio</option>
+            <option value="Julio">Julio</option>
+            <option value="Agosto">Agosto</option>
+            <option value="Septiembre">Septiembre</option>
+            <option value="Octubre">Octubre</option>
+            <option value="Noviembre">Noviembre</option>
+            <option value="Diciembre">Diciembre</option>
+          </select>
+        </div>
+        <div id="alertaExtraccion" class="alert d-none" role="alert"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="extraerAhorro()">Realizar extracción</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalAgregarAhorro" tabindex="-1" aria-labelledby="modalAgregarAhorroLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAgregarAhorroLabel">Nuevo ahorro</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="montoAgregar" class="form-label">Monto</label>
+          <input type="number" id="montoAgregar" class="form-control" placeholder="Monto a agregar">
+        </div>
+        <div class="mb-3">
+          <label for="inputMesAgregar" class="form-label">Mes</label>
+          <select id="inputMesAgregar" class="form-select">
+            <option>Selecciona el mes</option>
+            <option value="Enero">Enero</option>
+            <option value="Febrero">Febrero</option>
+            <option value="Marzo">Marzo</option>
+            <option value="Abril">Abril</option>
+            <option value="Mayo">Mayo</option>
+            <option value="Junio">Junio</option>
+            <option value="Julio">Julio</option>
+            <option value="Agosto">Agosto</option>
+            <option value="Septiembre">Septiembre</option>
+            <option value="Octubre">Octubre</option>
+            <option value="Noviembre">Noviembre</option>
+            <option value="Diciembre">Diciembre</option>
+          </select>
+        </div>
+        <div id="alertaAgregar" class="alert d-none" role="alert"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="agregarAhorro()">Agregar ahorro</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
             
-            </div>
+            
+            
         </div>
     <div class="float-xl-end">
        <div class="text-bg-dark p-3" id="montoActual"> </div>

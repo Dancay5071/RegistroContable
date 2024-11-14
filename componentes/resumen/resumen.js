@@ -88,7 +88,8 @@ async function resumenAnual() {
       console.error(`Error al obtener gastos para ${mes}:`, error); 
       gastosMensuales.push(0); 
     }
-
+    
+    // Obtener ahorros para c/ mes
     try { 
       const ahorrosSnap = await getDoc(ahorrosMesDoc); 
       let totalAhorrosMes = ahorrosSnap.exists() ? ahorrosSnap.data().totalAhorros || 0 : 0; 
