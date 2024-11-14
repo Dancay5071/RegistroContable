@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const monto = parseFloat(document.getElementById("montoAgregar").value); // Para ahorro
-const month = document.getElementById("inputMesAgregar").value; // id del select actualizado
+const month = document.getElementById("inputMesAgregar").value; 
 
 function setupYearSelect() {
     const yearSelect = document.getElementById("inputGroupSelectYear");
@@ -30,11 +30,11 @@ function setupYearSelect() {
   });
   
   document.getElementById("modalExtraccion").addEventListener("shown.bs.modal", () => {
-    setMesActual(); // Asegurarse que siempre se actualice al mostrar el modal
+    setMesActual();
   });
   
   function setMesActual() {
-    const mesActual = new Date().toLocaleString('es-ES', { month: 'long' }); // Obtiene mes actual en texto largo
+    const mesActual = new Date().toLocaleString('es-ES', { month: 'long' }); 
     const selectMes = document.getElementById("inputGroupSelect01");
   
     for (let option of selectMes.options) {
@@ -166,7 +166,7 @@ async function consultarAhorro(meses) {
           <tr>
             <th scope="col">Mes</th>`;
   
-    // Agregar los meses como encabezados de columna
+   
     meses.forEach(mes => {
         contenido += `<th scope="col">${mes}</th>`;
     });
@@ -203,7 +203,7 @@ async function consultarAhorro(meses) {
         const ahorrosNetos = ahorros - extracciones;
         totalAnual += ahorrosNetos;
 
-        // Agregar ahorros netos como nueva celda de la fila
+        
         contenido += `<td>$${formatoNumber(ahorrosNetos)}</td>`;
     }
 

@@ -2,18 +2,20 @@
 import { addDoc, arrayUnion, increment, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { actualizarMontoActual, actualizarAhorroActual, ingresosCollection, ingresosPorMes, ahorrosPorMes  } from "../utilidades/firebase.js";
 
-
 async function agregarIngreso() {
   const descripcion = document.getElementById("descripcionIngreso").value;
   const monto = parseFloat(document.getElementById("montoIngreso").value);
   const porcentajeAhorro = parseFloat(document.getElementById("inputGroupSelectPorcentaje").value);
   const alertaDiv = document.getElementById("alertaIngreso");
+  const loader = document.getElementById("loader"); 
+  loader.style.display = "block"; 
 
   if (!descripcion || isNaN(monto) || isNaN(porcentajeAhorro)) {
     alertaDiv.className = "alert alert-danger";
     alertaDiv.textContent = "Por favor, completa todos los campos correctamente.";
     alertaDiv.classList.remove("d-none");
     setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
+    loader.style.display = "none";
     return;
   }
 
@@ -28,6 +30,7 @@ async function agregarIngreso() {
     alertaDiv.textContent = "Por favor, selecciona un mes.";
     alertaDiv.classList.remove("d-none");
     setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
+    loader.style.display = "none";
     return;
   }
 
@@ -55,11 +58,14 @@ async function agregarIngreso() {
     alertaDiv.classList.remove("d-none");
     setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
   }
-
-  document.getElementById("inputGroupSelect01").value = "Selecciona el mes";
-  document.getElementById("descripcionIngreso").value = "";
-  document.getElementById("montoIngreso").value = "";
-  document.getElementById("inputGroupSelectPorcentaje").value = "0";
+  finally {
+    loader.style.display = "none"; 
+    setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
+    document.getElementById("inputGroupSelect01").value = "Selecciona el mes";
+    document.getElementById("descripcionIngreso").value = "";
+    document.getElementById("montoIngreso").value = "";
+  }
+  
 }
 
 document.getElementById("actualizarIngreso").addEventListener("click", agregarIngreso);

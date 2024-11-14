@@ -12,11 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
 window.consultarGasto = consultarGasto;
 
 async function consultarGasto() {
+    const loader = document.getElementById("loader");
+    loader.style.display = "block"; 
     let mes = document.getElementById("inputGroupSelect01").value;
     let resultadosDiv = document.getElementById('resultadosGastos');
 
     if (mes === '' || mes === 'Selecciona el mes') {
         alert('Por favor, selecciona un mes.');
+        loader.style.display = "none"; 
         return;
     }
 
@@ -94,9 +97,12 @@ async function consultarGasto() {
     } catch (error) {
         console.error("Error al obtener gastoS:", error);
     }
+    finally{
+        loader.style.display = "none";
+    }
 }
 
-// Actualiza la función editarGasto para trabajar con Firestore
+
 window.editarGasto = editarGasto;
 async function editarGasto(index) {
     let mes = document.getElementById("inputGroupSelect01").value;
@@ -126,6 +132,8 @@ async function editarGasto(index) {
 }
 window.guardarEdicionGasto = guardarEdicionGasto;
 async function guardarEdicionGasto() {
+    const loader = document.getElementById("loader");
+    loader.style.display = "block"; 
   let mes = document.getElementById("inputGroupSelect01").value;
   let year = new Date().getFullYear();
   let claveMesAño = `${mes}_${year}`;
@@ -137,6 +145,7 @@ async function guardarEdicionGasto() {
 
   if (isNaN(monto) || monto <= 0) {
       alert('Por favor, ingresa un monto válido.');
+      loader.style.display = "none"; 
       return;
   }
 
@@ -171,11 +180,16 @@ async function guardarEdicionGasto() {
   } catch (error) {
       console.error("Error al guardar edición de gasto:", error);
   }
+  finally {
+    loader.style.display = "none"; 
+}
 }
 
 
 window.eliminarGasto = eliminarGasto;
 async function eliminarGasto(index) {
+    const loader = document.getElementById("loader");
+    loader.style.display = "block"; 
   let mes = document.getElementById("inputGroupSelect01").value;
   let year = new Date().getFullYear();
   let claveMesAño = `${mes}_${year}`;
@@ -202,5 +216,7 @@ async function eliminarGasto(index) {
       }
   } catch (error) {
       console.error("Error al eliminar gasto:", error);
-  }
+  }finally {
+    loader.style.display = "none"; 
+}
 }

@@ -5,15 +5,17 @@ import { ingresosPorMes, actualizarMontoActual } from "../utilidades/firebase.js
 window.consultarIngreso = consultarIngreso;
 
 async function consultarIngreso() {
+    const loader = document.getElementById("loader");
+    loader.style.display = "block"; 
     let mes = document.getElementById("inputGroupSelect01").value;
     let resultadosDiv = document.getElementById('resultadosIngresos');
 
     if (mes === '' || mes === 'Selecciona el mes') {
         alert('Por favor, selecciona un mes.');
+        loader.style.display = "none"; 
         return;
     }
 
-    
     let year = new Date().getFullYear();
     let claveMesAño = `${mes}_${year}`;
     let ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
@@ -21,7 +23,6 @@ async function consultarIngreso() {
     try {
         const docSnap = await getDoc(ingresosMesDoc);
         let ingresosMes = docSnap.exists() ? docSnap.data().ingresos || [] : [];
-
         resultadosDiv.innerHTML = '';
 
         let contenido = `<table class="table table-striped table-hover">
@@ -84,12 +85,16 @@ async function consultarIngreso() {
             resultadosDiv.innerHTML = contenido + tabla;
         }
         
+        
     } catch (error) {
         console.error("Error al obtener ingresos:", error);
+    } finally {
+        loader.style.display = "none";
     }
 }
 
-// Actualiza la función editarIngreso para trabajar con Firestore
+
+
 window.editarIngreso = editarIngreso;
 async function editarIngreso(index) {
     let mes = document.getElementById("inputGroupSelect01").value;
@@ -119,81 +124,84 @@ async function editarIngreso(index) {
 }
 window.guardarEdicionIngreso = guardarEdicionIngreso;
 async function guardarEdicionIngreso() {
-  let mes = document.getElementById("inputGroupSelect01").value;
-  let year = new Date().getFullYear();
-  let claveMesAño = `${mes}_${year}`;
-  let ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
+    const loader = document.getElementById("loader");
+    loader.style.display = "block"; 
 
-  let index = parseInt(document.getElementById('editarIndex').value, 10);
-  let descripcion = document.getElementById('editarDescripcion').value.trim();
-  let monto = parseFloat(document.getElementById('editarMonto').value);
+    let mes = document.getElementById("inputGroupSelect01").value;
+    let year = new Date().getFullYear();
+    let claveMesAño = `${mes}_${year}`;
+    let ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
 
-  
-  if (isNaN(monto) || monto <= 0) {
-      alert('Por favor, ingresa un monto válido.');
-      return;
-  }
+    let index = parseInt(document.getElementById('editarIndex').value, 10);
+    let descripcion = document.getElementById('editarDescripcion').value.trim();
+    let monto = parseFloat(document.getElementById('editarMonto').value);
 
-  try {
-      const docSnap = await getDoc(ingresosMesDoc);
-      let ingresosMes = docSnap.exists() ? docSnap.data().ingresos || [] : [];
+    if (isNaN(monto) || monto <= 0) {
+        alert('Por favor, ingresa un monto válido.');
+        loader.style.display = "none"; 
+        return;
+    }
 
-      if (index >= 0 && index < ingresosMes.length) {
-          let ingresoAntiguo = ingresosMes[index];
-          let difference = monto - ingresoAntiguo.monto;  
+    try {
+        const docSnap = await getDoc(ingresosMesDoc);
+        let ingresosMes = docSnap.exists() ? docSnap.data().ingresos || [] : [];
 
-          ingresosMes[index] = { descripcion: descripcion, monto: monto };
+        if (index >= 0 && index < ingresosMes.length) {
+            let ingresoAntiguo = ingresosMes[index];
+            let difference = monto - ingresoAntiguo.monto;
 
-          await updateDoc(ingresosMesDoc, {
-              ingresos: ingresosMes
-          });
+            ingresosMes[index] = { descripcion, monto };
 
-          consultarIngreso();
-          actualizarMontoActual(difference);  
+            await updateDoc(ingresosMesDoc, { ingresos: ingresosMes });
+            consultarIngreso();
+            actualizarMontoActual(difference);
 
-          let editarIngresoModal = bootstrap.Modal.getInstance(document.getElementById('editarIngresoModal'));
-          editarIngresoModal.hide();
-      } else {
-          alert('Índice de ingreso no válido.');
-      }
-  } catch (error) {
-      console.error("Error al guardar edición de ingreso:", error);
-  }
+            let editarIngresoModal = bootstrap.Modal.getInstance(document.getElementById('editarIngresoModal'));
+            editarIngresoModal.hide();
+        } else {
+            alert('Índice de ingreso no válido.');
+        }
+    } catch (error) {
+        console.error("Error al guardar edición de ingreso:", error);
+    } finally {
+        loader.style.display = "none"; 
+    }
 }
+
 
 
 window.eliminarIngreso = eliminarIngreso;
 async function eliminarIngreso(index) {
-  let mes = document.getElementById("inputGroupSelect01").value;
-  let year = new Date().getFullYear();
-  let claveMesAño = `${mes}_${year}`;
-  let ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
+    const loader = document.getElementById("loader");
+    loader.style.display = "block"; 
 
-  try {
-      const docSnap = await getDoc(ingresosMesDoc);
-      let ingresosMes = docSnap.exists() ? docSnap.data().ingresos || [] : [];
+    let mes = document.getElementById("inputGroupSelect01").value;
+    let year = new Date().getFullYear();
+    let claveMesAño = `${mes}_${year}`;
+    let ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
 
-      if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {
-      
-          let ingresoEliminado = ingresosMes[index];
-          let montoEliminado = ingresoEliminado.monto;
+    try {
+        const docSnap = await getDoc(ingresosMesDoc);
+        let ingresosMes = docSnap.exists() ? docSnap.data().ingresos || [] : [];
 
-         
-          ingresosMes.splice(index, 1);
+        if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {
+            let ingresoEliminado = ingresosMes[index];
+            let montoEliminado = ingresoEliminado.monto;
 
-         
-          await updateDoc(ingresosMesDoc, {
-              ingresos: ingresosMes.length > 0 ? ingresosMes : deleteField()
-          });
+            ingresosMes.splice(index, 1);
 
-          
-          actualizarMontoActual(-montoEliminado);  
+            await updateDoc(ingresosMesDoc, {
+                ingresos: ingresosMes.length > 0 ? ingresosMes : deleteField()
+            });
 
-          
-          consultarIngreso();
-      }
-  } catch (error) {
-      console.error("Error al eliminar ingreso:", error);
-  }
+            actualizarMontoActual(-montoEliminado);
+            consultarIngreso();
+        }
+    } catch (error) {
+        console.error("Error al eliminar ingreso:", error);
+    } finally {
+        loader.style.display = "none"; 
+    }
 }
+
 

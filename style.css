@@ -146,38 +146,38 @@ h4 {
    text-decoration: underline;
 }
 .card {
-   width: 100%; /* Ajusta el tamaño según el contenedor */
-   max-width: 30rem; /* Limita el ancho */
-   margin: 0 auto; /* Centra la tarjeta */
+   width: 100%; 
+   max-width: 30rem; 
+   margin: 0 auto; 
 }
 
 .card-header {
-   background-color: #f8f9fa; /* Color suave para distinguir */
+   background-color: #f8f9fa; 
    font-weight: bold;
 }
 
 #inputGroupSelectYear {
-   font-size: 0.875rem; /* Hace el select más pequeño */
+   font-size: 0.875rem; 
 }
 
 .card-body {
    display: flex;
    justify-content: center;
-   gap: 10px; /* Espaciado uniforme entre botones */
+   gap: 10px; 
 }
 
 .table-responsive {
-   margin-top: 20px; /* Espaciado respecto a la tarjeta */
+   margin-top: 20px; 
 }
 
 @media (max-width: 768px) {
    .card-body {
-       flex-direction: column; /* Botones en columna en pantallas pequeñas */
+       flex-direction: column; 
        gap: 5px;
    }
 }
 .container {
-   margin-top: 20px; /* Espaciado superior del contenedor */
+   margin-top: 20px; 
 }
 
 .card {
@@ -187,12 +187,12 @@ h4 {
 }
 
 #loader {
-   margin-top: 10px; /* Espaciado superior del loader */
+   margin-top: 10px; 
    text-align: center;
 }
 
 .table-responsive {
-   margin-top: 20px; /* Espaciado superior de la tabla */
+   margin-top: 20px; 
 }
 
 .mt-3 {
