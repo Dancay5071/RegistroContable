@@ -93,8 +93,6 @@ async function consultarIngreso() {
     }
 }
 
-
-
 window.editarIngreso = editarIngreso;
 async function editarIngreso(index) {
     let mes = document.getElementById("inputGroupSelect01").value;

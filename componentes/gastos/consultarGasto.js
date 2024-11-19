@@ -185,7 +185,6 @@ async function guardarEdicionGasto() {
 }
 }
 
-
 window.eliminarGasto = eliminarGasto;
 async function eliminarGasto(index) {
     const loader = document.getElementById("loader");
@@ -209,7 +208,6 @@ async function eliminarGasto(index) {
             gastos: gastosMes.length > 0 ? gastosMes : deleteField()
           });
 
-          
           actualizarMontoActual(+montoEliminado);
 
           consultarGasto();

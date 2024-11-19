@@ -13,32 +13,27 @@ async function agregarGasto() {
   const descripcion = document.getElementById("descripcionGasto").value;
   const monto = parseFloat(document.getElementById("montoGasto").value);
   const alertaDiv = document.getElementById("alertaGasto");
-  const loader = document.getElementById("loader"); // Referencia al loader
-  loader.style.display = "block"; // Mostrar loader al inicio
+  const loader = document.getElementById("loader");
+  const monthSelect = document.getElementById("inputGroupSelect01");
+
+  loader.style.display = "block";
 
   if (!descripcion || isNaN(monto)) {
-    alertaDiv.className = "alert alert-danger";
-    alertaDiv.textContent = "Por favor, completa todos los campos correctamente.";
-    alertaDiv.classList.remove("d-none");
-    setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
-    loader.style.display = "none"; // Ocultar loader si hay error en la validación
+    mostrarAlerta("Por favor, completa todos los campos correctamente.", "danger", alertaDiv);
+    loader.style.display = "none";
     return;
   }
 
-  const data = { descripcion, monto };
-  const month = document.getElementById("inputGroupSelect01").value;
+  const month = monthSelect.value;
+  if (!month || month === "Selecciona el mes") {
+    mostrarAlerta("Por favor, selecciona un mes válido.", "danger", alertaDiv);
+    loader.style.display = "none";
+    return;
+  }
+
   const year = new Date().getFullYear();
-
-  if (month === "Selecciona el mes") {
-    alertaDiv.className = "alert alert-danger";
-    alertaDiv.textContent = "Por favor, selecciona un mes.";
-    alertaDiv.classList.remove("d-none");
-    setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
-    loader.style.display = "none"; // Ocultar loader si no se selecciona mes
-    return;
-  }
-
   const claveMesAño = `${month}_${year}`;
+  const data = { descripcion, monto };
 
   try {
     await addDoc(gastosCollection, data);
@@ -47,21 +42,27 @@ async function agregarGasto() {
     const gastosMesDoc = doc(gastosPorMes, claveMesAño);
     await setDoc(gastosMesDoc, { gastos: arrayUnion(data) }, { merge: true });
 
-    alertaDiv.className = "alert alert-success";
-    alertaDiv.textContent = "Gasto agregado con éxito.";
-    alertaDiv.classList.remove("d-none");
+    mostrarAlerta("Gasto agregado con éxito.", "success", alertaDiv);
   } catch (error) {
     console.error("Error al agregar gasto:", error);
-    alertaDiv.className = "alert alert-danger";
-    alertaDiv.textContent = "Error al agregar gasto. Inténtalo de nuevo.";
-    alertaDiv.classList.remove("d-none");
+    mostrarAlerta("Error al agregar gasto. Inténtalo de nuevo.", "danger", alertaDiv);
   } finally {
-    loader.style.display = "none"; // Ocultar loader al finalizar
-    setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
-    document.getElementById("inputGroupSelect01").value = "Selecciona el mes";
-    document.getElementById("descripcionGasto").value = "";
-    document.getElementById("montoGasto").value = "";
+    loader.style.display = "none";
+    resetFormulario();
   }
+}
+
+function mostrarAlerta(mensaje, tipo, alertaDiv) {
+  alertaDiv.className = `alert alert-${tipo}`;
+  alertaDiv.textContent = mensaje;
+  alertaDiv.classList.remove("d-none");
+  setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
+}
+
+function resetFormulario() {
+  document.getElementById("inputGroupSelect01").value = "Selecciona el mes";
+  document.getElementById("descripcionGasto").value = "";
+  document.getElementById("montoGasto").value = "";
 }
 
 

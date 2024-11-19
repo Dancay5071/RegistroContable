@@ -28,6 +28,17 @@ body {
 .bi-house{
    color: #585858;
 }
+.containerResumen{
+   display: flex;
+   flex-direction: row;
+   justify-content: center;
+   align-items: flex-start;
+   padding: 20px;
+   overflow: auto; 
+ 
+   
+   
+}
 .container {
    display: flex;
    flex-direction: row;
@@ -47,14 +58,29 @@ body {
 
 
 .float-xl-end {
-   position: fixed;
+   position: absolute; 
    bottom: 20px; 
    right: 20px; 
    background-color: rgba(0, 0, 0, 0.8); 
    color: white; 
    padding: 10px; 
    z-index: 1000;
+   clear: both;
+   order: 2; 
+   margin-top: 20px;
 }
+
+
+@media (max-width: 768px) {
+   .float-xl-end {
+      position: static; /* Que no sea flotante en móviles */
+      margin-top: 10px; 
+   }
+}
+
+.text-bg-dark {
+   display: block;
+ }
 @keyframes fadeIn {
    from {
      opacity: 0;
@@ -168,6 +194,7 @@ h4 {
 
 .table-responsive {
    margin-top: 20px; 
+   float: right;
 }
 
 @media (max-width: 768px) {
@@ -177,7 +204,7 @@ h4 {
    }
 }
 .container {
-   margin-top: 20px; 
+   margin-top: 60px; 
 }
 
 .card {

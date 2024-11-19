@@ -56,9 +56,9 @@ async function resumenAnual() {
   let ingresosMensuales = [];
   let gastosMensuales = [];
   let ahorrosMensuales = [];
-  let restosMensuales = [0]; // Inicialización del resto del mes anterior (primer mes como 0)
+  let restosMensuales = [0]; 
 
-  // Primero, obtener los ingresos y gastos para cada mes
+  //  obtener los ingresos y gastos para cada mes
   for (let mes of meses) {
      let claveMesAño = `${mes}_${year}`;
      let ingresosMesDoc = doc(ingresosPorMes, claveMesAño); 
@@ -72,6 +72,7 @@ async function resumenAnual() {
       let sumaIngresos = ingresosMes.reduce((acc, ingreso) => acc + ingreso.monto, 0); 
       ingresosMensuales.push(sumaIngresos); 
       totalAnualIngresos += sumaIngresos; 
+      console.log("sumaIngresos: " + sumaIngresos)
     } catch (error) { 
       console.error(`Error al obtener ingresos para ${mes}:`, error);
       ingresosMensuales.push(0); 
