@@ -14,7 +14,7 @@ window.consultarGasto = consultarGasto;
 async function consultarGasto() {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
-    let mes = document.getElementById("inputGroupSelect01").value;
+    let mes = document.getElementById("mesGasto").value;
     let resultadosDiv = document.getElementById('resultadosGastos');
 
     if (mes === '' || mes === 'Selecciona el mes') {
@@ -105,7 +105,7 @@ async function consultarGasto() {
 
 window.editarGasto = editarGasto;
 async function editarGasto(index) {
-    let mes = document.getElementById("inputGroupSelect01").value;
+    let mes = document.getElementById("mesGasto").value;
     let year = new Date().getFullYear();
     let claveMesAño = `${mes}_${year}`;
     let gastosMesDoc = doc(gastosPorMes, claveMesAño);
@@ -134,7 +134,7 @@ window.guardarEdicionGasto = guardarEdicionGasto;
 async function guardarEdicionGasto() {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
-  let mes = document.getElementById("inputGroupSelect01").value;
+  let mes = document.getElementById("mesGasto").value;
   let year = new Date().getFullYear();
   let claveMesAño = `${mes}_${year}`;
   let gastosMesDoc = doc(gastosPorMes, claveMesAño);
@@ -189,7 +189,7 @@ window.eliminarGasto = eliminarGasto;
 async function eliminarGasto(index) {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
-  let mes = document.getElementById("inputGroupSelect01").value;
+  let mes = document.getElementById("mesGasto").value;
   let year = new Date().getFullYear();
   let claveMesAño = `${mes}_${year}`;
   let gastosMesDoc = doc(gastosPorMes, claveMesAño);

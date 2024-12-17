@@ -53,17 +53,23 @@ function setupYearSelect() {
 window.agregarAhorro = agregarAhorro;
 
 async function agregarAhorro() {
-  const monto = parseFloat(document.getElementById("montoAgregar").value);
+  
   const alertaDiv = document.getElementById("alertaAgregar");
-  const month = document.getElementById("inputGroupSelect01").value;
 
+  const monto = parseFloat(document.getElementById("montoAgregar").value);
+  const month = document.getElementById("inputMesAgregar").value;
+  console.log("Monto:", monto);
+  console.log("Mes:", month);
+  
   if (isNaN(monto) || monto <= 0 || month === "Selecciona el mes") {
-    alertaDiv.className = "alert alert-danger";
-    alertaDiv.textContent = "Por favor, completa todos los campos correctamente.";
-    alertaDiv.classList.remove("d-none");
-    setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
-    return;
+      console.log("Error en los campos. Monto o mes no válidos.");
+      alertaDiv.className = "alert alert-danger";
+      alertaDiv.textContent = "Por favor, completa todos los campos correctamente.";
+      alertaDiv.classList.remove("d-none");
+      setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
+      return;
   }
+  
 
   const year = document.getElementById("inputGroupSelectYear").value;
   const claveMesAño = `${month}_${year}`;

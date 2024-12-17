@@ -4,7 +4,7 @@ import { signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-aut
 
 
 function setupYearSelect() {
-  const yearSelect = document.getElementById("inputGroupSelectYear");
+  const yearSelect = document.getElementById("añoGasto");
   if (yearSelect) {
     const currentYear = new Date().getFullYear();
     yearSelect.innerHTML = `
@@ -13,7 +13,7 @@ function setupYearSelect() {
       <option value="${currentYear + 1}">${currentYear + 1}</option>
     `;
   } else {
-    console.error("El elemento yearSelect no está presente en el DOM.");
+    console.error("El elemento añoGasto no está presente en el DOM.");
   }
 }
 

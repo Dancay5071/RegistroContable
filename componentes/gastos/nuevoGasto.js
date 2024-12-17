@@ -14,7 +14,7 @@ async function agregarGasto() {
   const monto = parseFloat(document.getElementById("montoGasto").value);
   const alertaDiv = document.getElementById("alertaGasto");
   const loader = document.getElementById("loader");
-  const monthSelect = document.getElementById("inputGroupSelect01");
+  const monthSelect = document.getElementById("mesGasto");
 
   loader.style.display = "block";
 
@@ -56,11 +56,11 @@ function mostrarAlerta(mensaje, tipo, alertaDiv) {
   alertaDiv.className = `alert alert-${tipo}`;
   alertaDiv.textContent = mensaje;
   alertaDiv.classList.remove("d-none");
-  setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
+  setTimeout(() => alertaDiv.classList.add("d-none"), 1000);
 }
 
 function resetFormulario() {
-  document.getElementById("inputGroupSelect01").value = "Selecciona el mes";
+  document.getElementById("mesGasto").value = "Selecciona el mes";
   document.getElementById("descripcionGasto").value = "";
   document.getElementById("montoGasto").value = "";
 }
