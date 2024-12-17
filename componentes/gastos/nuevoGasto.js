@@ -7,6 +7,7 @@ import { escucharMontoActual, } from "../app/escucharMonto.js";
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOMContentLoaded disparado"); 
   escucharMontoActual();
+  inicializarSelectoresFecha();
 });
 
 async function agregarGasto() {
