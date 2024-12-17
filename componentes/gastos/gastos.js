@@ -1,31 +1,41 @@
-
+//gasto.js
 import { auth } from '../utilidades/firebase.js';
 import { renderNavbar } from "../navbar/navbar.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
-
-
-function inicializarSelectoresFecha() {
+function selectoresFecha(mesActual = true) {
   const mesSelect = document.getElementById("mesGasto");
   const yearSelect = document.getElementById("añoGasto");
-
-  // Obtener el mes y el año actuales
   const fechaActual = new Date();
-  const mesActual = fechaActual.getMonth(); 
-  const añoActual = fechaActual.getFullYear();
 
-  // Seleccionar el mes actual en el selector
-  mesSelect.selectedIndex = mesActual + 1; // +1 porque la lista de opciones inicia en 0
+  let mes = mesActual ? fechaActual.getMonth() : fechaActual.getMonth() - 1;
+  let año = fechaActual.getFullYear();
 
-  // Llenar dinámicamente el selector de años (por ejemplo, mostrar desde añoActual - 5 hasta añoActual + 5)
-  yearSelect.innerHTML = ""; // Limpiar opciones existentes
-  for (let i = añoActual - 1; i <= añoActual + 1; i++) {
+  // Ajustar mes y año si es necesario
+  if (mes < 0) {
+    mes = 11;
+    año -= 1;
+  }
+
+  const meses = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+  ];
+
+  // Actualizar opciones del selector de meses
+  mesSelect.innerHTML = meses.map((mesNombre, index) => 
+    `<option value="${mesNombre}" ${index === mes ? "selected" : ""}>${mesNombre}</option>`
+  ).join("");
+
+  // Limpiar opciones existentes del selector de años
+  yearSelect.innerHTML = "";
+  for (let i = año - 1; i <= año + 1; i++) {
     const option = document.createElement("option");
     option.value = i;
     option.textContent = i;
 
-    // Seleccionar el año actual por defecto
-    if (i === añoActual) {
+    // Seleccionar el año por defecto
+    if (i === año) {
       option.selected = true;
     }
 
@@ -33,8 +43,6 @@ function inicializarSelectoresFecha() {
   }
 }
 
-
-// Función para cerrar sesión
 function setupLogoutListener() {
   const logoutBtn = document.getElementById("logout-btn"); 
   if (logoutBtn) {
@@ -68,3 +76,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.warn("No se encontró el contenedor del navbar en el DOM");
   }
 });
+
+export{selectoresFecha};

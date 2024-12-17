@@ -2,11 +2,13 @@
 import { doc, getDoc, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { gastosPorMes, actualizarMontoActual } from "../utilidades/firebase.js";
 import { escucharMontoActual } from "../app/escucharMonto.js";
+import { selectoresFecha } from "./gastos.js";
 
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOMContentLoaded disparado"); 
   escucharMontoActual();
+  selectoresFecha(true);
 });
 
 window.consultarGasto = consultarGasto;
@@ -14,7 +16,7 @@ window.consultarGasto = consultarGasto;
 async function consultarGasto() {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
-    let mes = document.getElementById("mesGasto").value;
+    let mes = document.getElementById("mesGasto");
     let resultadosDiv = document.getElementById('resultadosGastos');
 
     if (mes === '' || mes === 'Selecciona el mes') {

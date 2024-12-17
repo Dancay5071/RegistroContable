@@ -1,13 +1,15 @@
+//nuevoGasto.js
 import { addDoc, arrayUnion, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import {  actualizarMontoActual, gastosCollection, gastosPorMes} from '../utilidades/firebase.js';
 import { escucharMontoActual, } from "../app/escucharMonto.js";
+import { selectoresFecha } from "../gastos/gastos.js"
 
-//mostrar monto actualizado
+//mostrar monto, mes y año actualizado
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOMContentLoaded disparado"); 
   escucharMontoActual();
-  inicializarSelectoresFecha();
+  selectoresFecha(true);
 });
 
 async function agregarGasto() {
