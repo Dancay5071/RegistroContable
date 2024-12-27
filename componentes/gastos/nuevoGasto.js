@@ -63,7 +63,6 @@ function mostrarAlerta(mensaje, tipo, alertaDiv) {
 }
 
 function resetFormulario() {
-  document.getElementById("mesGasto").value = "Selecciona el mes";
   document.getElementById("descripcionGasto").value = "";
   document.getElementById("montoGasto").value = "";
 }

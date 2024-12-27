@@ -5,7 +5,7 @@ import { signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-aut
 
 function selectoresFecha(mesActual = true) {
   const mesSelect = document.getElementById("mesGasto");
-  const yearSelect = document.getElementById("añoGasto");
+  const yearSelect = document.getElementById("anioGasto");
   const fechaActual = new Date();
 
   let mes = mesActual ? fechaActual.getMonth() : fechaActual.getMonth() - 1;
@@ -21,7 +21,7 @@ function selectoresFecha(mesActual = true) {
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
-
+ 
   // Actualizar opciones del selector de meses
   mesSelect.innerHTML = meses.map((mesNombre, index) => 
     `<option value="${mesNombre}" ${index === mes ? "selected" : ""}>${mesNombre}</option>`
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (navbarContainer) {
     await renderNavbar(navbarContainer);
-    setupYearSelect();
+    
     setupLogoutListener();
   } else {
     console.warn("No se encontró el contenedor del navbar en el DOM");

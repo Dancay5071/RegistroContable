@@ -1,11 +1,19 @@
 //nuevoIngreso.js
-import { addDoc, arrayUnion, increment, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-import { actualizarMontoActual, actualizarAhorroActual, ingresosCollection, ingresosPorMes, ahorrosPorMes  } from "../utilidades/firebase.js";
+import { addDoc, arrayUnion,increment,  doc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import {  actualizarMontoActual, actualizarAhorroActual, ingresosCollection, ingresosPorMes, ahorrosPorMes} from '../utilidades/firebase.js';
+import { escucharMontoActual, } from "../app/escucharMonto.js";
+import { selectoresFecha } from "../ingresos/ingresos.js"
+ 
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOMContentLoaded disparado"); 
+  escucharMontoActual();
+  selectoresFecha(true);
+});
 
 async function agregarIngreso() {
   const descripcion = document.getElementById("descripcionIngreso").value;
   const monto = parseFloat(document.getElementById("montoIngreso").value);
-  const porcentajeAhorro = parseFloat(document.getElementById("inputGroupSelectPorcentaje").value);
+  const porcentajeAhorro = parseFloat(document.getElementById("porcentaje").value);
   const alertaDiv = document.getElementById("alertaIngreso");
   const loader = document.getElementById("loader"); 
   loader.style.display = "block"; 
@@ -22,7 +30,7 @@ async function agregarIngreso() {
   const ahorro = (monto * porcentajeAhorro) / 100;
   const ingresoNeto = monto - ahorro;
   const data = { descripcion, monto: ingresoNeto, ahorro };
-  const month = document.getElementById("inputGroupSelect01").value;
+  const month = document.getElementById("mesIngreso").value;
   const year = new Date().getFullYear();
 
   if (month === "Selecciona el mes") {
@@ -60,8 +68,6 @@ async function agregarIngreso() {
   }
   finally {
     loader.style.display = "none"; 
-    setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
-    document.getElementById("inputGroupSelect01").value = "Selecciona el mes";
     document.getElementById("descripcionIngreso").value = "";
     document.getElementById("montoIngreso").value = "";
   }

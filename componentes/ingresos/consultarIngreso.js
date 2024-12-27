@@ -1,13 +1,21 @@
 //consultarIngreso.js
 import { doc, getDoc, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { ingresosPorMes, actualizarMontoActual } from "../utilidades/firebase.js";
+import { escucharMontoActual } from "../app/escucharMonto.js";
+import { selectoresFecha } from "./ingresos.js";
 
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOMContentLoaded disparado"); 
+    escucharMontoActual();
+    selectoresFecha(true);
+  });
+  
 window.consultarIngreso = consultarIngreso;
 
 async function consultarIngreso() {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
-    let mes = document.getElementById("inputGroupSelect01").value;
+    let mes = document.getElementById("mesIngreso").value;
     let resultadosDiv = document.getElementById('resultadosIngresos');
 
     if (mes === '' || mes === 'Selecciona el mes') {

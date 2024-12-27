@@ -4,17 +4,43 @@ import { renderNavbar } from "../navbar/navbar.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 
-function setupYearSelect() {
-  const yearSelect = document.getElementById("inputGroupSelectYear");
-  if (yearSelect) {
-    const currentYear = new Date().getFullYear();
-    yearSelect.innerHTML = `
-      <option value="${currentYear - 1}">${currentYear - 1}</option>
-      <option value="${currentYear}" selected>${currentYear}</option>
-      <option value="${currentYear + 1}">${currentYear + 1}</option>
-    `;
-  } else {
-    console.error("El elemento yearSelect no está presente en el DOM.");
+function selectoresFecha(mesActual = true) {
+  const mesSelect = document.getElementById("mesIngreso");
+  const yearSelect = document.getElementById("anioIngreso");
+  const fechaActual = new Date();
+
+  let mes = mesActual ? fechaActual.getMonth() : fechaActual.getMonth() - 1;
+  let año = fechaActual.getFullYear();
+
+  // Ajustar mes y año si es necesario
+  if (mes < 0) {
+    mes = 11;
+    año -= 1;
+  }
+
+  const meses = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+  ];
+ 
+  // Actualizar opciones del selector de meses
+  mesSelect.innerHTML = meses.map((mesNombre, index) => 
+    `<option value="${mesNombre}" ${index === mes ? "selected" : ""}>${mesNombre}</option>`
+  ).join("");
+
+  // Limpiar opciones existentes del selector de años
+  yearSelect.innerHTML = "";
+  for (let i = año - 1; i <= año + 1; i++) {
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = i;
+
+    // Seleccionar el año por defecto
+    if (i === año) {
+      option.selected = true;
+    }
+
+    yearSelect.appendChild(option);
   }
 }
 
@@ -44,9 +70,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (navbarContainer) {
     await renderNavbar(navbarContainer);
-    setupYearSelect();
+    
     setupLogoutListener();
   } else {
     console.warn("No se encontró el contenedor del navbar en el DOM");
   }
 });
+export{selectoresFecha};
