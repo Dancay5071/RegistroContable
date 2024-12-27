@@ -16,26 +16,25 @@
       <div class="fondo"></div>
 
       <div class="container">
-        
-        <div class="card">
+        <div class="card card-consulta">
             <p class="tituloCard">Consulta de ingreso:</p>
             <div class="input-group mb-3">
                 <label class="input-group-text" for="mesIngreso">Mes:</label>
-                <select class="form-select" id="mesIngreso">
-                    
-                </select>
+                <select class="form-select" id="mesIngreso"></select>
                 <div class="input-group-append" style="margin-left: 1rem;">
-                  <select class="form-select" id="anioIngreso"></select>
-              </div>
+                    <select class="form-select" id="anioIngreso"></select>
+                </div>
             </div>
-                <button class="btn btn-secondary" type="button" onclick="consultarIngreso()">
-                    Consultar
-                </button>
+            <button class="btn btn-secondary" type="button" onclick="consultarIngreso()">
+                Consultar
+            </button>
         </div>
-      </div>
         <div class="consulta">
-          <div id="resultadosIngresos"></div>
+            <div id="resultadosIngresos"></div>
         </div>
+    </div>
+    
+        
     </div>
     <div id="loader" style="display: none; text-align: center;" class="mt-3">
       <p>Cargando datos...</p>
