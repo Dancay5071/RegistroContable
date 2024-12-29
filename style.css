@@ -11,6 +11,7 @@ body {
    flex-direction: column;
    min-height: 100vh;
 }
+
 .principal{
    background-color:rgba(0, 0, 0, 0.8);
 }
@@ -28,6 +29,16 @@ body {
 .bi-house{
    color: #585858;
 }
+.containerIndex {
+   display: flex;
+   flex-direction: row;
+   justify-content: center;
+   align-items: stretch;
+   margin-top: 70px;
+
+   overflow: auto; 
+   
+}
 .containerResumen{
    display: flex;
    flex-direction: row;
@@ -35,8 +46,6 @@ body {
    align-items: flex-start;
    padding: 20px;
    overflow: auto; 
- 
-   
    
 }
 .container {
@@ -57,29 +66,36 @@ body {
 
 
 .float-xl-end {
-   position: absolute; 
-   bottom: 20px; 
-   right: 20px; 
-   background-color: rgba(0, 0, 0, 0.8); 
-   color: white; 
-   padding: 10px; 
-   z-index: 1000;
-   clear: both;
-   order: 2; 
-   margin-top: 20px;
+   display: flex;
+    align-items: center;
+    gap: 10px; 
+    margin-top: 20px;
+    padding: 5px 10px; 
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 5px;
+}
+
+#totalAhorro, #montoActual {
+   margin: 0; 
+   font-size: 14px;
+}
+
+.text-bg-dark {
+   padding: 5px 10px; 
+   font-size: 14px;
+   display: inline-block; 
 }
 
 
 @media (max-width: 768px) {
-   .float-xl-end {
-      position: static; /* Que no sea flotante en móviles */
-      margin-top: 10px; 
+   .float-xl-start {
+       flex-direction: column; 
+       gap: 5px;
    }
 }
 
-.text-bg-dark {
-   display: block;
- }
+
 @keyframes fadeIn {
    from {
      opacity: 0;
@@ -176,9 +192,6 @@ h4 {
    font-weight: bold;
 }
 
-#inputGroupSelectYear {
-   font-size: 0.875rem; 
-}
 
 .card-body {
    display: flex;
