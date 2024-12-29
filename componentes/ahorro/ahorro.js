@@ -2,15 +2,16 @@
 import { escucharAhorro } from "../app/escucharMonto.js";
 import { actualizarAhorroActual, ahorrosPorMes, settingDoc, extraccionPorMes, extraccionCollection} from "../utilidades/firebase.js";
 import { doc, getDoc, updateDoc, setDoc, addDoc, arrayUnion, increment } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { selectoresFecha } from "../index.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOMContentLoaded disparado"); 
     escucharAhorro();
-    setupYearSelect()
+    selectoresFecha(true)
 });
 
 const monto = parseFloat(document.getElementById("montoAgregar").value); // Para ahorro
-const month = document.getElementById("inputMesAgregar").value; 
+const month = document.getElementById("mesSelect").value; 
 
 function setupYearSelect() {
     const yearSelect = document.getElementById("inputGroupSelectYear");
@@ -35,7 +36,7 @@ function setupYearSelect() {
   
   function setMesActual() {
     const mesActual = new Date().toLocaleString('es-ES', { month: 'long' }); 
-    const selectMes = document.getElementById("inputGroupSelect01");
+    const selectMes = document.getElementById("mesSelect");
   
     for (let option of selectMes.options) {
       if (option.textContent.toLowerCase() === mesActual.toLowerCase()) {
@@ -57,7 +58,7 @@ async function agregarAhorro() {
   const alertaDiv = document.getElementById("alertaAgregar");
 
   const monto = parseFloat(document.getElementById("montoAgregar").value);
-  const month = document.getElementById("inputMesAgregar").value;
+  const month = document.getElementById("mesSelect").value;
   console.log("Monto:", monto);
   console.log("Mes:", month);
   
@@ -71,7 +72,7 @@ async function agregarAhorro() {
   }
   
 
-  const year = document.getElementById("inputGroupSelectYear").value;
+  const year = document.getElementById("anioSelect").value;
   const claveMesAño = `${month}_${year}`;
   const data = { monto: monto, fecha: new Date() };
 
@@ -99,21 +100,19 @@ async function agregarAhorro() {
 
     // Limpiar los campos del modal
     document.getElementById("montoAgregar").value = "";
-    document.getElementById("inputGroupSelect01").value = "Selecciona el mes";
+    document.getElementById("mesSelect").value = "Selecciona el mes";
   }
   await actualizarTotalAhorros(); 
 };
-
-
 
 window.extraerAhorro = extraerAhorro;
 
 async function extraerAhorro() {
   const monto = parseFloat(document.getElementById("montoExtraccion").value);
   const alertaDiv = document.getElementById("alertaExtraccion");
-  const month = document.getElementById("inputGroupSelect01").value;
+  const month = document.getElementById("mesSelect").value;
 
-  if (isNaN(monto) || monto <= 0 || month === "Selecciona el mes") {
+  if (isNaN(monto) || monto <= 0 ) {
     alertaDiv.className = "alert alert-danger";
     alertaDiv.textContent = "Por favor, completa todos los campos correctamente.";
     alertaDiv.classList.remove("d-none");
@@ -150,7 +149,7 @@ async function extraerAhorro() {
 
     // Limpiar los campos del modal
     document.getElementById("montoExtraccion").value = "";
-    document.getElementById("inputGroupSelect01").value = "Selecciona el mes";
+    document.getElementById("mesSelect").value = "Selecciona el mes";
   }
   
   await actualizarTotalAhorros(); 
@@ -162,7 +161,7 @@ async function consultarAhorro(meses) {
     const loader = document.getElementById("loader");
     loader.style.display = "block";
 
-    const year = document.getElementById("inputGroupSelectYear").value;
+    const year = document.getElementById("anioSelect").value;
     const tabla = document.getElementById("tabla-ahorro");
     let totalAnual = 0;
 

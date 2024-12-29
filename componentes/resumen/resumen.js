@@ -3,14 +3,11 @@ import { db, gastosPorMes, ingresosPorMes, ahorrosPorMes } from "../utilidades/f
 import { collection, doc, getDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-
   setupYearSelect();
- 
-
 });
 
 function setupYearSelect() {
-  const yearSelect = document.getElementById("inputGroupSelectYear");
+  const yearSelect = document.getElementById("anioSelect");
   if (yearSelect) {
     const currentYear = new Date().getFullYear();
     yearSelect.innerHTML = `

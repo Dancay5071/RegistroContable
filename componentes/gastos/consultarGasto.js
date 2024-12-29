@@ -2,7 +2,7 @@
 import { doc, getDoc, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { gastosPorMes, actualizarMontoActual } from "../utilidades/firebase.js";
 import { escucharMontoActual } from "../app/escucharMonto.js";
-import { selectoresFecha } from "./gastos.js";
+import { selectoresFecha } from "../index.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOMContentLoaded disparado"); 
@@ -15,16 +15,9 @@ window.consultarGasto = consultarGasto;
 async function consultarGasto() {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
-    let mes = document.getElementById("mesGasto");
+    let mes = document.getElementById("mesSelect").value;
     let resultadosDiv = document.getElementById('resultadosGastos');
 
-    if (mes === '' || mes === 'Selecciona el mes') {
-        alert('Por favor, selecciona un mes.');
-        loader.style.display = "none"; 
-        return;
-    }
-
-    
     let year = new Date().getFullYear();
     let claveMesAño = `${mes}_${year}`;
     let gastosMesDoc = doc(gastosPorMes, claveMesAño);
@@ -106,7 +99,7 @@ async function consultarGasto() {
 
 window.editarGasto = editarGasto;
 async function editarGasto(index) {
-    let mes = document.getElementById("mesGasto").value;
+    let mes = document.getElementById("mesSelect").value;
     let year = new Date().getFullYear();
     let claveMesAño = `${mes}_${year}`;
     let gastosMesDoc = doc(gastosPorMes, claveMesAño);
@@ -135,7 +128,7 @@ window.guardarEdicionGasto = guardarEdicionGasto;
 async function guardarEdicionGasto() {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
-  let mes = document.getElementById("mesGasto").value;
+  let mes = document.getElementById("mesSelect").value;
   let year = new Date().getFullYear();
   let claveMesAño = `${mes}_${year}`;
   let gastosMesDoc = doc(gastosPorMes, claveMesAño);
@@ -164,8 +157,6 @@ async function guardarEdicionGasto() {
             gastos: gastosMes
           });
 
-          // Si el nuevo monto es mayor que el antiguo, resta de monto actual
-          // Si el nuevo monto es menor, suma al monto actual
           if (diferencia > 0) {
               actualizarMontoActual(-diferencia);  
           } else {
@@ -190,7 +181,7 @@ window.eliminarGasto = eliminarGasto;
 async function eliminarGasto(index) {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
-  let mes = document.getElementById("mesGasto").value;
+  let mes = document.getElementById("mesSelect").value;
   let year = new Date().getFullYear();
   let claveMesAño = `${mes}_${year}`;
   let gastosMesDoc = doc(gastosPorMes, claveMesAño);

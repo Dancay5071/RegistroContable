@@ -2,7 +2,7 @@
 import { addDoc, arrayUnion, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import {  actualizarMontoActual, gastosCollection, gastosPorMes} from '../utilidades/firebase.js';
 import { escucharMontoActual, } from "../app/escucharMonto.js";
-import { selectoresFecha } from "../gastos/gastos.js"
+import { selectoresFecha } from "../index.js"
 
 //mostrar monto, mes y año actualizado
 
@@ -17,7 +17,7 @@ async function agregarGasto() {
   const monto = parseFloat(document.getElementById("montoGasto").value);
   const alertaDiv = document.getElementById("alertaGasto");
   const loader = document.getElementById("loader");
-  const monthSelect = document.getElementById("mesGasto");
+  const monthSelect = document.getElementById("mesSelect");
 
   loader.style.display = "block";
 

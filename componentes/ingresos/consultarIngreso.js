@@ -2,7 +2,7 @@
 import { doc, getDoc, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { ingresosPorMes, actualizarMontoActual } from "../utilidades/firebase.js";
 import { escucharMontoActual } from "../app/escucharMonto.js";
-import { selectoresFecha } from "./ingresos.js";
+import { selectoresFecha } from "../index.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOMContentLoaded disparado"); 
@@ -15,14 +15,8 @@ window.consultarIngreso = consultarIngreso;
 async function consultarIngreso() {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
-    let mes = document.getElementById("mesIngreso").value;
+    let mes = document.getElementById("mesSelect").value;
     let resultadosDiv = document.getElementById('resultadosIngresos');
-
-    if (mes === '' || mes === 'Selecciona el mes') {
-        alert('Por favor, selecciona un mes.');
-        loader.style.display = "none"; 
-        return;
-    }
 
     let year = new Date().getFullYear();
     let claveMesAño = `${mes}_${year}`;
@@ -103,7 +97,7 @@ async function consultarIngreso() {
 
 window.editarIngreso = editarIngreso;
 async function editarIngreso(index) {
-    let mes = document.getElementById("inputGroupSelect01").value;
+    let mes = document.getElementById("mesSelect").value;
     let year = new Date().getFullYear();
     let claveMesAño = `${mes}_${year}`;
     let ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
@@ -133,7 +127,7 @@ async function guardarEdicionIngreso() {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
 
-    let mes = document.getElementById("inputGroupSelect01").value;
+    let mes = document.getElementById("mesSelect").value;
     let year = new Date().getFullYear();
     let claveMesAño = `${mes}_${year}`;
     let ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
@@ -181,7 +175,7 @@ async function eliminarIngreso(index) {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
 
-    let mes = document.getElementById("inputGroupSelect01").value;
+    let mes = document.getElementById("mesSelect").value;
     let year = new Date().getFullYear();
     let claveMesAño = `${mes}_${year}`;
     let ingresosMesDoc = doc(ingresosPorMes, claveMesAño);

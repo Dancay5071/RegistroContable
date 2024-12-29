@@ -2,7 +2,7 @@
 import { addDoc, arrayUnion,increment,  doc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import {  actualizarMontoActual, actualizarAhorroActual, ingresosCollection, ingresosPorMes, ahorrosPorMes} from '../utilidades/firebase.js';
 import { escucharMontoActual, } from "../app/escucharMonto.js";
-import { selectoresFecha } from "../ingresos/ingresos.js"
+import { selectoresFecha } from "../index.js"
  
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOMContentLoaded disparado"); 
@@ -30,17 +30,8 @@ async function agregarIngreso() {
   const ahorro = (monto * porcentajeAhorro) / 100;
   const ingresoNeto = monto - ahorro;
   const data = { descripcion, monto: ingresoNeto, ahorro };
-  const month = document.getElementById("mesIngreso").value;
+  const month = document.getElementById("mesSelect").value;
   const year = new Date().getFullYear();
-
-  if (month === "Selecciona el mes") {
-    alertaDiv.className = "alert alert-danger";
-    alertaDiv.textContent = "Por favor, selecciona un mes.";
-    alertaDiv.classList.remove("d-none");
-    setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
-    loader.style.display = "none";
-    return;
-  }
 
   const claveMesAño = `${month}_${year}`;
 

@@ -3,46 +3,6 @@ import { auth } from '../utilidades/firebase.js';
 import { renderNavbar } from "../navbar/navbar.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
-function selectoresFecha(mesActual = true) {
-  const mesSelect = document.getElementById("mesGasto");
-  const yearSelect = document.getElementById("anioGasto");
-  const fechaActual = new Date();
-
-  let mes = mesActual ? fechaActual.getMonth() : fechaActual.getMonth() - 1;
-  let año = fechaActual.getFullYear();
-
-  // Ajustar mes y año si es necesario
-  if (mes < 0) {
-    mes = 11;
-    año -= 1;
-  }
-
-  const meses = [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-  ];
- 
-  // Actualizar opciones del selector de meses
-  mesSelect.innerHTML = meses.map((mesNombre, index) => 
-    `<option value="${mesNombre}" ${index === mes ? "selected" : ""}>${mesNombre}</option>`
-  ).join("");
-
-  // Limpiar opciones existentes del selector de años
-  yearSelect.innerHTML = "";
-  for (let i = año - 1; i <= año + 1; i++) {
-    const option = document.createElement("option");
-    option.value = i;
-    option.textContent = i;
-
-    // Seleccionar el año por defecto
-    if (i === año) {
-      option.selected = true;
-    }
-
-    yearSelect.appendChild(option);
-  }
-}
-
 function setupLogoutListener() {
   const logoutBtn = document.getElementById("logout-btn"); 
   if (logoutBtn) {
@@ -76,5 +36,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.warn("No se encontró el contenedor del navbar en el DOM");
   }
 });
-
-export{selectoresFecha};
