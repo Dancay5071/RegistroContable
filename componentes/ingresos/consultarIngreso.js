@@ -18,7 +18,8 @@ async function consultarIngreso() {
     let mes = document.getElementById("mesSelect").value;
     let resultadosDiv = document.getElementById('resultadosIngresos');
 
-    let year = new Date().getFullYear();
+    let year = document.getElementById("anioSelect").value;
+    
     let claveMesAño = `${mes}_${year}`;
     let ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
 

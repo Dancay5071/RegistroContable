@@ -28,11 +28,7 @@ async function agregarGasto() {
   }
 
   const month = monthSelect.value;
-  if (!month || month === "Selecciona el mes") {
-    mostrarAlerta("Por favor, selecciona un mes válido.", "danger", alertaDiv);
-    loader.style.display = "none";
-    return;
-  }
+  
 
   const year = new Date().getFullYear();
   const claveMesAño = `${month}_${year}`;

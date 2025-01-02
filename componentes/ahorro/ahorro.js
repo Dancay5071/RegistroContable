@@ -5,7 +5,6 @@ import { doc, getDoc, updateDoc, setDoc, addDoc, arrayUnion, increment } from "h
 import { selectoresFecha } from "../index.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOMContentLoaded disparado"); 
     escucharAhorro();
     selectoresFecha(true)
 });
@@ -13,19 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const monto = parseFloat(document.getElementById("montoAgregar").value); // Para ahorro
 const month = document.getElementById("mesSelect").value; 
 
-function setupYearSelect() {
-    const yearSelect = document.getElementById("inputGroupSelectYear");
-    if (yearSelect) {
-      const currentYear = new Date().getFullYear();
-      yearSelect.innerHTML = `
-        <option value="${currentYear - 1}">${currentYear - 1}</option>
-        <option value="${currentYear}" selected>${currentYear}</option>
-        <option value="${currentYear + 1}">${currentYear + 1}</option>
-      `;
-    } else {
-      console.error("El elemento yearSelect no está presente en el DOM.");
-    }
-  }
+
   document.addEventListener("DOMContentLoaded", () => {
     setMesActual();
   });
@@ -62,7 +49,7 @@ async function agregarAhorro() {
   console.log("Monto:", monto);
   console.log("Mes:", month);
   
-  if (isNaN(monto) || monto <= 0 || month === "Selecciona el mes") {
+  if (isNaN(monto) || monto <= 0 ) {
       console.log("Error en los campos. Monto o mes no válidos.");
       alertaDiv.className = "alert alert-danger";
       alertaDiv.textContent = "Por favor, completa todos los campos correctamente.";
@@ -100,7 +87,7 @@ async function agregarAhorro() {
 
     // Limpiar los campos del modal
     document.getElementById("montoAgregar").value = "";
-    document.getElementById("mesSelect").value = "Selecciona el mes";
+    
   }
   await actualizarTotalAhorros(); 
 };
@@ -149,7 +136,6 @@ async function extraerAhorro() {
 
     // Limpiar los campos del modal
     document.getElementById("montoExtraccion").value = "";
-    document.getElementById("mesSelect").value = "Selecciona el mes";
   }
   
   await actualizarTotalAhorros(); 

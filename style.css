@@ -74,7 +74,6 @@ body {
    gap: 10px; /* Espacio entre los elementos */
    margin-top: 20px;
    padding: 5px 10px; /* Reducir padding */
-   background-color: rgba(0, 0, 0, 0.8);
    color: white;
    border-radius: 5px; /* Suavizar bordes */
 }
@@ -171,11 +170,6 @@ h4 {
    color:#198754; 
    text-decoration: underline;
 }
-.card {
-   width: 100%; 
-   max-width: 30rem; 
-   margin: 0 auto; 
-}
 
 
 .card-header {
@@ -203,10 +197,13 @@ h4 {
 }
 
 
-.card {
-   width: 100%;
-   max-width: 30rem;
-   margin: 0 auto;
+.card-ingreso{
+   flex: 2;
+   max-height: 80vh; 
+   overflow-y: auto;  
+   background-color: rgba(255, 255, 255, 0.8); /* Mismo fondo */
+   margin-top: 20px; /* Asegurar el mismo margen superior */
+   padding: 10px; /* Opcional: para mejor alineación interna */
 }
 
 #loader {
@@ -221,12 +218,22 @@ h4 {
    max-width: 400px; 
    margin: 0 auto;  
    flex: 1;
+   background-color: rgba(255, 255, 255, 0.8); /* Fondo transparente similar al resultado */
+   margin-top: 20px; /* Asegurar el mismo margen superior */
 }
 
 .consulta {
    flex: 2;
    max-height: 80vh; 
    overflow-y: auto;  
-   background-color: rgba(255, 255, 255, 0.8);  
-   margin-top: 20px; 
+   background-color: rgba(255, 255, 255, 0.8); /* Mismo fondo */
+   margin-top: 20px; /* Asegurar el mismo margen superior */
+   padding: 10px; /* Opcional: para mejor alineación interna */
+}
+.card-ingreso{
+   max-width: 400px; 
+   margin: 0 auto;  
+   flex: 1;
+   background-color: rgba(255, 255, 255, 0.8); /* Fondo transparente similar al resultado */
+   margin-top: 20px; /* Asegurar el mismo margen superior */
 }

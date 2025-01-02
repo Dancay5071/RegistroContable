@@ -3,7 +3,6 @@ import { initAuthUI } from "../servicios/auth.js";
 import { escucharAhorro, escucharMontoActual } from "../app/escucharMonto.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOMContentLoaded disparado"); 
   escucharMontoActual();
   escucharAhorro();
 });
