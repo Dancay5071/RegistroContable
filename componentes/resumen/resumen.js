@@ -69,7 +69,6 @@ async function resumenAnual() {
       let sumaIngresos = ingresosMes.reduce((acc, ingreso) => acc + ingreso.monto, 0); 
       ingresosMensuales.push(sumaIngresos); 
       totalAnualIngresos += sumaIngresos; 
-      console.log("sumaIngresos: " + sumaIngresos)
     } catch (error) { 
       console.error(`Error al obtener ingresos para ${mes}:`, error);
       ingresosMensuales.push(0); 
@@ -108,7 +107,7 @@ for (let i = 0; i < meses.length; i++) {
   let restoMesAnterior = i === 0 
     ? restosMensuales[0] 
     : ingresosMensuales[i - 1] - gastosMensuales[i - 1] + restosMensuales[i - 1];
-    console.log(restoMesAnterior);
+    
   restosMensuales[i] = restoMesAnterior;
   
   
