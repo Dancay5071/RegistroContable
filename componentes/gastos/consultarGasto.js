@@ -18,7 +18,7 @@ async function consultarGasto() {
     let mes = document.getElementById("mesSelect").value;
     let resultadosDiv = document.getElementById('resultadosGastos');
 
-    let year = new Date().getFullYear();
+    let year = document.getElementById("anioSelect").value;
     let claveMesAño = `${mes}_${year}`;
     let gastosMesDoc = doc(gastosPorMes, claveMesAño);
 
@@ -100,7 +100,7 @@ async function consultarGasto() {
 window.editarGasto = editarGasto;
 async function editarGasto(index) {
     let mes = document.getElementById("mesSelect").value;
-    let year = new Date().getFullYear();
+    let year = document.getElementById("anioSelect").value;
     let claveMesAño = `${mes}_${year}`;
     let gastosMesDoc = doc(gastosPorMes, claveMesAño);
 
@@ -129,7 +129,7 @@ async function guardarEdicionGasto() {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
   let mes = document.getElementById("mesSelect").value;
-  let year = new Date().getFullYear();
+  let year = document.getElementById("anioSelect").value;
   let claveMesAño = `${mes}_${year}`;
   let gastosMesDoc = doc(gastosPorMes, claveMesAño);
 
@@ -182,7 +182,7 @@ async function eliminarGasto(index) {
     const loader = document.getElementById("loader");
     loader.style.display = "block"; 
   let mes = document.getElementById("mesSelect").value;
-  let year = new Date().getFullYear();
+  let year = document.getElementById("anioSelect").value;
   let claveMesAño = `${mes}_${year}`;
   let gastosMesDoc = doc(gastosPorMes, claveMesAño);
 
@@ -209,4 +209,4 @@ async function eliminarGasto(index) {
   }finally {
     loader.style.display = "none"; 
 }
-}
+} 

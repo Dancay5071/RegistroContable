@@ -31,7 +31,7 @@ async function agregarIngreso() {
   const ingresoNeto = monto - ahorro;
   const data = { descripcion, monto: ingresoNeto, ahorro };
   const month = document.getElementById("mesSelect").value;
-  const year = new Date().getFullYear();
+  const year = document.getElementById("anioSelect").value;
 
   const claveMesAño = `${month}_${year}`;
 

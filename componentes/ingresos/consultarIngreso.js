@@ -99,7 +99,7 @@ async function consultarIngreso() {
 window.editarIngreso = editarIngreso;
 async function editarIngreso(index) {
     let mes = document.getElementById("mesSelect").value;
-    let year = new Date().getFullYear();
+    let year = document.getElementById("anioSelect").value;
     let claveMesAño = `${mes}_${year}`;
     let ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
 
@@ -129,7 +129,7 @@ async function guardarEdicionIngreso() {
     loader.style.display = "block"; 
 
     let mes = document.getElementById("mesSelect").value;
-    let year = new Date().getFullYear();
+    let year = document.getElementById("anioSelect").value;
     let claveMesAño = `${mes}_${year}`;
     let ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
 
@@ -177,7 +177,7 @@ async function eliminarIngreso(index) {
     loader.style.display = "block"; 
 
     let mes = document.getElementById("mesSelect").value;
-    let year = new Date().getFullYear();
+    let year = document.getElementById("anioSelect").value;
     let claveMesAño = `${mes}_${year}`;
     let ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
 

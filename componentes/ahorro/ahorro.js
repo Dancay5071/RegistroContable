@@ -107,7 +107,7 @@ async function extraerAhorro() {
     return;
   }
 
-  const year = new Date().getFullYear();
+  const year = document.getElementById("anioSelect").value;
   const claveMesAño = `${month}_${year}`;
   const data = { monto: -monto, fecha: new Date() };
 

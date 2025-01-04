@@ -30,7 +30,7 @@ async function resumenAnual() {
   loader.style.display = 'block';
   resumenAnual.innerHTML = '';
 
-  let year = new Date().getFullYear();
+  let year = document.getElementById("anioSelect").value;
   const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
   let contenido = `

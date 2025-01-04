@@ -30,7 +30,7 @@ async function agregarGasto() {
   const month = monthSelect.value;
   
 
-  const year = new Date().getFullYear();
+  const year = document.getElementById("anioSelect").value;
   const claveMesAño = `${month}_${year}`;
   const data = { descripcion, monto };
 
