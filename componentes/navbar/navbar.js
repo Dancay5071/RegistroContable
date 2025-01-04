@@ -12,8 +12,13 @@ export async function renderNavbar(container) {
 
     // Remueve la clase 'd-none' del navbar si está oculta
     const navbar = document.getElementById("navbar");
+    
     if (navbar) {
       navbar.classList.remove("d-none");
+
+      
+      // Oculta el título principal después de cargar el navbar
+      
     } else {
       console.warn("Elemento con ID 'navbar' no encontrado en el archivo HTML");
     }
@@ -21,6 +26,7 @@ export async function renderNavbar(container) {
     console.error("Error al cargar el navbar:", error);
   }
 }
+
 
 // Función para configurar el evento de cerrar sesión
 export function setupLogoutListener() {
@@ -39,7 +45,9 @@ function cerrarSesion() {
   signOut(auth)
     .then(() => {
       console.log("Sesión cerrada con éxito");
-      
+
+      // Mostrar el título principal al cerrar sesión
+    
       window.location.href = "/index.html";
     })
     .catch((error) => {
@@ -47,4 +55,5 @@ function cerrarSesion() {
       alert("Hubo un problema al cerrar sesión. Inténtalo de nuevo.");
     });
 }
+
 

@@ -44,11 +44,13 @@ function selectoresFecha(mesActual = true) {
 }
 document.addEventListener("DOMContentLoaded", async () => {
   const navbarContainer = document.getElementById("navbar-container");
-
+  
   if (navbarContainer) {
     await renderNavbar(navbarContainer);
     setupLogoutListener();
     escucharMontoActual();
+    
+    
   } else {
     console.warn("No se encontró el contenedor del navbar en el DOM");
   }
@@ -57,17 +59,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 // cerrar sesión
 function setupLogoutListener() {
   const logoutBtn = document.getElementById("logout-btn");
+  
   if (logoutBtn) {
     logoutBtn.addEventListener("click", cerrarSesion);
+    
   } else {
+    
     console.warn("No se encontró el botón de cerrar sesión en el DOM.");
   }
 }
+
+
 
 function cerrarSesion() {
   signOut(auth)
     .then(() => {
       console.log("Sesión cerrada con éxito");
+
+
       window.location.href = "/index.html";
     })
     .catch((error) => {
@@ -75,8 +84,6 @@ function cerrarSesion() {
       alert("Hubo un problema al cerrar sesión. Inténtalo de nuevo.");
     });
 }
-export{selectoresFecha};
 
 
-
-  
+export{selectoresFecha}

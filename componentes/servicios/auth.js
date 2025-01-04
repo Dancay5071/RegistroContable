@@ -15,11 +15,12 @@ async function cargarNavbarYAuth() {
 
   const checkElementsLoaded = () => {
     const navbar = document.getElementById("navbar");
+    const titulo = document.getElementById("titulo");
     const loginBtn = document.getElementById("login-btn");
     const logoutBtn = document.getElementById("logout-btn");
     const loginForm = document.getElementById("loginForm");
 
-    if (navbar && loginBtn && logoutBtn && loginForm) {
+    if (navbar && loginBtn && logoutBtn && loginForm && titulo) {
       initAuthUI();
     } else {
       console.warn("Algunos elementos no fueron encontrados en el DOM, reintentando...");
@@ -32,6 +33,7 @@ async function cargarNavbarYAuth() {
 
 export function initAuthUI() {
   const navbar = document.getElementById("navbar");
+  const titulo = document.getElementById("titulo");
   const loginBtn = document.getElementById("login-btn");
   const logoutBtn = document.getElementById("logout-btn");
   const loginForm = document.getElementById("loginForm");
@@ -49,11 +51,13 @@ export function initAuthUI() {
     if (user) {
       navbar.classList.remove("d-none");
       loginBtn.classList.add("d-none");
+      titulo.classList.add("d-none");
       montoActual?.classList.remove("d-none");
       ahorro?.classList.remove("d-none");
       totalAhorros?.classList.remove("d-none");
     } else {
       navbar.classList.add("d-none");
+      titulo.classList.remove("d-none");
       loginBtn.classList.remove("d-none");
       montoActual?.classList.add("d-none");
       ahorro?.classList.add("d-none");
