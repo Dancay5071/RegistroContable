@@ -30,7 +30,7 @@ body {
 
 img.titulo {
    position: relative;
-   top: 50%;
+   margin-top: 90%;
    left: 45%;
    transform: translate(-50%, -50%);
    width: 30px; /* Ajusta el tamaño que desees */
@@ -39,6 +39,13 @@ img.titulo {
   
   
 }
+.titulo  {
+   top: 8px;
+   height: 30px;
+   margin-top: 40;
+   padding: 0;
+}
+
 #diaDeHoy{
    margin-top: 110px;
    margin-left: 50px;
@@ -122,11 +129,7 @@ img {
 }
 
 
-.titulo {
-   width: 10px; /* Ajusta según el tamaño de tu imagen */
-   height: auto;
-   
-}
+
 
 @media (max-width: 768px) {
    .float-xl-end {
