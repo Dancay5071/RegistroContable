@@ -30,12 +30,13 @@ body {
 
 img.titulo {
    position: relative;
-   top: 45%;
+   top: 50%;
    left: 45%;
    transform: translate(-50%, -50%);
-   width: 130px; /* Ajusta el tamaño que desees */
+   width: 30px; /* Ajusta el tamaño que desees */
    height: auto; /* Mantiene la proporción */
    z-index: 1;
+  
   
 }
 #diaDeHoy{
@@ -48,6 +49,7 @@ img.titulo {
 
 }
 #login-btn{
+   margin-left: 45px;
    opacity: 0.8;
   
 }
@@ -56,8 +58,8 @@ img {
    top: 20%;
    left: 50%;
    transform: translate(-50%, -50%);
-   width: 300px; /* Ajusta el tamaño al porcentaje que desees */
-   height: auto; /* Mantiene la proporción */
+   width: 80px; 
+   height: auto;
    z-index: 1;
    border-color:black ;
 }
@@ -121,7 +123,7 @@ img {
 
 
 .titulo {
-   width: 150px; /* Ajusta según el tamaño de tu imagen */
+   width: 10px; /* Ajusta según el tamaño de tu imagen */
    height: auto;
    
 }
@@ -198,7 +200,7 @@ h4 {
 
 .navbar-nav .nav-link {
    transition: color 0.3s, text-decoration 0.3s, background-color 0.3s;
-   margin-top: 30px;
+  
 }
 .navbar-nav .nav-link:hover {
    color:#198754; 
