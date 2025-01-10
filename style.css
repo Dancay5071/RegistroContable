@@ -56,12 +56,13 @@ img.titulo {
 
 }
 #login-btn{
-   margin-left: 45px;
+   margin-left:25px;
    opacity: 0.8;
   
 }
+
 img {
-   position: absolute;
+   position: fixed;
    top: 20%;
    left: 50%;
    transform: translate(-50%, -50%);
