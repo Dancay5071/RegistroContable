@@ -8,30 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
     escucharAhorro();
     selectoresFecha(true)
 });
-
-const monto = parseFloat(document.getElementById("montoAgregar").value); // Para ahorro
-const month = document.getElementById("mesSelect").value; 
-
-
-  document.addEventListener("DOMContentLoaded", () => {
-    setMesActual();
-  });
-  
-  document.getElementById("modalExtraccion").addEventListener("shown.bs.modal", () => {
-    setMesActual();
-  });
-  
-  function setMesActual() {
-    const mesActual = new Date().toLocaleString('es-ES', { month: 'long' }); 
-    const selectMes = document.getElementById("mesSelect");
-  
-    for (let option of selectMes.options) {
-      if (option.textContent.toLowerCase() === mesActual.toLowerCase()) {
-        option.selected = true;
-        break;
-      }
-    }
-  }
   
   async function actualizarTotalAhorros() {
     const ahorroDoc = await getDoc(settingDoc);
@@ -41,31 +17,23 @@ const month = document.getElementById("mesSelect").value;
 window.agregarAhorro = agregarAhorro;
 
 async function agregarAhorro() {
-  
   const alertaDiv = document.getElementById("alertaAgregar");
-
   const monto = parseFloat(document.getElementById("montoAgregar").value);
   const month = document.getElementById("mesSelect").value;
-  console.log("Monto:", monto);
-  console.log("Mes:", month);
-  
-  if (isNaN(monto) || monto <= 0 ) {
-      console.log("Error en los campos. Monto o mes no válidos.");
-      alertaDiv.className = "alert alert-danger";
-      alertaDiv.textContent = "Por favor, completa todos los campos correctamente.";
-      alertaDiv.classList.remove("d-none");
-      setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
-      return;
-  }
-  
 
-  const year = document.getElementById("anioSelect").value;
-  const claveMesAño = `${month}_${year}`;
+  if (isNaN(monto) || monto <= 0) {
+    alertaDiv.className = "alert alert-danger";
+    alertaDiv.textContent = "Por favor, completa todos los campos correctamente.";
+    alertaDiv.classList.remove("d-none");
+    setTimeout(() => alertaDiv.classList.add("d-none"), 5000);
+    return;
+  }
+
   const data = { monto: monto, fecha: new Date() };
 
   try {
-    // Guardar el ahorro en Firestore
-    const ahorroMesDoc = doc(ahorrosPorMes, claveMesAño);
+    // Guardar el ahorro en Firestore usando el mes como clave
+    const ahorroMesDoc = doc(ahorrosPorMes, month);
     await setDoc(ahorroMesDoc, { totalAhorros: increment(monto) }, { merge: true });
 
     // Actualizar el total de ahorros global
@@ -87,10 +55,11 @@ async function agregarAhorro() {
 
     // Limpiar los campos del modal
     document.getElementById("montoAgregar").value = "";
-    
   }
-  await actualizarTotalAhorros(); 
-};
+
+  await actualizarTotalAhorros();
+}
+
 
 window.extraerAhorro = extraerAhorro;
 
