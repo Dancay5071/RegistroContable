@@ -1,0 +1,55 @@
+
+{
+  "users": {
+    "userID_1": {
+      "name": "Daniela",
+      "email": "dancay5071@gmail.com",
+      "data": {
+        "field1": "value1",
+        "field2": "value2"
+      }
+    },
+    "userID_2": {
+      "name": "Prueba",
+      "email": "prueba@prueba.com",
+      "data": {
+        "field1": "value3",
+        "field2": "value4"
+      }
+    }
+  }
+}
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Solo permite acceso al documento del usuario autenticado
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+{
+  "rules": {
+    "users": {
+      "$userId": {
+        ".read": "auth != null && auth.uid == $userId",
+        ".write": "auth != null && auth.uid == $userId"
+      }
+    }
+  }
+}
