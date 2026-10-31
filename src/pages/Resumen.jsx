@@ -1,15 +1,14 @@
 // src/pages/Resumen.jsx
 import React, { useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { gastosPorMes, ingresosPorMes, ahorrosPorMes } from "../services/firebase";
 import { useAuth } from "../context/AuthContext";
 import { getDemoResumenAnual } from "../services/demoData";
+import { getResumenAnualUser } from "../services/dbService";
 import { MESES, formatoNumber } from "../utils/formatters";
 import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function Resumen() {
-  const { isDemo } = useAuth();
+  const { user, isDemo } = useAuth();
   const currentYear = new Date().getFullYear();
   const yearOptions = [currentYear - 1, currentYear, currentYear + 1];
   const [anio, setAnio] = useState(currentYear);
@@ -19,97 +18,20 @@ export default function Resumen() {
   const consultarResumenAnual = async () => {
     setLoading(true);
 
-    if (isDemo) {
-      const data = getDemoResumenAnual(anio);
-      setResumenData(data);
-      setLoading(false);
-      return;
-    }
-
-    const ingresosMensuales = [];
-    const gastosMensuales = [];
-    const ahorrosMensuales = [];
-    const restosMesAnterior = [];
-    const restosTotales = [];
-
-    let totalAnualIngresos = 0;
-    let totalAnualGastos = 0;
-    let totalAnualAhorros = 0;
-
-    for (let i = 0; i < MESES.length; i++) {
-      const mes = MESES[i];
-      const claveMesAño = `${mes}_${anio}`;
-      const ingresosDoc = doc(ingresosPorMes, claveMesAño);
-      const gastosDoc = doc(gastosPorMes, claveMesAño);
-      const ahorrosDoc = doc(ahorrosPorMes, claveMesAño);
-
-      let sumaIngresos = 0;
-      let sumaGastos = 0;
-      let sumaAhorros = 0;
-
-      // 1. Ingresos
-      try {
-        const snap = await getDoc(ingresosDoc);
-        if (snap.exists()) {
-          const lista = snap.data().ingresos || [];
-          sumaIngresos = lista.reduce((acc, item) => acc + (item.monto || 0), 0);
-        }
-      } catch (err) {
-        console.error(`Error ingresos ${mes}:`, err);
-      }
-      ingresosMensuales.push(sumaIngresos);
-      totalAnualIngresos += sumaIngresos;
-
-      // 2. Gastos
-      try {
-        const snap = await getDoc(gastosDoc);
-        if (snap.exists()) {
-          const lista = snap.data().gastos || [];
-          sumaGastos = lista.reduce((acc, item) => acc + (item.monto || 0), 0);
-        }
-      } catch (err) {
-        console.error(`Error gastos ${mes}:`, err);
-      }
-      gastosMensuales.push(sumaGastos);
-      totalAnualGastos += sumaGastos;
-
-      // 3. Ahorros
-      try {
-        const snap = await getDoc(ahorrosDoc);
-        if (snap.exists()) {
-          sumaAhorros = snap.data().totalAhorros || 0;
-        }
-      } catch (err) {
-        console.error(`Error ahorros ${mes}:`, err);
-      }
-      ahorrosMensuales.push(sumaAhorros);
-      totalAnualAhorros += sumaAhorros;
-
-      // 4. Resto Mes Anterior & Resto Total
-      let restoAnterior = 0;
-      if (i === 0) {
-        restoAnterior = 0;
+    try {
+      if (isDemo) {
+        const data = getDemoResumenAnual(anio);
+        setResumenData(data);
       } else {
-        restoAnterior = ingresosMensuales[i - 1] - gastosMensuales[i - 1] + restosMesAnterior[i - 1];
+        const data = await getResumenAnualUser(user.uid, anio);
+        setResumenData(data);
       }
-      restosMesAnterior.push(restoAnterior);
-
-      const restoTotalMes = sumaIngresos - sumaGastos + restoAnterior;
-      restosTotales.push(restoTotalMes);
+    } catch (error) {
+      console.error("Error al obtener resumen anual:", error);
+      alert("Error al consultar el resumen anual: " + error.message);
+    } finally {
+      setLoading(false);
     }
-
-    setResumenData({
-      ingresosMensuales,
-      gastosMensuales,
-      ahorrosMensuales,
-      restosMesAnterior,
-      restosTotales,
-      totalAnualIngresos,
-      totalAnualGastos,
-      totalAnualAhorros
-    });
-
-    setLoading(false);
   };
 
   return (

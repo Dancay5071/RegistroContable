@@ -3,9 +3,12 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { 
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signInWithPopup, 
+  sendPasswordResetEmail, 
   signOut 
 } from "firebase/auth";
-import { auth } from "../services/firebase";
+import { auth, googleProvider } from "../services/firebase";
 
 const AuthContext = createContext(null);
 
@@ -22,7 +25,7 @@ export function AuthProvider({ children }) {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
-    // Comprobar si estaba en modo demo previamente
+    // Comprobar si estaba en modo demo
     const storedDemo = localStorage.getItem("registro_contable_demo_active");
     if (storedDemo === "true") {
       setUser(DEMO_USER);
@@ -31,7 +34,6 @@ export function AuthProvider({ children }) {
     }
 
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      // Si no es demo, toma el usuario de Firebase
       if (localStorage.getItem("registro_contable_demo_active") !== "true") {
         setUser(currentUser ? { ...currentUser, isDemo: false } : null);
       }
@@ -46,6 +48,24 @@ export function AuthProvider({ children }) {
     const cred = await signInWithEmailAndPassword(auth, email, password);
     setUser({ ...cred.user, isDemo: false });
     return cred;
+  };
+
+  const register = async (email, password) => {
+    localStorage.removeItem("registro_contable_demo_active");
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    setUser({ ...cred.user, isDemo: false });
+    return cred;
+  };
+
+  const loginWithGoogle = async () => {
+    localStorage.removeItem("registro_contable_demo_active");
+    const cred = await signInWithPopup(auth, googleProvider);
+    setUser({ ...cred.user, isDemo: false });
+    return cred;
+  };
+
+  const resetPassword = async (email) => {
+    return sendPasswordResetEmail(auth, email);
   };
 
   const loginAsDemo = () => {
@@ -72,6 +92,9 @@ export function AuthProvider({ children }) {
     isDemo: Boolean(user?.isDemo),
     loading,
     login,
+    register,
+    loginWithGoogle,
+    resetPassword,
     loginAsDemo,
     logout,
     isLoginModalOpen,

@@ -1,16 +1,15 @@
 // src/pages/NuevoGasto.jsx
 import React, { useState } from "react";
-import { addDoc, arrayUnion, doc, setDoc } from "firebase/firestore";
-import { gastosCollection, gastosPorMes, actualizarMontoActual } from "../services/firebase";
 import { useAuth } from "../context/AuthContext";
 import { addDemoGasto } from "../services/demoData";
+import { addGastoUser } from "../services/dbService";
 import { MESES } from "../utils/formatters";
 import MonthYearSelect from "../components/MonthYearSelect";
 import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function NuevoGasto() {
-  const { isDemo } = useAuth();
+  const { user, isDemo } = useAuth();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -31,30 +30,30 @@ export default function NuevoGasto() {
     const montoNum = parseFloat(monto);
 
     if (!descripcion.trim() || isNaN(montoNum) || montoNum <= 0) {
-      mostrarAlerta("Por favor, completa todos los campos correctamente con un monto mayor a cero.", "danger");
+      mostrarAlerta("Por favor, ingresa una descripción y un monto válido mayor a 0.", "danger");
       return;
     }
 
     setLoading(true);
-    const data = { descripcion: descripcion.trim(), monto: montoNum };
 
     try {
       if (isDemo) {
-        addDemoGasto(mes, anio, data);
+        addDemoGasto(mes, anio, { descripcion: descripcion.trim(), monto: montoNum });
       } else {
-        const claveMesAño = `${mes}_${anio}`;
-        await addDoc(gastosCollection, data);
-        await actualizarMontoActual(-montoNum);
-        const gastosMesDoc = doc(gastosPorMes, claveMesAño);
-        await setDoc(gastosMesDoc, { gastos: arrayUnion(data) }, { merge: true });
+        await addGastoUser(user.uid, {
+          mes,
+          anio,
+          descripcion: descripcion.trim(),
+          monto: montoNum
+        });
       }
 
-      mostrarAlerta("Gasto agregado con éxito.", "success");
+      mostrarAlerta("Gasto registrado y saldo actualizado con éxito.", "success");
       setDescripcion("");
       setMonto("");
     } catch (error) {
       console.error("Error al agregar gasto:", error);
-      mostrarAlerta("Error al agregar gasto. Inténtalo de nuevo.", "danger");
+      mostrarAlerta("Error al registrar el gasto: " + error.message, "danger");
     } finally {
       setLoading(false);
     }
@@ -87,7 +86,7 @@ export default function NuevoGasto() {
             <input 
               type="number" 
               step="0.01" 
-              min="0"
+              min="0.01"
               className="form-control" 
               placeholder="0.00"
               value={monto}
@@ -113,7 +112,7 @@ export default function NuevoGasto() {
         )}
       </div>
 
-      {loading && <Loader message="Cargando datos..." />}
+      {loading && <Loader message="Guardando gasto..." />}
 
       <BalanceDisplay />
     </div>

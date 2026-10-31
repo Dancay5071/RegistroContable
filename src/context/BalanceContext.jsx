@@ -1,9 +1,8 @@
 // src/context/BalanceContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { onSnapshot } from "firebase/firestore";
-import { settingsDoc, settingDoc } from "../services/firebase";
 import { useAuth } from "./AuthContext";
 import { getDemoBalances } from "../services/demoData";
+import { listenUserBalances } from "../services/dbService";
 
 const BalanceContext = createContext({
   montoActual: 0,
@@ -12,14 +11,14 @@ const BalanceContext = createContext({
 });
 
 export function BalanceProvider({ children }) {
-  const { isDemo } = useAuth();
+  const { user, isDemo } = useAuth();
   const [montoActual, setMontoActual] = useState(0);
   const [totalAhorros, setTotalAhorros] = useState(0);
   const [loadingBalances, setLoadingBalances] = useState(true);
 
   useEffect(() => {
+    // 1. Modo Demo
     if (isDemo) {
-      // Modo Demo: cargar desde almacenamiento local demo y escuchar cambios
       const updateFromDemo = () => {
         const bal = getDemoBalances();
         setMontoActual(bal.montoActual || 0);
@@ -35,36 +34,23 @@ export function BalanceProvider({ children }) {
       };
     }
 
-    // Modo Real Firebase
-    const unsubMonto = onSnapshot(settingsDoc, (docSnap) => {
-      if (docSnap.exists()) {
-        const val = docSnap.data().montoActual;
-        setMontoActual(isNaN(val) ? 0 : Number(val));
-      } else {
-        setMontoActual(0);
-      }
-    }, (error) => {
-      console.error("Error al escuchar montoActual:", error);
-    });
+    // 2. Usuario Autenticado en Firebase (Aislamiento por User ID)
+    if (user && user.uid) {
+      setLoadingBalances(true);
+      const unsubscribe = listenUserBalances(user.uid, (balances) => {
+        setMontoActual(balances.montoActual);
+        setTotalAhorros(balances.totalAhorros);
+        setLoadingBalances(false);
+      });
 
-    const unsubAhorro = onSnapshot(settingDoc, (docSnap) => {
-      if (docSnap.exists()) {
-        const val = docSnap.data().totalAhorros;
-        setTotalAhorros(isNaN(val) ? 0 : Number(val));
-      } else {
-        setTotalAhorros(0);
-      }
-      setLoadingBalances(false);
-    }, (error) => {
-      console.error("Error al escuchar totalAhorros:", error);
-      setLoadingBalances(false);
-    });
+      return () => unsubscribe();
+    }
 
-    return () => {
-      unsubMonto();
-      unsubAhorro();
-    };
-  }, [isDemo]);
+    // 3. Sin usuario
+    setMontoActual(0);
+    setTotalAhorros(0);
+    setLoadingBalances(false);
+  }, [user, isDemo]);
 
   return (
     <BalanceContext.Provider value={{ montoActual, totalAhorros, loadingBalances }}>

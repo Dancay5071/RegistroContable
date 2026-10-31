@@ -1,20 +1,23 @@
 // src/pages/ConsultarGasto.jsx
 import React, { useState } from "react";
-import { doc, getDoc, updateDoc, deleteField } from "firebase/firestore";
-import { gastosPorMes, actualizarMontoActual } from "../services/firebase";
 import { useAuth } from "../context/AuthContext";
 import { 
   getDemoGastos, 
   updateDemoGasto, 
   deleteDemoGasto 
 } from "../services/demoData";
+import { 
+  getGastosUser, 
+  updateGastoUser, 
+  deleteGastoUser 
+} from "../services/dbService";
 import { MESES, formatoMoneda } from "../utils/formatters";
 import MonthYearSelect from "../components/MonthYearSelect";
 import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function ConsultarGasto() {
-  const { isDemo } = useAuth();
+  const { user, isDemo } = useAuth();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -23,6 +26,7 @@ export default function ConsultarGasto() {
 
   // Modal edición
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editDescripcion, setEditDescripcion] = useState("");
   const [editMonto, setEditMonto] = useState("");
@@ -31,23 +35,17 @@ export default function ConsultarGasto() {
   const consultarGasto = async () => {
     setLoading(true);
 
-    if (isDemo) {
-      const lista = getDemoGastos(mes, anio);
-      setGastos(lista);
-      setLoading(false);
-      return;
-    }
-
-    const claveMesAño = `${mes}_${anio}`;
-    const gastosMesDoc = doc(gastosPorMes, claveMesAño);
-
     try {
-      const docSnap = await getDoc(gastosMesDoc);
-      const listaGastos = docSnap.exists() ? docSnap.data().gastos || [] : [];
-      setGastos(listaGastos);
+      if (isDemo) {
+        const lista = getDemoGastos(mes, anio);
+        setGastos(lista);
+      } else {
+        const lista = await getGastosUser(user.uid, mes, anio);
+        setGastos(lista);
+      }
     } catch (error) {
       console.error("Error al obtener gastos:", error);
-      alert("Error al consultar los gastos.");
+      alert("Error al consultar los gastos: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -57,6 +55,7 @@ export default function ConsultarGasto() {
     const item = gastos[index];
     if (!item) return;
     setEditingIndex(index);
+    setEditingItem(item);
     setEditDescripcion(item.descripcion);
     setEditMonto(item.monto.toString());
     setEditModalOpen(true);
@@ -81,26 +80,20 @@ export default function ConsultarGasto() {
         });
         setGastos(getDemoGastos(mes, anio));
       } else {
-        const claveMesAño = `${mes}_${anio}`;
-        const gastosMesDoc = doc(gastosPorMes, claveMesAño);
-        const gastoAntiguo = gastos[editingIndex];
-        const diferencia = montoNum - gastoAntiguo.monto;
-
-        const nuevaLista = [...gastos];
-        nuevaLista[editingIndex] = {
+        await updateGastoUser(user.uid, editingItem.id, {
+          mes,
+          anio,
           descripcion: editDescripcion.trim(),
-          monto: montoNum
-        };
-
-        await updateDoc(gastosMesDoc, { gastos: nuevaLista });
-        await actualizarMontoActual(-diferencia);
-        setGastos(nuevaLista);
+          monto: montoNum,
+          montoAnterior: editingItem.monto
+        });
+        await consultarGasto();
       }
 
       setEditModalOpen(false);
     } catch (error) {
       console.error("Error al guardar edición de gasto:", error);
-      alert("Hubo un error al actualizar el gasto.");
+      alert("Hubo un error al actualizar el gasto: " + error.message);
     } finally {
       setEditLoading(false);
     }
@@ -118,29 +111,23 @@ export default function ConsultarGasto() {
         deleteDemoGasto(mes, anio, index);
         setGastos(getDemoGastos(mes, anio));
       } else {
-        const claveMesAño = `${mes}_${anio}`;
-        const gastosMesDoc = doc(gastosPorMes, claveMesAño);
-        const gastoEliminado = gastos[index];
-        const montoEliminado = gastoEliminado.monto;
-
-        const nuevaLista = gastos.filter((_, i) => i !== index);
-
-        await updateDoc(gastosMesDoc, {
-          gastos: nuevaLista.length > 0 ? nuevaLista : deleteField()
+        const item = gastos[index];
+        await deleteGastoUser(user.uid, item.id, {
+          mes,
+          anio,
+          monto: item.monto
         });
-
-        await actualizarMontoActual(montoEliminado);
-        setGastos(nuevaLista);
+        await consultarGasto();
       }
     } catch (error) {
       console.error("Error al eliminar gasto:", error);
-      alert("Hubo un error al eliminar el gasto.");
+      alert("Hubo un error al eliminar el gasto: " + error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const sumaGastos = (gastos || []).reduce((acc, g) => acc + (g.monto || 0), 0);
+  const sumaGastos = (gastos || []).reduce((acc, g) => acc + (Number(g.monto) || 0), 0);
 
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3 position-relative">
@@ -197,7 +184,7 @@ export default function ConsultarGasto() {
                   </thead>
                   <tbody>
                     {gastos.map((gasto, index) => (
-                      <tr key={index}>
+                      <tr key={gasto.id || index}>
                         <td><i className="bi bi-dot fs-5"></i></td>
                         <td>{gasto.descripcion}</td>
                         <td>{formatoMoneda(gasto.monto)}</td>
@@ -273,7 +260,7 @@ export default function ConsultarGasto() {
                     <label className="form-label">Monto</label>
                     <input 
                       type="number" 
-                      step="0.01"
+                      step="0.01" 
                       min="0.01"
                       className="form-control" 
                       value={editMonto}

@@ -1,20 +1,23 @@
 // src/pages/ConsultarIngreso.jsx
 import React, { useState } from "react";
-import { doc, getDoc, updateDoc, deleteField } from "firebase/firestore";
-import { ingresosPorMes, actualizarMontoActual } from "../services/firebase";
 import { useAuth } from "../context/AuthContext";
 import { 
   getDemoIngresos, 
   updateDemoIngreso, 
   deleteDemoIngreso 
 } from "../services/demoData";
+import { 
+  getIngresosUser, 
+  updateIngresoUser, 
+  deleteIngresoUser 
+} from "../services/dbService";
 import { MESES, formatoMoneda } from "../utils/formatters";
 import MonthYearSelect from "../components/MonthYearSelect";
 import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function ConsultarIngreso() {
-  const { isDemo } = useAuth();
+  const { user, isDemo } = useAuth();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -23,6 +26,7 @@ export default function ConsultarIngreso() {
 
   // Modal edición
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editDescripcion, setEditDescripcion] = useState("");
   const [editMonto, setEditMonto] = useState("");
@@ -31,23 +35,17 @@ export default function ConsultarIngreso() {
   const consultarIngreso = async () => {
     setLoading(true);
 
-    if (isDemo) {
-      const lista = getDemoIngresos(mes, anio);
-      setIngresos(lista);
-      setLoading(false);
-      return;
-    }
-
-    const claveMesAño = `${mes}_${anio}`;
-    const ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
-
     try {
-      const docSnap = await getDoc(ingresosMesDoc);
-      const listaIngresos = docSnap.exists() ? docSnap.data().ingresos || [] : [];
-      setIngresos(listaIngresos);
+      if (isDemo) {
+        const lista = getDemoIngresos(mes, anio);
+        setIngresos(lista);
+      } else {
+        const lista = await getIngresosUser(user.uid, mes, anio);
+        setIngresos(lista);
+      }
     } catch (error) {
       console.error("Error al obtener ingresos:", error);
-      alert("Error al consultar los ingresos.");
+      alert("Error al consultar los ingresos: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -57,6 +55,7 @@ export default function ConsultarIngreso() {
     const item = ingresos[index];
     if (!item) return;
     setEditingIndex(index);
+    setEditingItem(item);
     setEditDescripcion(item.descripcion);
     setEditMonto(item.monto.toString());
     setEditModalOpen(true);
@@ -82,27 +81,20 @@ export default function ConsultarIngreso() {
         });
         setIngresos(getDemoIngresos(mes, anio));
       } else {
-        const claveMesAño = `${mes}_${anio}`;
-        const ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
-        const ingresoAntiguo = ingresos[editingIndex];
-        const diferencia = montoNum - ingresoAntiguo.monto;
-
-        const nuevaLista = [...ingresos];
-        nuevaLista[editingIndex] = {
-          ...ingresoAntiguo,
+        await updateIngresoUser(user.uid, editingItem.id, {
+          mes,
+          anio,
           descripcion: editDescripcion.trim(),
-          monto: montoNum
-        };
-
-        await updateDoc(ingresosMesDoc, { ingresos: nuevaLista });
-        await actualizarMontoActual(diferencia);
-        setIngresos(nuevaLista);
+          monto: montoNum,
+          montoAnterior: editingItem.monto
+        });
+        await consultarIngreso();
       }
 
       setEditModalOpen(false);
     } catch (error) {
       console.error("Error al guardar edición de ingreso:", error);
-      alert("Hubo un error al actualizar el ingreso.");
+      alert("Hubo un error al actualizar el ingreso: " + error.message);
     } finally {
       setEditLoading(false);
     }
@@ -120,29 +112,23 @@ export default function ConsultarIngreso() {
         deleteDemoIngreso(mes, anio, index);
         setIngresos(getDemoIngresos(mes, anio));
       } else {
-        const claveMesAño = `${mes}_${anio}`;
-        const ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
-        const ingresoEliminado = ingresos[index];
-        const montoEliminado = ingresoEliminado.monto;
-
-        const nuevaLista = ingresos.filter((_, i) => i !== index);
-
-        await updateDoc(ingresosMesDoc, {
-          ingresos: nuevaLista.length > 0 ? nuevaLista : deleteField()
+        const item = ingresos[index];
+        await deleteIngresoUser(user.uid, item.id, {
+          mes,
+          anio,
+          monto: item.monto
         });
-
-        await actualizarMontoActual(-montoEliminado);
-        setIngresos(nuevaLista);
+        await consultarIngreso();
       }
     } catch (error) {
       console.error("Error al eliminar ingreso:", error);
-      alert("Hubo un error al eliminar el ingreso.");
+      alert("Hubo un error al eliminar el ingreso: " + error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const sumaIngresos = (ingresos || []).reduce((acc, ing) => acc + (ing.monto || 0), 0);
+  const sumaIngresos = (ingresos || []).reduce((acc, ing) => acc + (Number(ing.monto) || 0), 0);
 
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3 position-relative">
@@ -199,7 +185,7 @@ export default function ConsultarIngreso() {
                   </thead>
                   <tbody>
                     {ingresos.map((ingreso, index) => (
-                      <tr key={index}>
+                      <tr key={ingreso.id || index}>
                         <td><i className="bi bi-dot fs-5"></i></td>
                         <td>{ingreso.descripcion}</td>
                         <td>{formatoMoneda(ingreso.monto)}</td>
@@ -275,7 +261,7 @@ export default function ConsultarIngreso() {
                     <label className="form-label">Monto</label>
                     <input 
                       type="number" 
-                      step="0.01"
+                      step="0.01" 
                       min="0.01"
                       className="form-control" 
                       value={editMonto}

@@ -1,12 +1,5 @@
 // src/pages/Ahorro.jsx
 import React, { useState } from "react";
-import { doc, getDoc, setDoc, addDoc, arrayUnion, increment } from "firebase/firestore";
-import { 
-  ahorrosPorMes, 
-  extraccionPorMes, 
-  extraccionCollection, 
-  actualizarAhorroActual 
-} from "../services/firebase";
 import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
 import { 
@@ -14,12 +7,17 @@ import {
   addDemoAhorro, 
   addDemoExtraccion 
 } from "../services/demoData";
+import { 
+  getAhorrosYearUser, 
+  addAhorroDirectoUser, 
+  addExtraccionUser 
+} from "../services/dbService";
 import { MESES, formatoMoneda, formatoNumber } from "../utils/formatters";
 import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function Ahorro() {
-  const { isDemo } = useAuth();
+  const { user, isDemo } = useAuth();
   const { totalAhorros } = useBalance();
   const currentYear = new Date().getFullYear();
   const yearOptions = [currentYear - 1, currentYear, currentYear + 1];
@@ -45,47 +43,20 @@ export default function Ahorro() {
   const consultarAhorro = async () => {
     setLoading(true);
 
-    if (isDemo) {
-      const netos = getDemoAhorrosPorMes(anio);
-      setTablaAhorros(netos);
-      setLoading(false);
-      return;
-    }
-
-    let netosPorMes = [];
-
-    for (const mes of MESES) {
-      const claveMesAño = `${mes}_${anio}`;
-      const docRef = doc(ahorrosPorMes, claveMesAño);
-      const extraccionRef = doc(extraccionPorMes, claveMesAño);
-
-      let ahorros = 0;
-      let extracciones = 0;
-
-      try {
-        const snap = await getDoc(docRef);
-        if (snap.exists()) {
-          ahorros = snap.data().totalAhorros || 0;
-        }
-
-        const snapExtracciones = await getDoc(extraccionRef);
-        if (snapExtracciones.exists()) {
-          const dataExtracciones = snapExtracciones.data();
-          extracciones = dataExtracciones.extraccion?.reduce(
-            (sum, ext) => sum + (ext.monto < 0 ? -ext.monto : ext.monto), 
-            0
-          ) || 0;
-        }
-      } catch (error) {
-        console.error(`Error al obtener datos de ahorro del mes ${mes}:`, error);
+    try {
+      if (isDemo) {
+        const netos = getDemoAhorrosPorMes(anio);
+        setTablaAhorros(netos);
+      } else {
+        const netos = await getAhorrosYearUser(user.uid, anio);
+        setTablaAhorros(netos);
       }
-
-      const ahorrosNetos = ahorros - extracciones;
-      netosPorMes.push({ mes, monto: ahorrosNetos });
+    } catch (error) {
+      console.error("Error al consultar ahorros:", error);
+      alert("Error al obtener datos de ahorro: " + error.message);
+    } finally {
+      setLoading(false);
     }
-
-    setTablaAhorros(netosPorMes);
-    setLoading(false);
   };
 
   const handleExtraerAhorro = async (e) => {
@@ -103,14 +74,11 @@ export default function Ahorro() {
       if (isDemo) {
         addDemoExtraccion(mesExtraccion, anio, montoNum);
       } else {
-        const claveMesAño = `${mesExtraccion}_${anio}`;
-        const data = { monto: -montoNum, fecha: new Date() };
-
-        await addDoc(extraccionCollection, data);
-        await actualizarAhorroActual(-montoNum);
-
-        const extraccionMesDoc = doc(extraccionPorMes, claveMesAño);
-        await setDoc(extraccionMesDoc, { extraccion: arrayUnion(data) }, { merge: true });
+        await addExtraccionUser(user.uid, {
+          mes: mesExtraccion,
+          anio,
+          monto: montoNum
+        });
       }
 
       setAlertaExtraccion({ tipo: "success", mensaje: "Extracción registrada con éxito." });
@@ -122,7 +90,7 @@ export default function Ahorro() {
       }, 1200);
     } catch (error) {
       console.error("Error al registrar extracción:", error);
-      setAlertaExtraccion({ tipo: "danger", mensaje: "Error al registrar la extracción." });
+      setAlertaExtraccion({ tipo: "danger", mensaje: "Error al registrar la extracción: " + error.message });
     } finally {
       setLoadingExtraccion(false);
     }
@@ -143,10 +111,11 @@ export default function Ahorro() {
       if (isDemo) {
         addDemoAhorro(mesAgregar, anio, montoNum);
       } else {
-        const claveMesAño = `${mesAgregar}_${anio}`;
-        const ahorroMesDoc = doc(ahorrosPorMes, claveMesAño);
-        await setDoc(ahorroMesDoc, { totalAhorros: increment(montoNum) }, { merge: true });
-        await actualizarAhorroActual(montoNum);
+        await addAhorroDirectoUser(user.uid, {
+          mes: mesAgregar,
+          anio,
+          monto: montoNum
+        });
       }
 
       setAlertaAgregar({ tipo: "success", mensaje: "Ahorro agregado con éxito." });
@@ -158,7 +127,7 @@ export default function Ahorro() {
       }, 1200);
     } catch (error) {
       console.error("Error al agregar ahorro:", error);
-      setAlertaAgregar({ tipo: "danger", mensaje: "Error al agregar el ahorro." });
+      setAlertaAgregar({ tipo: "danger", mensaje: "Error al agregar el ahorro: " + error.message });
     } finally {
       setLoadingAgregar(false);
     }
@@ -248,7 +217,7 @@ export default function Ahorro() {
         <div 
           className="modal fade show d-block" 
           tabIndex="-1" 
-          role="dialog"
+          role="dialog" 
           style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
         >
           <div className="modal-dialog modal-dialog-centered">
@@ -273,7 +242,7 @@ export default function Ahorro() {
                     <label className="form-label">Monto</label>
                     <input 
                       type="number" 
-                      step="0.01"
+                      step="0.01" 
                       min="0.01"
                       className="form-control" 
                       placeholder="Monto a extraer"
@@ -286,7 +255,7 @@ export default function Ahorro() {
                   <div className="mb-3">
                     <label className="form-label">Mes</label>
                     <select 
-                      className="form-select"
+                      className="form-select" 
                       value={mesExtraccion}
                       onChange={(e) => setMesExtraccion(e.target.value)}
                       disabled={loadingExtraccion}
@@ -325,7 +294,7 @@ export default function Ahorro() {
         <div 
           className="modal fade show d-block" 
           tabIndex="-1" 
-          role="dialog"
+          role="dialog" 
           style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
         >
           <div className="modal-dialog modal-dialog-centered">
@@ -350,7 +319,7 @@ export default function Ahorro() {
                     <label className="form-label">Monto</label>
                     <input 
                       type="number" 
-                      step="0.01"
+                      step="0.01" 
                       min="0.01"
                       className="form-control" 
                       placeholder="Monto a agregar"
@@ -363,7 +332,7 @@ export default function Ahorro() {
                   <div className="mb-3">
                     <label className="form-label">Mes</label>
                     <select 
-                      className="form-select"
+                      className="form-select" 
                       value={mesAgregar}
                       onChange={(e) => setMesAgregar(e.target.value)}
                       disabled={loadingAgregar}

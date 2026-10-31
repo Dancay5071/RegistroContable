@@ -1,22 +1,15 @@
 // src/pages/NuevoIngreso.jsx
 import React, { useState } from "react";
-import { addDoc, arrayUnion, doc, increment, setDoc } from "firebase/firestore";
-import { 
-  ingresosCollection, 
-  ingresosPorMes, 
-  ahorrosPorMes, 
-  actualizarMontoActual, 
-  actualizarAhorroActual 
-} from "../services/firebase";
 import { useAuth } from "../context/AuthContext";
 import { addDemoIngreso } from "../services/demoData";
+import { addIngresoUser } from "../services/dbService";
 import { MESES } from "../utils/formatters";
 import MonthYearSelect from "../components/MonthYearSelect";
 import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function NuevoIngreso() {
-  const { isDemo } = useAuth();
+  const { user, isDemo } = useAuth();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -39,43 +32,38 @@ export default function NuevoIngreso() {
     const porcentajeNum = parseFloat(porcentaje);
 
     if (!descripcion.trim() || isNaN(montoNum) || montoNum <= 0 || isNaN(porcentajeNum)) {
-      mostrarAlerta("Por favor, completa todos los campos correctamente.", "danger");
+      mostrarAlerta("Por favor, completa todos los campos correctamente con un monto mayor a 0.", "danger");
       return;
     }
 
     setLoading(true);
 
-    const ahorro = (montoNum * porcentajeNum) / 100;
-    const ingresoNeto = montoNum - ahorro;
-    const data = { descripcion: descripcion.trim(), monto: ingresoNeto, ahorro };
-
     try {
       if (isDemo) {
-        addDemoIngreso(mes, anio, data);
+        const ahorro = (montoNum * porcentajeNum) / 100;
+        const ingresoNeto = montoNum - ahorro;
+        addDemoIngreso(mes, anio, {
+          descripcion: descripcion.trim(),
+          monto: ingresoNeto,
+          ahorro
+        });
       } else {
-        const claveMesAño = `${mes}_${anio}`;
-        await addDoc(ingresosCollection, data);
-        await actualizarMontoActual(ingresoNeto);
-        if (ahorro > 0) {
-          await actualizarAhorroActual(ahorro);
-        }
-
-        const ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
-        await setDoc(ingresosMesDoc, { ingresos: arrayUnion(data) }, { merge: true });
-
-        if (ahorro > 0) {
-          const ahorrosMesDoc = doc(ahorrosPorMes, claveMesAño);
-          await setDoc(ahorrosMesDoc, { totalAhorros: increment(ahorro) }, { merge: true });
-        }
+        await addIngresoUser(user.uid, {
+          mes,
+          anio,
+          descripcion: descripcion.trim(),
+          montoBruto: montoNum,
+          porcentajeAhorro: porcentajeNum
+        });
       }
 
-      mostrarAlerta("Ingreso agregado con éxito.", "success");
+      mostrarAlerta("Ingreso registrado y saldos actualizados con éxito.", "success");
       setDescripcion("");
       setMonto("");
       setPorcentaje(0);
     } catch (error) {
       console.error("Error al agregar ingreso:", error);
-      mostrarAlerta("Error al agregar ingreso. Inténtalo de nuevo.", "danger");
+      mostrarAlerta("Error al registrar el ingreso: " + error.message, "danger");
     } finally {
       setLoading(false);
     }
@@ -152,7 +140,7 @@ export default function NuevoIngreso() {
         )}
       </div>
 
-      {loading && <Loader message="Cargando datos..." />}
+      {loading && <Loader message="Guardando ingreso..." />}
 
       <BalanceDisplay />
     </div>
