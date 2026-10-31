@@ -11,8 +11,6 @@ export default function Navbar() {
   const { montoActual, totalAhorros } = useBalance();
   const { openQuickModal } = useQuickMovement();
   const [isOpen, setIsOpen] = useState(false);
-  const [gastosOpen, setGastosOpen] = useState(false);
-  const [ingresosOpen, setIngresosOpen] = useState(false);
   const navigate = useNavigate();
 
   if (!user) return null;
@@ -29,8 +27,6 @@ export default function Navbar() {
 
   const closeMenu = () => {
     setIsOpen(false);
-    setGastosOpen(false);
-    setIngresosOpen(false);
   };
 
   return (
@@ -113,62 +109,18 @@ export default function Navbar() {
           </button>
 
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-            {/* Dropdown Gastos */}
-            <li 
-              className={`nav-item dropdown ${gastosOpen ? "show" : ""}`}
-              onMouseEnter={() => setGastosOpen(true)}
-              onMouseLeave={() => setGastosOpen(false)}
-            >
-              <button 
-                className="nav-link dropdown-toggle btn btn-link" 
-                type="button"
-                onClick={() => setGastosOpen(!gastosOpen)}
-                aria-expanded={gastosOpen}
-              >
+            {/* Enlace Directo Gastos */}
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/gastos/consultar" onClick={closeMenu}>
                 <i className="bi bi-arrow-down-circle text-danger me-1"></i> Gastos
-              </button>
-              <ul className={`dropdown-menu ${gastosOpen ? "show" : ""}`}>
-                <li>
-                  <NavLink className="dropdown-item" to="/gastos/nuevo" onClick={closeMenu}>
-                    <i className="bi bi-plus-circle me-2 text-danger"></i> Nuevo Gasto
-                  </NavLink>
-                </li>
-                <li><hr className="dropdown-divider border-secondary opacity-25" /></li>
-                <li>
-                  <NavLink className="dropdown-item" to="/gastos/consultar" onClick={closeMenu}>
-                    <i className="bi bi-search me-2"></i> Consultar Gastos
-                  </NavLink>
-                </li>
-              </ul>
+              </NavLink>
             </li>
 
-            {/* Dropdown Ingresos */}
-            <li 
-              className={`nav-item dropdown ${ingresosOpen ? "show" : ""}`}
-              onMouseEnter={() => setIngresosOpen(true)}
-              onMouseLeave={() => setIngresosOpen(false)}
-            >
-              <button 
-                className="nav-link dropdown-toggle btn btn-link" 
-                type="button"
-                onClick={() => setIngresosOpen(!ingresosOpen)}
-                aria-expanded={ingresosOpen}
-              >
+            {/* Enlace Directo Ingresos */}
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/ingresos/consultar" onClick={closeMenu}>
                 <i className="bi bi-arrow-up-circle text-success me-1"></i> Ingresos
-              </button>
-              <ul className={`dropdown-menu ${ingresosOpen ? "show" : ""}`}>
-                <li>
-                  <NavLink className="dropdown-item" to="/ingresos/nuevo" onClick={closeMenu}>
-                    <i className="bi bi-plus-circle me-2 text-success"></i> Nuevo Ingreso
-                  </NavLink>
-                </li>
-                <li><hr className="dropdown-divider border-secondary opacity-25" /></li>
-                <li>
-                  <NavLink className="dropdown-item" to="/ingresos/consultar" onClick={closeMenu}>
-                    <i className="bi bi-search me-2"></i> Consultar Ingresos
-                  </NavLink>
-                </li>
-              </ul>
+              </NavLink>
             </li>
 
             {/* Ahorros */}
@@ -181,7 +133,7 @@ export default function Navbar() {
             {/* Resumen */}
             <li className="nav-item">
               <NavLink className="nav-link" to="/resumen" onClick={closeMenu}>
-                <i className="bi bi-bar-chart-line me-1 text-warning"></i> Resumen
+                <i className="bi bi-bar-chart-line me-1 text-primary"></i> Resumen
               </NavLink>
             </li>
           </ul>

@@ -12,7 +12,9 @@ function generarDatosIniciales() {
   return {
     balances: {
       montoActual: 154800.50,
-      totalAhorros: 85000.00
+      totalAhorros: 85000.00,
+      totalAhorrosUSD: 350.00,
+      totalAhorrosEUR: 0.00
     },
     gastosPorMes: {
       [`${currentMonthName}_${currentYear}`]: [
@@ -47,7 +49,12 @@ function generarDatosIniciales() {
       [`${prevMonthName}_${currentYear}`]: [
         { monto: -15000.00, fecha: new Date().toISOString() }
       ]
-    }
+    },
+    ahorrosDetallados: [
+      { id: "aho_1", tipo: "ahorro", monto: 50000.00, moneda: "ARS", categoria: "Emergencia", descripcion: "Reserva de seguridad", mes: currentMonthName, anio: currentYear, fecha: new Date().toISOString() },
+      { id: "aho_2", tipo: "ahorro", monto: 35000.00, moneda: "ARS", categoria: "Vacaciones", descripcion: "Fondo vacaciones verano", mes: currentMonthName, anio: currentYear, fecha: new Date().toISOString() },
+      { id: "aho_3", tipo: "ahorro", monto: 350.00, moneda: "USD", categoria: "Vacaciones", descripcion: "Billetes dólar para viaje", mes: currentMonthName, anio: currentYear, fecha: new Date().toISOString() }
+    ]
   };
 }
 
@@ -215,18 +222,39 @@ export function getDemoAhorrosPorMes(anio) {
   });
 }
 
-export function addDemoAhorro(mes, anio, monto) {
+export function addDemoAhorro(mes, anio, monto, moneda = "ARS", categoria = "Emergencia", descripcion = "") {
   const store = getDemoStore();
   const clave = `${mes}_${anio}`;
   if (!store.ahorrosPorMes[clave]) {
     store.ahorrosPorMes[clave] = { totalAhorros: 0 };
   }
-  store.ahorrosPorMes[clave].totalAhorros += monto;
-  store.balances.totalAhorros = (store.balances.totalAhorros || 0) + monto;
+
+  if (moneda === "USD") {
+    store.balances.totalAhorrosUSD = (store.balances.totalAhorrosUSD || 0) + monto;
+  } else if (moneda === "EUR") {
+    store.balances.totalAhorrosEUR = (store.balances.totalAhorrosEUR || 0) + monto;
+  } else {
+    store.ahorrosPorMes[clave].totalAhorros += monto;
+    store.balances.totalAhorros = (store.balances.totalAhorros || 0) + monto;
+  }
+
+  if (!store.ahorrosDetallados) store.ahorrosDetallados = [];
+  store.ahorrosDetallados.unshift({
+    id: `aho_${Date.now()}`,
+    tipo: "ahorro",
+    monto,
+    moneda,
+    categoria,
+    descripcion: descripcion.trim() || `Aporte a ${categoria}`,
+    mes,
+    anio,
+    fecha: new Date().toISOString()
+  });
+
   saveDemoStore(store);
 }
 
-export function addDemoExtraccion(mes, anio, monto) {
+export function addDemoExtraccion(mes, anio, monto, moneda = "ARS", categoria = "Emergencia", descripcion = "") {
   const store = getDemoStore();
   const clave = `${mes}_${anio}`;
   if (!store.extraccionPorMes[clave]) {
@@ -236,8 +264,34 @@ export function addDemoExtraccion(mes, anio, monto) {
     monto: -monto,
     fecha: new Date().toISOString()
   });
-  store.balances.totalAhorros = Math.max(0, (store.balances.totalAhorros || 0) - monto);
+
+  if (moneda === "USD") {
+    store.balances.totalAhorrosUSD = Math.max(0, (store.balances.totalAhorrosUSD || 0) - monto);
+  } else if (moneda === "EUR") {
+    store.balances.totalAhorrosEUR = Math.max(0, (store.balances.totalAhorrosEUR || 0) - monto);
+  } else {
+    store.balances.totalAhorros = Math.max(0, (store.balances.totalAhorros || 0) - monto);
+  }
+
+  if (!store.ahorrosDetallados) store.ahorrosDetallados = [];
+  store.ahorrosDetallados.unshift({
+    id: `ext_${Date.now()}`,
+    tipo: "extraccion",
+    monto,
+    moneda,
+    categoria,
+    descripcion: descripcion.trim() || `Extracción de ${categoria}`,
+    mes,
+    anio,
+    fecha: new Date().toISOString()
+  });
+
   saveDemoStore(store);
+}
+
+export function getDemoDetalleAhorros() {
+  const store = getDemoStore();
+  return store.ahorrosDetallados || [];
 }
 
 // Helper para Resumen

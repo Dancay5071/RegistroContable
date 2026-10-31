@@ -92,10 +92,13 @@ export default function LoginModal() {
       handleClose();
     } catch (err) {
       console.error("Error con Google:", err);
-      if (err.code === "auth/operation-not-allowed") {
-        setError("El inicio de sesión con Google aún no está habilitado en tu Firebase Console. Debes ir a Authentication > Sign-in method y activar Google, o puedes ingresar con tu Correo y Contraseña.");
-      } else if (err.code !== "auth/popup-closed-by-user") {
-        setError("Error al iniciar sesión con Google: " + err.message);
+      const errStr = `${err?.code || ""} ${err?.message || ""}`.toLowerCase();
+      if (errStr.includes("operation-not-allowed")) {
+        setError("El inicio de sesión con Google aún no está habilitado en tu Firebase Console. Debes ir a Firebase Console > Authentication > Sign-in method y habilitar 'Google'. Mientras tanto, puedes crear una cuenta con correo y contraseña o explorar en Modo Demo.");
+      } else if (err?.code === "auth/popup-closed-by-user") {
+        // El usuario cerró la ventana emergente de Google
+      } else {
+        setError("Error al iniciar sesión con Google: " + (err?.message || err));
       }
       setLoading(false);
     }

@@ -4,11 +4,13 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
-import { getFechaHoy, formatoMoneda } from "../utils/formatters";
-import { resetDemoData, getDemoUltimasTransacciones } from "../services/demoData";
-import { getUltimasTransaccionesUser } from "../services/dbService";
+import { getFechaHoy, formatoMoneda, MESES } from "../utils/formatters";
+import { resetDemoData, getDemoUltimasTransacciones, getDemoGastos, getDemoResumenAnual } from "../services/demoData";
+import { getUltimasTransaccionesUser, getGastosUser, getResumenAnualUser } from "../services/dbService";
 import { getCategoriaGasto, getCategoriaIngreso } from "../utils/categories";
 import { useToast } from "../context/ToastContext";
+import ExpenseCategoryChart from "../components/charts/ExpenseCategoryChart";
+import MonthlyComparisonChart from "../components/charts/MonthlyComparisonChart";
 
 export default function Home() {
   const { user, isDemo, openLoginModal, loginAsDemo } = useAuth();
@@ -17,7 +19,13 @@ export default function Home() {
   const { showToast } = useToast();
   const [fecha, setFecha] = useState(getFechaHoy(window.innerWidth < 768));
   const [ultimasTransacciones, setUltimasTransacciones] = useState([]);
+  const [gastosMes, setGastosMes] = useState([]);
+  const [resumenAnual, setResumenAnual] = useState(null);
   const [loadingRecientes, setLoadingRecientes] = useState(false);
+  const [loadingAnalytics, setLoadingAnalytics] = useState(false);
+
+  const mesActual = MESES[new Date().getMonth()];
+  const anioActual = new Date().getFullYear();
 
   useEffect(() => {
     const handleResize = () => {
@@ -31,25 +39,37 @@ export default function Home() {
   useEffect(() => {
     if (!user) return;
 
-    const cargarRecientes = async () => {
+    const cargarDashboard = async () => {
       setLoadingRecientes(true);
+      setLoadingAnalytics(true);
       try {
         if (isDemo) {
-          const data = getDemoUltimasTransacciones(5);
-          setUltimasTransacciones(data);
+          const recientes = getDemoUltimasTransacciones(5);
+          const gastos = getDemoGastos(mesActual, anioActual);
+          const anual = getDemoResumenAnual(anioActual);
+          setUltimasTransacciones(recientes);
+          setGastosMes(gastos);
+          setResumenAnual(anual);
         } else {
-          const data = await getUltimasTransaccionesUser(user.uid, 5);
-          setUltimasTransacciones(data);
+          const [recientes, gastos, anual] = await Promise.all([
+            getUltimasTransaccionesUser(user.uid, 5),
+            getGastosUser(user.uid, mesActual, anioActual),
+            getResumenAnualUser(user.uid, anioActual)
+          ]);
+          setUltimasTransacciones(recientes);
+          setGastosMes(gastos);
+          setResumenAnual(anual);
         }
       } catch (err) {
-        console.error("Error al cargar transacciones recientes:", err);
+        console.error("Error al cargar datos del dashboard:", err);
       } finally {
         setLoadingRecientes(false);
+        setLoadingAnalytics(false);
       }
     };
 
-    cargarRecientes();
-  }, [user, isDemo, movementCounter]);
+    cargarDashboard();
+  }, [user, isDemo, movementCounter, mesActual, anioActual]);
 
   const handleResetDemo = () => {
     if (window.confirm("¿Deseas reiniciar los datos del Modo Demo a los valores por defecto?")) {
@@ -57,22 +77,24 @@ export default function Home() {
       showToast("Datos del modo demo restablecidos.", "info");
       if (isDemo) {
         setUltimasTransacciones(getDemoUltimasTransacciones(5));
+        setGastosMes(getDemoGastos(mesActual, anioActual));
+        setResumenAnual(getDemoResumenAnual(anioActual));
       }
     }
   };
 
   return (
     <div className="home-page fade-in d-flex flex-column align-items-center justify-content-center flex-grow-1 p-3">
-      {/* Logo & Marca */}
+      {/* Encabezado Principal */}
       <div className="logo-container mb-4 text-center">
-        <h1 className="h4 fw-bold mt-3 text-dark tracking-wide">Registro Contable</h1>
+        <h1 className="h4 fw-bold mt-2 text-dark tracking-wide">Registro Contable</h1>
         <div className="badge shadow-sm border px-3 py-2 text-dark fw-medium rounded-pill mt-1" style={{ backgroundColor: "var(--bg-card)" }}>
           <i className="bi bi-calendar3 me-2 text-success"></i>
           {fecha}
         </div>
       </div>
 
-      {/* Contenido Principal */}
+      {/* Vista para usuarios no autenticados */}
       {!user ? (
         <div className="principal text-center p-4 p-md-5 rounded-4 shadow-sm border" style={{ maxWidth: "560px", width: "100%" }}>
           <h2 className="h4 fw-bold mb-3">Control Financiero Simple y Eficiente</h2>
@@ -100,7 +122,7 @@ export default function Home() {
           </div>
         </div>
       ) : (
-        <div className="w-100" style={{ maxWidth: "800px" }}>
+        <div className="w-100" style={{ maxWidth: "1020px" }}>
           {isDemo && (
             <div className="alert bg-warning bg-opacity-10 border border-warning text-dark d-flex align-items-center justify-content-between p-3 rounded-3 mb-4 shadow-sm">
               <div className="d-flex align-items-center gap-2">
@@ -141,7 +163,7 @@ export default function Home() {
                     <i className="bi bi-piggy-bank"></i> Total Ahorrado
                   </div>
                   <div className="kpi-amount">{formatoMoneda(totalAhorros)}</div>
-                  <span className="text-muted small">Fondo acumulado</span>
+                  <span className="text-muted small">Fondo acumulado en ARS</span>
                 </div>
                 <div className="p-3 bg-warning bg-opacity-15 rounded-circle text-warning fs-2">
                   <i className="bi bi-shield-lock"></i>
@@ -150,46 +172,73 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Acciones Rápidas */}
-          <div className="principal p-4 rounded-4 shadow-sm border mb-4">
-            <h5 className="h6 text-muted text-uppercase fw-bold mb-3 tracking-wider">Acciones Rápidas</h5>
-            <div className="row g-2">
-              <div className="col-6 col-sm-3">
-                <Link to="/gastos/nuevo" className="btn btn-outline-danger w-100 py-3 d-flex flex-column align-items-center rounded-3">
-                  <i className="bi bi-dash-circle fs-4 mb-1"></i>
-                  <span className="small fw-semibold">Nuevo Gasto</span>
-                </Link>
+          {/* Gráficos Financieros Chart.js (Fase 3) */}
+          <div className="row g-3 mb-4">
+            {/* Gráfico 1: Gastos por Categoría */}
+            <div className="col-12 col-lg-5">
+              <div className="principal p-3 p-md-4 rounded-4 shadow-sm border h-100 d-flex flex-column">
+                <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                  <h5 className="h6 text-muted text-uppercase fw-bold mb-0 tracking-wider d-flex align-items-center gap-2">
+                    <i className="bi bi-pie-chart text-danger"></i> Gastos de {mesActual}
+                  </h5>
+                  <Link to="/gastos/consultar" className="small text-decoration-none fw-semibold text-primary">
+                    Detalle <i className="bi bi-arrow-right"></i>
+                  </Link>
+                </div>
+
+                <div className="flex-grow-1 d-flex align-items-center justify-content-center" style={{ minHeight: "260px" }}>
+                  {loadingAnalytics ? (
+                    <div className="text-center text-muted small py-4">
+                      <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                      Cargando gráfico...
+                    </div>
+                  ) : (
+                    <ExpenseCategoryChart gastos={gastosMes} mes={mesActual} anio={anioActual} />
+                  )}
+                </div>
               </div>
-              <div className="col-6 col-sm-3">
-                <Link to="/ingresos/nuevo" className="btn btn-outline-success w-100 py-3 d-flex flex-column align-items-center rounded-3">
-                  <i className="bi bi-plus-circle fs-4 mb-1"></i>
-                  <span className="small fw-semibold">Nuevo Ingreso</span>
-                </Link>
-              </div>
-              <div className="col-6 col-sm-3">
-                <Link to="/ahorros" className="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center rounded-3">
-                  <i className="bi bi-safe fs-4 mb-1"></i>
-                  <span className="small fw-semibold">Ahorros</span>
-                </Link>
-              </div>
-              <div className="col-6 col-sm-3">
-                <Link to="/resumen" className="btn btn-outline-warning text-dark w-100 py-3 d-flex flex-column align-items-center rounded-3">
-                  <i className="bi bi-bar-chart fs-4 mb-1"></i>
-                  <span className="small fw-semibold">Resumen</span>
-                </Link>
+            </div>
+
+            {/* Gráfico 2: Evolución y Comparativa Anual */}
+            <div className="col-12 col-lg-7">
+              <div className="principal p-3 p-md-4 rounded-4 shadow-sm border h-100 d-flex flex-column">
+                <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                  <h5 className="h6 text-muted text-uppercase fw-bold mb-0 tracking-wider d-flex align-items-center gap-2">
+                    <i className="bi bi-bar-chart-line text-success"></i> Evolución Mensual — {anioActual}
+                  </h5>
+                  <Link to="/resumen" className="small text-decoration-none fw-semibold text-primary">
+                    Matriz Anual <i className="bi bi-arrow-right"></i>
+                  </Link>
+                </div>
+
+                <div className="flex-grow-1" style={{ minHeight: "260px" }}>
+                  {loadingAnalytics ? (
+                    <div className="text-center text-muted small py-4">
+                      <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                      Cargando comparativa...
+                    </div>
+                  ) : (
+                    <MonthlyComparisonChart 
+                      ingresosMensuales={resumenAnual?.ingresosMensuales || []}
+                      gastosMensuales={resumenAnual?.gastosMensuales || []}
+                      ahorrosMensuales={resumenAnual?.ahorrosMensuales || []}
+                      anio={anioActual}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Historial de Últimos Movimientos */}
-          <div className="principal p-4 rounded-4 shadow-sm border">
+          <div className="principal p-3 p-md-4 rounded-4 shadow-sm border mb-4">
             <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
               <h5 className="h6 text-muted text-uppercase fw-bold mb-0 tracking-wider d-flex align-items-center gap-2">
                 <i className="bi bi-clock-history text-primary"></i> Últimos Movimientos
               </h5>
               <button 
                 type="button" 
-                className="btn btn-sm btn-outline-success rounded-pill px-3 fw-semibold"
+                className="btn btn-sm btn-outline-success rounded-pill px-3 fw-semibold shadow-sm"
                 onClick={() => openQuickModal("gasto")}
               >
                 <i className="bi bi-plus-lg me-1"></i> + Movimiento
@@ -207,7 +256,7 @@ export default function Home() {
                 <p className="small mb-2">Aún no hay movimientos registrados este mes.</p>
                 <button 
                   type="button" 
-                  className="btn btn-sm btn-success rounded-pill px-3"
+                  className="btn btn-sm btn-success rounded-pill px-3 shadow-sm"
                   onClick={() => openQuickModal("gasto")}
                 >
                   Registrar primer movimiento
@@ -226,7 +275,7 @@ export default function Home() {
                     >
                       <div className="d-flex align-items-center gap-3">
                         <div 
-                          className="rounded-circle d-flex align-items-center justify-content-center"
+                          className="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
                           style={{ width: "38px", height: "38px", backgroundColor: cat.bg, color: cat.color }}
                         >
                           <i className={`bi ${cat.icon} fs-6`}></i>
@@ -254,6 +303,19 @@ export default function Home() {
                 })}
               </div>
             )}
+
+            {/* Accesos directos a consultas */}
+            <div className="d-flex flex-wrap justify-content-center gap-3 pt-3 mt-2 border-top">
+              <Link to="/gastos/consultar" className="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                <i className="bi bi-receipt me-1"></i> Ver todos los Gastos
+              </Link>
+              <Link to="/ingresos/consultar" className="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                <i className="bi bi-cash-coin me-1"></i> Ver todos los Ingresos
+              </Link>
+              <Link to="/ahorros" className="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                <i className="bi bi-piggy-bank me-1"></i> Administrar Ahorros
+              </Link>
+            </div>
           </div>
         </div>
       )}

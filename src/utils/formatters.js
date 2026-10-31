@@ -9,6 +9,13 @@ export const DIAS_SEMANA = [
   "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"
 ];
 
+export const MONEDAS = [
+  { id: "ARS", simbolo: "$", nombre: "Pesos Argentinos (ARS)", flag: "🇦🇷" },
+  { id: "USD", simbolo: "US$", nombre: "Dólares Estadounidenses (USD)", flag: "🇺🇸" },
+  { id: "EUR", simbolo: "€", nombre: "Euros (EUR)", flag: "🇪🇺" },
+  { id: "USDT", simbolo: "₮", nombre: "Tether / Crypto (USDT)", flag: "🪙" }
+];
+
 /**
  * Formatea un número al estilo local: miles con punto y decimales con coma (ej. 1.234,56)
  */
@@ -22,8 +29,9 @@ export function formatoNumber(number) {
 /**
  * Formatea un número como dinero con signo peso: $1.234,56
  */
-export function formatoMoneda(number) {
-  return `$${formatoNumber(number)}`;
+export function formatoMoneda(number, moneda = "ARS") {
+  const m = MONEDAS.find((item) => item.id === moneda) || MONEDAS[0];
+  return `${m.simbolo}${formatoNumber(number)}`;
 }
 
 /**

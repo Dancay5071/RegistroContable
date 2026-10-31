@@ -25,6 +25,31 @@ export const CATEGORIAS_INGRESO = [
   { id: "Otros", nombre: "Otros Ingresos", icon: "bi-cash-coin", color: "#475569", bg: "#f1f5f9", border: "#cbd5e1" }
 ];
 
+export const CATEGORIAS_AHORRO = [
+  { id: "Emergencia", nombre: "Fondo de Emergencia", icon: "bi-shield-check", color: "#15803d", bg: "#dcfce7", border: "#bbf7d0" },
+  { id: "Vacaciones", nombre: "Vacaciones & Viajes", icon: "bi-airplane", color: "#0369a1", bg: "#e0f2fe", border: "#bae6fd" },
+  { id: "Vehiculo", nombre: "Auto / Vehículo", icon: "bi-car-front", color: "#b45309", bg: "#fef3c7", border: "#fde68a" },
+  { id: "Vivienda", nombre: "Vivienda / Hogar", icon: "bi-house-heart", color: "#4338ca", bg: "#e0e7ff", border: "#c7d2fe" },
+  { id: "Inversiones", nombre: "Inversión / Futuro", icon: "bi-graph-up-arrow", color: "#047857", bg: "#d1fae5", border: "#a7f3d0" },
+  { id: "Tecnologia", nombre: "Tecnología / Herramientas", icon: "bi-laptop", color: "#6d28d9", bg: "#ede9fe", border: "#ddd6fe" },
+  { id: "Metas", nombre: "Meta Personal / General", icon: "bi-bullseye", color: "#be185d", bg: "#fce7f3", border: "#fbcfe8" }
+];
+
+export function getCategoriaAhorro(nombreOId) {
+  if (!nombreOId) return CATEGORIAS_AHORRO.find((c) => c.id === "Metas");
+  const encontrada = CATEGORIAS_AHORRO.find(
+    (c) => c.id.toLowerCase() === nombreOId.toLowerCase() || c.nombre.toLowerCase() === nombreOId.toLowerCase()
+  );
+  return encontrada || {
+    id: "Metas",
+    nombre: nombreOId,
+    icon: "bi-piggy-bank",
+    color: "#b45309",
+    bg: "#fef3c7",
+    border: "#fde68a"
+  };
+}
+
 export function getCategoriaGasto(nombreOId) {
   if (!nombreOId) return CATEGORIAS_GASTO.find((c) => c.id === "Otros");
   const encontrada = CATEGORIAS_GASTO.find(
@@ -54,3 +79,4 @@ export function getCategoriaIngreso(nombreOId) {
     border: "#b3dfbb"
   };
 }
+

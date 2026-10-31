@@ -6,6 +6,7 @@ import { getDemoResumenAnual } from "../services/demoData";
 import { getResumenAnualUser } from "../services/dbService";
 import { MESES, formatoNumber } from "../utils/formatters";
 import Loader from "../components/Loader";
+import MonthlyComparisonChart from "../components/charts/MonthlyComparisonChart";
 
 export default function Resumen() {
   const { user, isDemo } = useAuth();
@@ -75,7 +76,7 @@ export default function Resumen() {
       )}
 
       {!loading && resumenData && (
-        <div className="w-100 p-4 bg-white rounded-4 shadow-sm border table-responsive mt-2" style={{ maxWidth: "1280px" }}>
+        <div className="w-100 p-4 bg-white rounded-4 shadow-sm border mt-2" style={{ maxWidth: "1280px" }}>
           <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
             <h5 className="text-dark fw-bold mb-0 d-flex align-items-center gap-2">
               <i className="bi bi-graph-up-arrow text-success"></i>
@@ -86,7 +87,18 @@ export default function Resumen() {
             </span>
           </div>
 
-          <table className="table table-bordered text-center align-middle mb-0">
+          {/* Gráfico Comparativo Anual */}
+          <div className="mb-4 p-3 bg-light rounded-3" style={{ height: "300px" }}>
+            <MonthlyComparisonChart 
+              ingresosMensuales={resumenData.ingresosMensuales || []}
+              gastosMensuales={resumenData.gastosMensuales || []}
+              ahorrosMensuales={resumenData.ahorrosMensuales || []}
+              anio={anio}
+            />
+          </div>
+
+          <div className="table-responsive">
+            <table className="table table-bordered text-center align-middle mb-0">
             <thead className="table-light">
               <tr>
                 <th scope="col" className="text-start text-muted small" style={{ minWidth: "170px" }}>Concepto / Mes</th>
@@ -153,6 +165,7 @@ export default function Resumen() {
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

@@ -38,16 +38,23 @@ export function listenUserBalances(userId, callback) {
       const data = docSnap.data();
       callback({
         montoActual: Number(data.montoActual || 0),
-        totalAhorros: Number(data.totalAhorros || 0)
+        totalAhorros: Number(data.totalAhorros || data.totalAhorrosARS || 0),
+        totalAhorrosUSD: Number(data.totalAhorrosUSD || 0),
+        totalAhorrosEUR: Number(data.totalAhorrosEUR || 0)
       });
     } else {
       // Si es un usuario nuevo, inicializar balances en 0
-      setDoc(balancesDoc, { montoActual: 0, totalAhorros: 0 }, { merge: true });
-      callback({ montoActual: 0, totalAhorros: 0 });
+      setDoc(balancesDoc, { 
+        montoActual: 0, 
+        totalAhorros: 0,
+        totalAhorrosUSD: 0,
+        totalAhorrosEUR: 0
+      }, { merge: true });
+      callback({ montoActual: 0, totalAhorros: 0, totalAhorrosUSD: 0, totalAhorrosEUR: 0 });
     }
   }, (error) => {
     console.error("Error al escuchar balances del usuario:", error);
-    callback({ montoActual: 0, totalAhorros: 0 });
+    callback({ montoActual: 0, totalAhorros: 0, totalAhorrosUSD: 0, totalAhorrosEUR: 0 });
   });
 }
 
@@ -250,8 +257,8 @@ export async function deleteIngresoUser(userId, id, { mes, anio, monto }) {
   });
 }
 
-// 10. Ahorros: Agregar Ahorro Directo
-export async function addAhorroDirectoUser(userId, { mes, anio, monto }) {
+// 10. Ahorros: Agregar Ahorro Directo (soporta Categoría y Moneda)
+export async function addAhorroDirectoUser(userId, { mes, anio, monto, moneda = "ARS", categoria = "Emergencia", descripcion = "" }) {
   const clave = `${mes}_${anio}`;
   const transaccionesRef = collection(db, "users", userId, "transacciones");
   const balancesRef = doc(db, "users", userId, "config", "balances");
@@ -260,23 +267,35 @@ export async function addAhorroDirectoUser(userId, { mes, anio, monto }) {
   await addDoc(transaccionesRef, {
     tipo: "ahorro",
     monto: Number(monto),
+    moneda,
+    categoria,
+    descripcion: descripcion.trim() || `Ahorro en ${categoria}`,
     mes,
     anio: Number(anio),
     claveMesAnio: clave,
     createdAt: serverTimestamp()
   });
 
-  await setDoc(balancesRef, {
-    totalAhorros: increment(Number(monto))
-  }, { merge: true });
+  const balanceUpdate = {};
+  if (moneda === "USD") {
+    balanceUpdate.totalAhorrosUSD = increment(Number(monto));
+  } else if (moneda === "EUR") {
+    balanceUpdate.totalAhorrosEUR = increment(Number(monto));
+  } else {
+    balanceUpdate.totalAhorros = increment(Number(monto));
+  }
 
-  await setDoc(resumenRef, {
-    totalAhorros: increment(Number(monto))
-  }, { merge: true });
+  await setDoc(balancesRef, balanceUpdate, { merge: true });
+
+  if (moneda === "ARS") {
+    await setDoc(resumenRef, {
+      totalAhorros: increment(Number(monto))
+    }, { merge: true });
+  }
 }
 
-// 11. Ahorros: Extraer Ahorro
-export async function addExtraccionUser(userId, { mes, anio, monto }) {
+// 11. Ahorros: Extraer Ahorro (soporta Categoría y Moneda)
+export async function addExtraccionUser(userId, { mes, anio, monto, moneda = "ARS", categoria = "Emergencia", descripcion = "" }) {
   const clave = `${mes}_${anio}`;
   const transaccionesRef = collection(db, "users", userId, "transacciones");
   const balancesRef = doc(db, "users", userId, "config", "balances");
@@ -285,19 +304,58 @@ export async function addExtraccionUser(userId, { mes, anio, monto }) {
   await addDoc(transaccionesRef, {
     tipo: "extraccion",
     monto: Number(monto),
+    moneda,
+    categoria,
+    descripcion: descripcion.trim() || `Extracción de ${categoria}`,
     mes,
     anio: Number(anio),
     claveMesAnio: clave,
     createdAt: serverTimestamp()
   });
 
-  await setDoc(balancesRef, {
-    totalAhorros: increment(-Number(monto))
-  }, { merge: true });
+  const balanceUpdate = {};
+  if (moneda === "USD") {
+    balanceUpdate.totalAhorrosUSD = increment(-Number(monto));
+  } else if (moneda === "EUR") {
+    balanceUpdate.totalAhorrosEUR = increment(-Number(monto));
+  } else {
+    balanceUpdate.totalAhorros = increment(-Number(monto));
+  }
 
-  await setDoc(resumenRef, {
-    totalExtracciones: increment(Number(monto))
-  }, { merge: true });
+  await setDoc(balancesRef, balanceUpdate, { merge: true });
+
+  if (moneda === "ARS") {
+    await setDoc(resumenRef, {
+      totalExtracciones: increment(Number(monto))
+    }, { merge: true });
+  }
+}
+
+// 12. Obtener desglose de ahorros por categoría y movimientos
+export async function getDetalleAhorrosUser(userId) {
+  if (!userId) return [];
+  try {
+    const transaccionesRef = collection(db, "users", userId, "transacciones");
+    const snap = await getDocs(transaccionesRef);
+    const ahorros = [];
+    snap.forEach((d) => {
+      const data = d.data();
+      if (data.tipo === "ahorro" || data.tipo === "extraccion") {
+        ahorros.push({ id: d.id, ...data });
+      }
+    });
+
+    ahorros.sort((a, b) => {
+      const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+      const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+      return timeB - timeA;
+    });
+
+    return ahorros;
+  } catch (error) {
+    console.error("Error al obtener detalle de ahorros:", error);
+    return [];
+  }
 }
 
 // 12. Ahorros: Consultar Año

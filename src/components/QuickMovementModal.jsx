@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useToast } from "../context/ToastContext";
-import { MESES } from "../utils/formatters";
-import { CATEGORIAS_GASTO, CATEGORIAS_INGRESO } from "../utils/categories";
+import { MESES, MONEDAS, formatoMoneda } from "../utils/formatters";
+import { CATEGORIAS_GASTO, CATEGORIAS_INGRESO, CATEGORIAS_AHORRO } from "../utils/categories";
 import { 
   addGastoUser, 
   addIngresoUser, 
@@ -33,6 +33,8 @@ export default function QuickMovementModal() {
   const [monto, setMonto] = useState("");
   const [categoriaGasto, setCategoriaGasto] = useState("Supermercado");
   const [categoriaIngreso, setCategoriaIngreso] = useState("Sueldo");
+  const [categoriaAhorro, setCategoriaAhorro] = useState("Emergencia");
+  const [monedaAhorro, setMonedaAhorro] = useState("ARS");
   const [porcentajeAhorro, setPorcentajeAhorro] = useState(0);
   const [tipoAhorro, setTipoAhorro] = useState("agregar"); // "agregar" | "extraer"
   const [loading, setLoading] = useState(false);
@@ -105,20 +107,36 @@ export default function QuickMovementModal() {
         }
         showToast(`Ingreso registrado correctamente.`, "success");
       } else if (activeTab === "ahorro") {
+        const descFinal = descripcion.trim() || `${tipoAhorro === 'agregar' ? 'Aporte a' : 'Extracción de'} ${categoriaAhorro}`;
+        const simboloMoneda = MONEDAS.find((m) => m.id === monedaAhorro)?.simbolo || "$";
         if (tipoAhorro === "agregar") {
           if (isDemo) {
-            addDemoAhorro(mes, anio, montoNum);
+            addDemoAhorro(mes, anio, montoNum, monedaAhorro, categoriaAhorro, descFinal);
           } else {
-            await addAhorroDirectoUser(user.uid, { mes, anio, monto: montoNum });
+            await addAhorroDirectoUser(user.uid, { 
+              mes, 
+              anio, 
+              monto: montoNum,
+              moneda: monedaAhorro,
+              categoria: categoriaAhorro,
+              descripcion: descFinal
+            });
           }
-          showToast(`Se agregaron $${montoNum.toLocaleString()} a tus ahorros.`, "success");
+          showToast(`Se agregaron ${simboloMoneda}${montoNum.toLocaleString()} a ${categoriaAhorro}.`, "success");
         } else {
           if (isDemo) {
-            addDemoExtraccion(mes, anio, montoNum);
+            addDemoExtraccion(mes, anio, montoNum, monedaAhorro, categoriaAhorro, descFinal);
           } else {
-            await addExtraccionUser(user.uid, { mes, anio, monto: montoNum });
+            await addExtraccionUser(user.uid, { 
+              mes, 
+              anio, 
+              monto: montoNum,
+              moneda: monedaAhorro,
+              categoria: categoriaAhorro,
+              descripcion: descFinal
+            });
           }
-          showToast(`Extracción de $${montoNum.toLocaleString()} registrada.`, "info");
+          showToast(`Extracción de ${simboloMoneda}${montoNum.toLocaleString()} registrada.`, "info");
         }
       }
 
@@ -367,7 +385,7 @@ export default function QuickMovementModal() {
                         onChange={() => setTipoAhorro("agregar")} 
                       />
                       <label className="btn btn-outline-success btn-sm fw-semibold" htmlFor="opcAgregar">
-                        <i className="bi bi-plus-circle me-1"></i> Agregar a Ahorros
+                        <i className="bi bi-plus-circle me-1"></i> Aportar Ahorro
                       </label>
 
                       <input 
@@ -384,12 +402,76 @@ export default function QuickMovementModal() {
                     </div>
                   </div>
 
+                  {/* Selector de Moneda */}
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted mb-1 d-block">
+                      Tipo de Moneda
+                    </label>
+                    <div className="d-flex gap-2">
+                      {MONEDAS.map((m) => (
+                        <button
+                          key={m.id}
+                          type="button"
+                          className={`btn btn-sm px-3 py-1 rounded-pill fw-semibold ${monedaAhorro === m.id ? 'btn-primary shadow-sm' : 'btn-outline-secondary'}`}
+                          onClick={() => setMonedaAhorro(m.id)}
+                          disabled={loading}
+                        >
+                          <span className="me-1">{m.flag}</span>
+                          {m.id} ({m.simbolo})
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Selector de Categoría / Meta de Ahorro */}
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted mb-1 d-block">
+                      Meta / Destino del Ahorro
+                    </label>
+                    <div className="d-flex flex-wrap gap-1">
+                      {CATEGORIAS_AHORRO.map((cat) => (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small ${categoriaAhorro === cat.id ? 'fw-bold border-2 shadow-sm' : 'opacity-80'}`}
+                          style={{
+                            backgroundColor: categoriaAhorro === cat.id ? cat.bg : "#f1ede4",
+                            color: cat.color,
+                            borderColor: cat.border,
+                            fontSize: "0.82rem"
+                          }}
+                          onClick={() => setCategoriaAhorro(cat.id)}
+                          disabled={loading}
+                        >
+                          <i className={`bi ${cat.icon}`}></i>
+                          <span>{cat.nombre.split(" ")[0]}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted mb-1">
+                      Descripción (opcional)
+                    </label>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      placeholder={`Ej. Aporte para ${categoriaAhorro}`}
+                      value={descripcion}
+                      onChange={(e) => setDescripcion(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
+
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted mb-1">
                       Monto {tipoAhorro === "agregar" ? "a Ahorrar" : "a Extraer"}
                     </label>
                     <div className="input-group">
-                      <span className="input-group-text">$</span>
+                      <span className="input-group-text fw-bold">
+                        {MONEDAS.find((m) => m.id === monedaAhorro)?.simbolo || "$"}
+                      </span>
                       <input 
                         type="number" 
                         step="0.01" 
@@ -447,3 +529,4 @@ export default function QuickMovementModal() {
     </div>
   );
 }
+
