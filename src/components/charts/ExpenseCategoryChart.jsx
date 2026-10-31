@@ -119,3 +119,4 @@ export default function ExpenseCategoryChart({ gastos = [], mes = "", anio = "" 
     </div>
   );
 }
+
