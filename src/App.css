@@ -1,19 +1,36 @@
 /* src/App.css */
 /* ==========================================================================
-   Fintech Light Design System (Paleta Clara, Elegante y Rápida)
+   Fintech Pastel Design System (Cálido, Acogedor, Cero Blanco Clínico)
+   Optimizado para máxima legibilidad y contraste ("Para que se pueda ver")
    ========================================================================== */
 
 :root {
-  --bg-main: #f8fafc;
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --border-subtle: #e2e8f0;
-  --border-focus: #10b981;
-  --accent-primary: #2563eb;
-  --accent-success: #16a34a;
-  --accent-danger: #dc2626;
-  --accent-warning: #d97706;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
+  /* Fondos Pastel Suaves */
+  --bg-main: #f5f1e8;         /* Lino / Crema pastel cálido de fondo */
+  --bg-card: #fdfbf7;         /* Marfil pastel suave para tarjetas */
+  --bg-card-alt: #f3ede2;     /* Pastel secundario para contenedores internos */
+  --border-subtle: #ded4c2;   /* Borde pastel visible y bien definido */
+  --border-focus: #2d6a4f;    /* Verde botánico para focos */
+
+  /* Tipografía de Alto Contraste (Crucial para que todo se lea nítido) */
+  --text-main: #1e293b;       /* Pizarra oscuro / carbón (> 11:1 contraste) */
+  --text-muted: #475569;      /* Gris medio oscuro con excelente lectura */
+
+  /* Acentos Pastel Sólidos con Contraste AAA */
+  --accent-primary: #2b577e;  /* Azul pizarra / cielo profundo */
+  --accent-success: #1e633f;  /* Verde salvia / botánico profundo */
+  --accent-danger: #a82e2e;   /* Terracota / carmesí profundo */
+  --accent-warning: #945203;  /* Miel / ámbar tostado profundo */
+
+  /* Fondos de Badges Pastel */
+  --badge-success-bg: #e2f2e5;
+  --badge-success-border: #b3dfbb;
+  --badge-danger-bg: #fbe5e3;
+  --badge-danger-border: #f4b8b3;
+  --badge-warning-bg: #fef0cd;
+  --badge-warning-border: #fae09c;
+  --badge-primary-bg: #ddeaf6;
+  --badge-primary-border: #b8d3ee;
 }
 
 html, body, #root {
@@ -42,7 +59,7 @@ body {
 }
 
 /* ==========================================================================
-   Fondo Claro Sutil (Limpio, Rápido, 0 KB)
+   Fondo Pastel Cálido (0 KB, Rápido, Sin fotografía de 7 MB)
    ========================================================================== */
 .fondo {
   position: fixed;
@@ -50,12 +67,12 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #f8fafc;
+  background-color: #f5f1e8;
   background-image:
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.06) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.07) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(244, 63, 94, 0.04) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.05) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(175, 212, 185, 0.32) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(248, 220, 198, 0.35) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(205, 220, 239, 0.28) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(253, 246, 227, 0.45) 0px, transparent 50%);
   background-attachment: fixed;
   z-index: -1;
 }
@@ -77,20 +94,20 @@ body {
 }
 
 /* ==========================================================================
-   Navbar Superior Claro
+   Navbar Superior Pastel
    ========================================================================== */
 .navbar {
-  background-color: rgba(255, 255, 255, 0.94) !important;
+  background-color: rgba(246, 241, 232, 0.95) !important;
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border-subtle);
   padding: 0.75rem 1.25rem;
   z-index: 1020;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 10px rgba(80, 65, 45, 0.05);
 }
 
 .nav-link {
   color: #334155 !important;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.95rem;
   padding: 0.5rem 0.85rem !important;
   border-radius: 8px;
@@ -100,20 +117,21 @@ body {
 .nav-link:hover, 
 .nav-link.active {
   color: var(--accent-success) !important;
-  background-color: rgba(22, 163, 74, 0.08);
+  background-color: #e0eee3 !important;
   text-decoration: none !important;
 }
 
 .dropdown-menu {
-  background-color: #ffffff !important;
+  background-color: #fdfbf7 !important;
   border: 1px solid var(--border-subtle) !important;
   border-radius: 12px !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 10px 25px rgba(80, 65, 45, 0.08) !important;
   padding: 0.5rem !important;
 }
 
 .dropdown-item {
   color: #334155 !important;
+  font-weight: 500;
   border-radius: 6px;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
@@ -121,14 +139,14 @@ body {
 }
 
 .dropdown-item:hover {
-  background-color: rgba(22, 163, 74, 0.1) !important;
+  background-color: #e4f1e7 !important;
   color: var(--accent-success) !important;
 }
 
 /* Pastilla de Saldos en Navbar */
 .navbar-balance-pill {
-  background: #f1f5f9;
-  border: 1px solid var(--border-subtle);
+  background: #ebe3d3;
+  border: 1px solid #dcd1be;
   border-radius: 20px;
   padding: 0.35rem 0.85rem;
   font-size: 0.85rem;
@@ -151,35 +169,57 @@ body {
 
 .dot-green {
   background-color: var(--accent-success);
-  box-shadow: 0 0 6px rgba(22, 163, 74, 0.4);
+  box-shadow: 0 0 6px rgba(30, 99, 63, 0.4);
 }
 
 .dot-blue {
   background-color: var(--accent-primary);
-  box-shadow: 0 0 6px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 0 6px rgba(43, 87, 126, 0.4);
+}
+
+.dot-amber {
+  background-color: var(--accent-warning);
+  box-shadow: 0 0 6px rgba(148, 82, 3, 0.4);
 }
 
 /* ==========================================================================
-   Tarjetas & Glassmorphism Claro
+   Tarjetas & Superficies Pastel
    ========================================================================== */
 .tarjeta-gasto,
 .tarjeta-ingreso,
 .tarjeta-ahorro,
 .card-consulta,
 .consulta,
-.principal {
-  background-color: #ffffff;
-  border: 1px solid var(--border-subtle);
+.principal,
+.modal-content,
+.bg-white {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 18px rgba(80, 65, 45, 0.05), 0 1px 3px rgba(80, 65, 45, 0.03);
   color: var(--text-main);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.tarjeta-gasto,
-.tarjeta-ingreso {
+/* Tintes Pastel Específicos por Sección */
+.tarjeta-gasto {
+  background: linear-gradient(180deg, #fdfbf9 0%, #fcf0ef 100%) !important;
+  border-color: #eed0cb !important;
   width: 100%;
   max-width: 460px;
+}
+
+.tarjeta-ingreso {
+  background: linear-gradient(180deg, #fbfdfa 0%, #f0f8f3 100%) !important;
+  border-color: #c9e4d0 !important;
+  width: 100%;
+  max-width: 460px;
+}
+
+.tarjeta-ahorro {
+  background: linear-gradient(180deg, #fdfdfb 0%, #f9f4e8 100%) !important;
+  border-color: #ebdeb8 !important;
+  max-width: 600px;
 }
 
 .card-consulta {
@@ -191,11 +231,7 @@ body {
 .consulta {
   flex: 1;
   min-width: 320px;
-  max-width: 780px;
-}
-
-.tarjeta-ahorro {
-  max-width: 580px;
+  max-width: 820px;
 }
 
 .tituloCard {
@@ -207,12 +243,13 @@ body {
   margin-bottom: 1.25rem;
 }
 
-/* Inputs y Selects Claros */
+/* Inputs y Selects Pastel con Borde Definido */
 .form-control,
 .form-select {
-  background-color: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  color: var(--text-main) !important;
+  background-color: #fffefc !important;
+  border: 1.5px solid #c7bdae !important;
+  color: #0f172a !important;
+  font-weight: 500;
   border-radius: 10px !important;
   padding: 0.65rem 0.9rem !important;
   font-size: 0.95rem;
@@ -222,81 +259,240 @@ body {
 .form-control:focus,
 .form-select:focus {
   border-color: var(--border-focus) !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18) !important;
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.18) !important;
+  background-color: #ffffff !important;
 }
 
 .input-group-text {
-  background-color: #f1f5f9 !important;
-  border: 1px solid #cbd5e1 !important;
-  color: var(--text-muted) !important;
+  background-color: #eee6d6 !important;
+  border: 1.5px solid #c7bdae !important;
+  color: #334155 !important;
+  font-weight: 600;
   border-radius: 10px;
 }
 
 /* ==========================================================================
-   Home Hero & KPI Cards Claros
+   Home Hero & KPI Cards Pastel
    ========================================================================== */
 .home-page {
   padding: 2.5rem 1rem;
 }
 
 .hero-balance-card {
-  background: #ffffff;
   border: 1px solid var(--border-subtle);
   border-radius: 20px;
   padding: 1.75rem;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 20px rgba(80, 65, 45, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .hero-balance-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 28px rgba(80, 65, 45, 0.08);
+}
+
+.hero-balance-card.hero-saldo {
+  background: linear-gradient(135deg, #f2f8f4 0%, #e7f3ec 100%) !important;
+  border-color: #b9dec2 !important;
+}
+
+.hero-balance-card.hero-saldo .kpi-amount {
+  color: #14532d !important;
+}
+
+.hero-balance-card.hero-ahorro {
+  background: linear-gradient(135deg, #fbf7ee 0%, #f4ecdc 100%) !important;
+  border-color: #e5d7b5 !important;
+}
+
+.hero-balance-card.hero-ahorro .kpi-amount {
+  color: #854d0e !important;
 }
 
 .kpi-title {
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--text-muted);
+  font-weight: 700;
   margin-bottom: 0.4rem;
 }
 
 .kpi-amount {
-  font-size: 2rem;
+  font-size: 2.1rem;
   font-weight: 800;
   font-feature-settings: "tnum";
 }
 
 /* ==========================================================================
-   Tablas Claras
+   Tablas Pastel Nítidas (Alto Contraste)
    ========================================================================== */
 .table {
   color: var(--text-main) !important;
   margin-bottom: 0;
 }
 
-.table th {
-  color: #475569;
-  font-weight: 600;
+.table th,
+.table-light th,
+thead th {
+  color: #1e293b !important;
+  font-weight: 700 !important;
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   border-bottom: 2px solid var(--border-subtle) !important;
-  background-color: #f8fafc;
+  background-color: #ede5d5 !important;
 }
 
 .table td {
-  border-bottom: 1px solid var(--border-subtle) !important;
+  border-bottom: 1px solid #e7dfd0 !important;
   font-size: 0.95rem;
   vertical-align: middle;
 }
 
 .table-hover tbody tr:hover td {
-  background-color: #f1f5f9 !important;
+  background-color: #f4ecde !important;
+}
+
+tfoot,
+tfoot td,
+.table-light td {
+  background-color: #ede5d5 !important;
+  border-top: 2px solid var(--border-subtle) !important;
+  color: #1e293b !important;
 }
 
 /* ==========================================================================
-   Sistema de Toasts Flotantes
+   Botones Armonizados con la Paleta Pastel
+   ========================================================================== */
+.btn-success {
+  background-color: #246845 !important;
+  border-color: #1d5538 !important;
+  color: #ffffff !important;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+  background-color: #1b4f34 !important;
+  border-color: #153e29 !important;
+}
+
+.btn-danger {
+  background-color: #b23535 !important;
+  border-color: #982c2c !important;
+  color: #ffffff !important;
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+  background-color: #932828 !important;
+  border-color: #791f1f !important;
+}
+
+.btn-primary {
+  background-color: #2e597f !important;
+  border-color: #244766 !important;
+  color: #ffffff !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #21415e !important;
+  border-color: #193147 !important;
+}
+
+.btn-warning {
+  background-color: #c46d03 !important;
+  border-color: #a45a02 !important;
+  color: #ffffff !important;
+}
+
+.btn-warning:hover,
+.btn-warning:focus {
+  background-color: #a05702 !important;
+  border-color: #844701 !important;
+}
+
+.btn-outline-success {
+  border-color: #246845 !important;
+  color: #246845 !important;
+  font-weight: 600;
+}
+
+.btn-outline-success:hover {
+  background-color: #246845 !important;
+  color: #ffffff !important;
+}
+
+.btn-outline-danger {
+  border-color: #b23535 !important;
+  color: #b23535 !important;
+  font-weight: 600;
+}
+
+.btn-outline-danger:hover {
+  background-color: #b23535 !important;
+  color: #ffffff !important;
+}
+
+.btn-outline-primary {
+  border-color: #2e597f !important;
+  color: #2e597f !important;
+  font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+  background-color: #2e597f !important;
+  color: #ffffff !important;
+}
+
+.btn-outline-warning {
+  border-color: #c46d03 !important;
+  color: #945203 !important;
+  font-weight: 600;
+}
+
+.btn-outline-warning:hover {
+  background-color: #c46d03 !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   Badges Pastel con Texto Legible
+   ========================================================================== */
+.badge.bg-success,
+.badge-pastel-success {
+  background-color: var(--badge-success-bg) !important;
+  border: 1px solid var(--badge-success-border) !important;
+  color: #14532d !important;
+  font-weight: 600;
+}
+
+.badge.bg-danger,
+.badge-pastel-danger {
+  background-color: var(--badge-danger-bg) !important;
+  border: 1px solid var(--badge-danger-border) !important;
+  color: #991b1b !important;
+  font-weight: 600;
+}
+
+.badge.bg-warning,
+.badge-pastel-warning {
+  background-color: var(--badge-warning-bg) !important;
+  border: 1px solid var(--badge-warning-border) !important;
+  color: #854d0e !important;
+  font-weight: 600;
+}
+
+.badge.bg-primary,
+.badge-pastel-primary {
+  background-color: var(--badge-primary-bg) !important;
+  border: 1px solid var(--badge-primary-border) !important;
+  color: #1e40af !important;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Sistema de Toasts Flotantes Pastel
    ========================================================================== */
 .toast-container-custom {
   position: fixed;
@@ -313,14 +509,14 @@ body {
   pointer-events: auto;
   min-width: 300px;
   max-width: 420px;
-  background-color: #ffffff;
+  background-color: #fdfbf7;
   color: var(--text-main);
   border-radius: 12px;
   padding: 0.9rem 1.1rem;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 30px rgba(80, 65, 45, 0.12);
   display: flex;
   align-items: center;
-  border-left: 4px solid var(--accent-primary);
+  border-left: 5px solid var(--accent-primary);
   border-top: 1px solid var(--border-subtle);
   border-right: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
@@ -340,22 +536,22 @@ body {
 
 .toast-message {
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* ==========================================================================
-   Footer Claro
+   Footer Pastel
    ========================================================================== */
 footer {
-  background-color: #ffffff !important;
+  background-color: #ede5d5 !important;
   border-top: 1px solid var(--border-subtle);
-  padding: 0.75rem 0;
+  padding: 0.85rem 0;
   font-size: 0.85rem;
   color: var(--text-muted);
 }
 
 footer a {
-  color: #475569;
+  color: #334155;
   transition: color 0.2s;
 }
 

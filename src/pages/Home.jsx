@@ -41,7 +41,7 @@ export default function Home() {
           style={{ maxHeight: "120px", filter: "drop-shadow(0 6px 12px rgba(0,0,0,0.08))" }}
         />
         <h1 className="h4 fw-bold mt-3 text-dark tracking-wide">Registro Contable</h1>
-        <div className="badge bg-white shadow-sm border px-3 py-2 text-secondary fw-medium rounded-pill mt-1">
+        <div className="badge shadow-sm border px-3 py-2 text-dark fw-medium rounded-pill mt-1" style={{ backgroundColor: "var(--bg-card)" }}>
           <i className="bi bi-calendar3 me-2 text-success"></i>
           {fecha}
         </div>
@@ -49,8 +49,8 @@ export default function Home() {
 
       {/* Contenido Principal */}
       {!user ? (
-        <div className="principal text-center p-4 p-md-5 rounded-4 shadow-sm text-dark bg-white border" style={{ maxWidth: "560px", width: "100%" }}>
-          <h2 className="h4 fw-bold mb-3 text-dark">Control Financiero Simple y Eficiente</h2>
+        <div className="principal text-center p-4 p-md-5 rounded-4 shadow-sm border" style={{ maxWidth: "560px", width: "100%" }}>
+          <h2 className="h4 fw-bold mb-3">Control Financiero Simple y Eficiente</h2>
           <p className="text-muted mb-4 small">
             Gestiona tus ingresos, gastos diarios y metas de ahorro con balances en tiempo real y estadísticas mensuales organizadas.
           </p>
@@ -65,7 +65,7 @@ export default function Home() {
               Iniciar sesión
             </button>
             <button 
-              className="btn btn-warning btn-lg px-4 fw-semibold text-dark shadow-sm d-flex align-items-center justify-content-center gap-2" 
+              className="btn btn-warning btn-lg px-4 fw-semibold text-white shadow-sm d-flex align-items-center justify-content-center gap-2" 
               type="button" 
               onClick={loginAsDemo}
             >
@@ -92,33 +92,33 @@ export default function Home() {
             </div>
           )}
 
-          {/* Tarjetas KPI Hero Claros */}
+          {/* Tarjetas KPI Hero Pastel */}
           <div className="row g-3 mb-4">
             <div className="col-12 col-md-6">
-              <div className="hero-balance-card d-flex align-items-center justify-content-between p-4 bg-white border rounded-4 shadow-sm">
+              <div className="hero-balance-card hero-saldo d-flex align-items-center justify-content-between p-4 rounded-4 shadow-sm">
                 <div>
                   <div className="kpi-title text-success d-flex align-items-center gap-1">
                     <i className="bi bi-wallet2"></i> Saldo Disponible
                   </div>
-                  <div className="kpi-amount text-dark">{formatoMoneda(montoActual)}</div>
+                  <div className="kpi-amount">{formatoMoneda(montoActual)}</div>
                   <span className="text-muted small">Actualizado en tiempo real</span>
                 </div>
-                <div className="p-3 bg-success bg-opacity-10 rounded-circle text-success fs-2">
+                <div className="p-3 bg-success bg-opacity-15 rounded-circle text-success fs-2">
                   <i className="bi bi-cash-stack"></i>
                 </div>
               </div>
             </div>
 
             <div className="col-12 col-md-6">
-              <div className="hero-balance-card d-flex align-items-center justify-content-between p-4 bg-white border rounded-4 shadow-sm">
+              <div className="hero-balance-card hero-ahorro d-flex align-items-center justify-content-between p-4 rounded-4 shadow-sm">
                 <div>
-                  <div className="kpi-title text-primary d-flex align-items-center gap-1">
+                  <div className="kpi-title text-warning d-flex align-items-center gap-1">
                     <i className="bi bi-piggy-bank"></i> Total Ahorrado
                   </div>
-                  <div className="kpi-amount text-dark">{formatoMoneda(totalAhorros)}</div>
+                  <div className="kpi-amount">{formatoMoneda(totalAhorros)}</div>
                   <span className="text-muted small">Fondo acumulado</span>
                 </div>
-                <div className="p-3 bg-primary bg-opacity-10 rounded-circle text-primary fs-2">
+                <div className="p-3 bg-warning bg-opacity-15 rounded-circle text-warning fs-2">
                   <i className="bi bi-shield-lock"></i>
                 </div>
               </div>
@@ -126,7 +126,7 @@ export default function Home() {
           </div>
 
           {/* Acciones Rápidas */}
-          <div className="principal p-4 rounded-4 shadow-sm bg-white border">
+          <div className="principal p-4 rounded-4 shadow-sm border">
             <h5 className="h6 text-muted text-uppercase fw-bold mb-3 tracking-wider">Acciones Rápidas</h5>
             <div className="row g-2">
               <div className="col-6 col-sm-3">

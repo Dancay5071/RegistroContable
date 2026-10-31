@@ -44,13 +44,13 @@ export default function Navbar() {
           <div className="balance-item" title="Monto disponible actual">
             <span className="dot dot-green"></span>
             <span className="text-muted small">Saldo:</span>
-            <strong className="text-dark">{formatoMoneda(montoActual)}</strong>
+            <strong className="text-success">{formatoMoneda(montoActual)}</strong>
           </div>
           <span className="text-secondary opacity-50">|</span>
           <div className="balance-item" title="Total ahorrado">
-            <span className="dot dot-blue"></span>
+            <span className="dot dot-amber"></span>
             <span className="text-muted small">Ahorro:</span>
-            <strong className="text-primary">{formatoMoneda(totalAhorros)}</strong>
+            <strong className="text-warning">{formatoMoneda(totalAhorros)}</strong>
           </div>
         </div>
 
@@ -80,12 +80,12 @@ export default function Navbar() {
             <div className="balance-item">
               <span className="dot dot-green"></span>
               <span className="text-muted small">Saldo:</span>
-              <strong className="text-dark">{formatoMoneda(montoActual)}</strong>
+              <strong className="text-success">{formatoMoneda(montoActual)}</strong>
             </div>
             <div className="balance-item">
-              <span className="dot dot-blue"></span>
+              <span className="dot dot-amber"></span>
               <span className="text-muted small">Ahorro:</span>
-              <strong className="text-primary">{formatoMoneda(totalAhorros)}</strong>
+              <strong className="text-warning">{formatoMoneda(totalAhorros)}</strong>
             </div>
           </div>
 
@@ -151,7 +151,7 @@ export default function Navbar() {
             {/* Ahorros */}
             <li className="nav-item">
               <NavLink className="nav-link" to="/ahorros" onClick={closeMenu}>
-                <i className="bi bi-piggy-bank me-1 text-info"></i> Ahorros
+                <i className="bi bi-piggy-bank me-1 text-warning"></i> Ahorros
               </NavLink>
             </li>
 

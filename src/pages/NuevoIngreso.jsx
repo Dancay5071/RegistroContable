@@ -136,14 +136,14 @@ export default function NuevoIngreso() {
 
           {/* Resumen dinámico del ingreso */}
           {montoNum > 0 && porcentaje > 0 && (
-            <div className="p-3 bg-dark bg-opacity-50 rounded-3 mb-3 border border-secondary border-opacity-25 small">
+            <div className="p-3 rounded-3 mb-3 border small" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
               <div className="d-flex justify-content-between text-muted mb-1">
                 <span>Disponible (Neto):</span>
-                <strong className="text-success">${netoCalculado.toFixed(2)}</strong>
+                <strong className="text-success fs-6">${netoCalculado.toFixed(2)}</strong>
               </div>
               <div className="d-flex justify-content-between text-muted">
                 <span>Directo a Ahorro ({porcentaje}%):</span>
-                <strong className="text-info">${ahorroCalculado.toFixed(2)}</strong>
+                <strong className="text-primary fs-6">${ahorroCalculado.toFixed(2)}</strong>
               </div>
             </div>
           )}

@@ -107,36 +107,36 @@ export default function Resumen() {
               </tr>
 
               {/* Ingresos */}
-              <tr style={{ backgroundColor: "rgba(22, 163, 74, 0.05)" }}>
+              <tr style={{ backgroundColor: "rgba(30, 99, 63, 0.07)" }}>
                 <th scope="row" className="text-start text-success fw-bold">
                   <i className="bi bi-arrow-up-short"></i> Ingresos
                 </th>
                 {resumenData.ingresosMensuales.map((val, idx) => (
-                  <td key={idx} className="text-success fw-semibold">${formatoNumber(val)}</td>
+                  <td key={idx} className="text-success fw-bold">${formatoNumber(val)}</td>
                 ))}
                 <td className="fw-bold text-success fs-6">${formatoNumber(resumenData.totalAnualIngresos)}</td>
               </tr>
 
               {/* Gastos */}
-              <tr style={{ backgroundColor: "rgba(220, 38, 38, 0.05)" }}>
+              <tr style={{ backgroundColor: "rgba(168, 46, 46, 0.07)" }}>
                 <th scope="row" className="text-start text-danger fw-bold">
                   <i className="bi bi-arrow-down-short"></i> Gastos
                 </th>
                 {resumenData.gastosMensuales.map((val, idx) => (
-                  <td key={idx} className="text-danger fw-semibold">${formatoNumber(val)}</td>
+                  <td key={idx} className="text-danger fw-bold">${formatoNumber(val)}</td>
                 ))}
                 <td className="fw-bold text-danger fs-6">${formatoNumber(resumenData.totalAnualGastos)}</td>
               </tr>
 
               {/* Ahorros */}
-              <tr style={{ backgroundColor: "rgba(37, 99, 235, 0.05)" }}>
-                <th scope="row" className="text-start text-primary fw-bold">
+              <tr style={{ backgroundColor: "rgba(148, 82, 3, 0.07)" }}>
+                <th scope="row" className="text-start text-warning fw-bold">
                   <i className="bi bi-piggy-bank"></i> Ahorros
                 </th>
                 {resumenData.ahorrosMensuales.map((val, idx) => (
-                  <td key={idx} className="text-primary fw-semibold">${formatoNumber(val)}</td>
+                  <td key={idx} className="text-warning fw-bold">${formatoNumber(val)}</td>
                 ))}
-                <td className="fw-bold text-primary fs-6">${formatoNumber(resumenData.totalAnualAhorros)}</td>
+                <td className="fw-bold text-warning fs-6">${formatoNumber(resumenData.totalAnualAhorros)}</td>
               </tr>
 
               {/* Resto Total */}

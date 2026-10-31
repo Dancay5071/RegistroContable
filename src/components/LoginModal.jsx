@@ -139,7 +139,7 @@ export default function LoginModal() {
                 <>
                   <button 
                     type="button" 
-                    className="btn btn-outline-dark w-100 mb-3 d-flex align-items-center justify-content-center gap-2 py-2 shadow-sm"
+                    className="btn btn-outline-dark w-100 mb-3 d-flex align-items-center justify-content-center gap-2 py-2 shadow-sm bg-white"
                     onClick={handleGoogleLogin}
                     disabled={loading}
                   >
@@ -277,7 +277,7 @@ export default function LoginModal() {
               <div className="text-center">
                 <button 
                   type="button" 
-                  className="btn btn-warning btn-sm w-100 fw-semibold text-dark shadow-sm"
+                  className="btn btn-warning btn-sm w-100 fw-semibold text-white shadow-sm"
                   onClick={handleDemoLogin}
                 >
                   <i className="bi bi-eye me-1"></i>

@@ -134,7 +134,7 @@ export default function Ahorro() {
           <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between pb-3 mb-3 border-bottom gap-2">
             <div>
               <span className="text-muted small text-uppercase fw-semibold tracking-wider d-block">Fondo de Ahorro Total</span>
-              <h3 className="h2 fw-bold text-primary mb-0">{formatoMoneda(totalAhorros)}</h3>
+              <h3 className="h2 fw-bold mb-0" style={{ color: "var(--accent-warning)" }}>{formatoMoneda(totalAhorros)}</h3>
             </div>
             <div className="d-flex align-items-center gap-2">
               <label htmlFor="anioAhorro" className="small text-muted mb-0 fw-semibold">Año:</label>
@@ -195,9 +195,9 @@ export default function Ahorro() {
               </thead>
               <tbody>
                 <tr>
-                  <th scope="row" className="text-start text-primary fw-semibold">Ahorros Netos</th>
+                  <th scope="row" className="text-start fw-semibold" style={{ color: "var(--accent-warning)" }}>Ahorros Netos</th>
                   {tablaAhorros.map((item) => (
-                    <td key={item.mes} className={item.monto > 0 ? "text-primary fw-bold" : "text-muted"}>
+                    <td key={item.mes} className={item.monto > 0 ? "fw-bold" : "text-muted"} style={{ color: item.monto > 0 ? "var(--accent-warning)" : undefined }}>
                       ${formatoNumber(item.monto)}
                     </td>
                   ))}
