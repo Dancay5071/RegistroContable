@@ -57,7 +57,7 @@ export default function Navbar() {
         {/* Badge Modo Demo */}
         {isDemo && (
           <span className="badge bg-warning text-dark d-none d-lg-inline-flex align-items-center gap-1 mx-2">
-            <i className="bi bi-rocket-takeoff-fill"></i> Modo Demo
+            <i className="bi bi-eye"></i> Modo Demo
           </span>
         )}
 
@@ -166,7 +166,7 @@ export default function Navbar() {
           <div className="d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0">
             {isDemo && (
               <span className="badge bg-warning text-dark d-inline-flex d-lg-none align-items-center gap-1">
-                <i className="bi bi-rocket-takeoff-fill"></i> Demo
+                <i className="bi bi-eye"></i> Demo
               </span>
             )}
             <button 

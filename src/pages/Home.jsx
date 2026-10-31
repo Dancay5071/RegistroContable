@@ -69,7 +69,7 @@ export default function Home() {
               type="button" 
               onClick={loginAsDemo}
             >
-              <i className="bi bi-rocket-takeoff-fill fs-5"></i>
+              <i className="bi bi-eye fs-5"></i>
               Probar Modo Demo
             </button>
           </div>

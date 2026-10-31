@@ -92,7 +92,9 @@ export default function LoginModal() {
       handleClose();
     } catch (err) {
       console.error("Error con Google:", err);
-      if (err.code !== "auth/popup-closed-by-user") {
+      if (err.code === "auth/operation-not-allowed") {
+        setError("El inicio de sesión con Google aún no está habilitado en tu Firebase Console. Debes ir a Authentication > Sign-in method y activar Google, o puedes ingresar con tu Correo y Contraseña.");
+      } else if (err.code !== "auth/popup-closed-by-user") {
         setError("Error al iniciar sesión con Google: " + err.message);
       }
       setLoading(false);
@@ -278,7 +280,7 @@ export default function LoginModal() {
                   className="btn btn-warning btn-sm w-100 fw-semibold text-dark shadow-sm"
                   onClick={handleDemoLogin}
                 >
-                  <i className="bi bi-rocket-takeoff-fill me-1"></i>
+                  <i className="bi bi-eye me-1"></i>
                   Ingresar en Modo Demo (sin registrarse)
                 </button>
               </div>
