@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Registro contable - Ahorro</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="/imagen/home.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body id="paginaAhorro"class="fade-in">
+  
+    <div id="navbar-container"></div>
+
+      <div class="fondo">
+      </div>
+  </div>
+  <div class="container">
+    <div class="tarjeta-ahorro">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 id="totalAhorros">Ahorro Actual: </h5>
+            <select class="form-select form-select-sm w-auto" id="anioSelect">
+            </select>
+        </div>
+
+        <div class="card-body text-center">
+            <button class="btn btn-secondary mx-2" type="button" onclick="consultarAhorro(['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'])">Consultar</button>
+            <button class="btn btn-secondary mx-2" type="button" data-bs-toggle="modal" data-bs-target="#modalExtraccion">Extraer</button>
+            <button class="btn btn-secondary mx-2" type="button" data-bs-toggle="modal" data-bs-target="#modalAgregarAhorro">Agregar ahorro</button>
+        </div>
+    </div>
+
+</div>
+<div id="loader" style="display: none; text-align: center;" class="mt-3">
+  <p>Cargando datos...</p>
+  <div class="spinner-border" role="status">
+      <span class="visually-hidden">Cargando...</span>
+  </div>
+</div>
+
+<div class="table-responsive mt-3" id="tabla-ahorro"></div>
+
+
+
+<!-- Modal de Extracción -->
+<div class="modal fade" id="modalExtraccion" tabindex="-1" aria-labelledby="modalExtraccionLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalExtraccionLabel">Registrar Extracción</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="montoExtraccion" class="form-label">Monto</label>
+          <input type="number" id="montoExtraccion" class="form-control" placeholder="Monto a extraer">
+        </div>
+        <div class="mb-3">
+          <label for="mesSelect" class="form-label">Mes</label>
+          <select id="mesSelect" class="form-select">
+            
+          </select>
+        </div>
+        <div id="alertaExtraccion" class="alert d-none" role="alert"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="extraerAhorro()">Realizar extracción</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalAgregarAhorro" tabindex="-1" aria-labelledby="modalAgregarAhorroLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAgregarAhorroLabel">Nuevo ahorro</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="montoAgregar" class="form-label">Monto</label>
+          <input type="number" id="montoAgregar" class="form-control" placeholder="Monto a agregar">
+        </div>
+        <div class="mb-3">
+          
+        </div>
+        <div id="alertaAgregar" class="alert d-none" role="alert"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="agregarAhorro()">Agregar ahorro</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>    
+        </div>
+    <div class="float-xl-end">
+       <div class="text-bg-dark p-3" id="montoActual">Monto actual: </div>
+   </div>
+
+   <footer class="bg-dark text-white py-1">
+    <div class="footer">
+        <p class="mb-0 small">Created by: Daniela Cabrera ||      
+        
+        Contact:
+          <a href="https://github.com/Dancay5071" class="text-white text-decoration-none">
+                <i class="bi bi-github"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/daniela-cabrera5071" class="text-white text-decoration-none">
+                <i class="bi bi-linkedin"></i>
+            </a>
+            <a href="mailto:daniinad175.may30@gmail.com" class="text-white text-decoration-none">
+                <i class="bi bi-envelope-at-fill"></i>
+            </a></p>
+        
+    </div>
+</footer>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+   <script type="module" src="/componentes/ahorro/ahorro.js"></script>
+   <script type="module" src="/componentes/index.js"></script>
+</body>
+</html>

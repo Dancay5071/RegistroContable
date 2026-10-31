@@ -1,0 +1,162 @@
+/* src/App.css */
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Fondo de pantalla */
+.fondo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('/imagen/fondo.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Estilos de la página principal (Home) */
+.principal {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  backdrop-filter: blur(4px);
+}
+
+#diaDeHoy {
+  font-size: 1.8rem;
+  color: azure;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* Indicador flotante de saldo actual */
+.float-xl-end {
+  position: fixed;
+  bottom: 35px;
+  right: 20px;
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .float-xl-end {
+    position: static;
+    margin-top: 1.5rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+/* Tarjetas y Contenedores */
+.tarjeta-gasto,
+.tarjeta-ingreso,
+.tarjeta-ahorro,
+.card-consulta,
+.consulta {
+  background-color: rgba(255, 255, 255, 0.92);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+}
+
+.tarjeta-gasto,
+.tarjeta-ingreso {
+  width: 100%;
+  max-width: 440px;
+}
+
+.card-consulta {
+  width: 100%;
+  max-width: 320px;
+  height: fit-content;
+}
+
+.consulta {
+  flex: 1;
+  min-width: 300px;
+  max-width: 700px;
+}
+
+.tituloCard {
+  border-bottom: 2px solid #6c757d;
+  padding-bottom: 6px;
+}
+
+/* Tablas */
+.table th:first-child,
+.table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background-color: inherit;
+}
+
+/* Navbar */
+.navbar-nav .nav-link {
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+  font-weight: 500;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: #198754 !important;
+  text-decoration: underline;
+}
+
+/* Footer */
+footer {
+  flex-shrink: 0;
+  font-size: 12px;
+  z-index: 10;
+}
+
+.footer {
+  padding: 6px 12px;
+}
+
+.footer a {
+  transition: opacity 0.2s;
+}
+
+.footer a:hover {
+  opacity: 0.8;
+}
+
