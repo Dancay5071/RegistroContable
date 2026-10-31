@@ -138,8 +138,8 @@ export default function ConsultarIngreso() {
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
       <div className="container d-flex flex-wrap justify-content-center gap-4">
         {/* Tarjeta de Selección */}
-        <div className="card-consulta p-4 rounded-4 shadow border">
-          <p className="tituloCard text-white d-flex align-items-center gap-2">
+        <div className="card-consulta p-4 rounded-4 shadow-sm border bg-white">
+          <p className="tituloCard text-dark d-flex align-items-center gap-2">
             <i className="bi bi-funnel text-success"></i> Filtrar Ingresos
           </p>
           <MonthYearSelect mes={mes} setMes={setMes} anio={anio} setAnio={setAnio} />
@@ -155,7 +155,7 @@ export default function ConsultarIngreso() {
         </div>
 
         {/* Resultados de Ingresos */}
-        <div className="consulta p-4 rounded-4 shadow border">
+        <div className="consulta p-4 rounded-4 shadow-sm border bg-white">
           {loading && <Loader />}
 
           {!loading && ingresos === null && (
@@ -168,7 +168,7 @@ export default function ConsultarIngreso() {
           {!loading && ingresos !== null && ingresos.length === 0 && (
             <div className="text-center p-5">
               <i className="bi bi-inbox fs-1 text-muted mb-3 d-block opacity-50"></i>
-              <h5 className="text-white">Sin ingresos en {mes} {anio}</h5>
+              <h5 className="text-dark">Sin ingresos en {mes} {anio}</h5>
               <p className="text-muted small mb-3">No tienes ningún ingreso registrado en este período.</p>
               <Link to="/ingresos/nuevo" className="btn btn-sm btn-outline-success">
                 <i className="bi bi-plus-circle me-1"></i> Agregar primer ingreso
@@ -179,8 +179,8 @@ export default function ConsultarIngreso() {
           {!loading && ingresos !== null && ingresos.length > 0 && (
             <div>
               <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
-                <h4 className="h5 fw-bold text-white mb-0">Ingresos de {mes} {anio}</h4>
-                <span className="badge bg-success bg-opacity-25 text-success px-3 py-2 fs-6">
+                <h4 className="h5 fw-bold text-dark mb-0">Ingresos de {mes} {anio}</h4>
+                <span className="badge bg-success bg-opacity-10 text-success px-3 py-2 fs-6">
                   Total: {formatoMoneda(sumaIngresos)}
                 </span>
               </div>
@@ -199,12 +199,12 @@ export default function ConsultarIngreso() {
                     {ingresos.map((ingreso, index) => (
                       <tr key={ingreso.id || index}>
                         <td><i className="bi bi-dot fs-4 text-success"></i></td>
-                        <td className="fw-semibold text-white">{ingreso.descripcion}</td>
+                        <td className="fw-semibold text-dark">{ingreso.descripcion}</td>
                         <td className="text-success fw-bold">{formatoMoneda(ingreso.monto)}</td>
                         <td className="text-end">
                           <button 
                             type="button" 
-                            className="btn btn-outline-light btn-sm me-2 border-secondary" 
+                            className="btn btn-outline-secondary btn-sm me-2" 
                             title="Editar" 
                             onClick={() => handleOpenEdit(index)}
                           >
@@ -212,7 +212,7 @@ export default function ConsultarIngreso() {
                           </button>
                           <button 
                             type="button" 
-                            className="btn btn-outline-light btn-sm border-secondary" 
+                            className="btn btn-outline-secondary btn-sm" 
                             title="Eliminar" 
                             onClick={() => handleEliminarIngreso(index)}
                           >
@@ -222,7 +222,7 @@ export default function ConsultarIngreso() {
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot className="table-dark">
+                  <tfoot className="table-light">
                     <tr>
                       <td colSpan="2" className="fw-bold">Total del Mes</td>
                       <td className="fw-bold text-success fs-6">{formatoMoneda(sumaIngresos)}</td>
@@ -236,21 +236,21 @@ export default function ConsultarIngreso() {
         </div>
       </div>
 
-      {/* Modal Editar Ingreso */}
+      {/* Modal Editar Ingreso Claro */}
       {editModalOpen && (
         <div 
           className="modal fade show d-block" 
           tabIndex="-1" 
           role="dialog" 
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.75)" }}
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content bg-dark text-white border border-secondary shadow-lg">
-              <div className="modal-header border-bottom border-secondary">
-                <h5 className="modal-title">Editar Ingreso</h5>
+            <div className="modal-content bg-white text-dark border-0 shadow-lg">
+              <div className="modal-header border-bottom">
+                <h5 className="modal-title fw-bold">Editar Ingreso</h5>
                 <button 
                   type="button" 
-                  className="btn-close btn-close-white" 
+                  className="btn-close" 
                   onClick={() => setEditModalOpen(false)}
                   disabled={editLoading}
                 ></button>
@@ -258,7 +258,7 @@ export default function ConsultarIngreso() {
               <form onSubmit={handleSaveEdit}>
                 <div className="modal-body">
                   <div className="mb-3">
-                    <label className="form-label text-muted small">Descripción</label>
+                    <label className="form-label text-muted small fw-semibold">Descripción</label>
                     <input 
                       type="text" 
                       className="form-control" 
@@ -269,12 +269,12 @@ export default function ConsultarIngreso() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label text-muted small">Monto ($)</label>
+                    <label className="form-label text-muted small fw-semibold">Monto ($)</label>
                     <input 
                       type="number" 
                       step="0.01" 
                       min="0.01"
-                      className="form-control" 
+                      className="form-control fs-5 fw-bold text-success" 
                       value={editMonto}
                       onChange={(e) => setEditMonto(e.target.value)}
                       required
@@ -282,7 +282,7 @@ export default function ConsultarIngreso() {
                     />
                   </div>
                 </div>
-                <div className="modal-footer border-top border-secondary">
+                <div className="modal-footer border-top">
                   <button 
                     type="button" 
                     className="btn btn-secondary btn-sm" 

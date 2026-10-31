@@ -38,19 +38,19 @@ export default function Home() {
           alt="Registro Contable Logo" 
           id="titulo" 
           className="img-fluid"
-          style={{ maxHeight: "130px", filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.5))" }}
+          style={{ maxHeight: "120px", filter: "drop-shadow(0 6px 12px rgba(0,0,0,0.08))" }}
         />
-        <h1 className="h4 fw-bold mt-3 text-white tracking-wide">Registro Contable</h1>
-        <div className="badge bg-dark bg-opacity-75 border border-secondary border-opacity-25 px-3 py-2 text-muted fw-normal rounded-pill mt-1">
-          <i className="bi bi-calendar3 me-2 text-primary"></i>
+        <h1 className="h4 fw-bold mt-3 text-dark tracking-wide">Registro Contable</h1>
+        <div className="badge bg-white shadow-sm border px-3 py-2 text-secondary fw-medium rounded-pill mt-1">
+          <i className="bi bi-calendar3 me-2 text-success"></i>
           {fecha}
         </div>
       </div>
 
       {/* Contenido Principal */}
       {!user ? (
-        <div className="principal text-center p-4 p-md-5 rounded-4 shadow-lg text-white" style={{ maxWidth: "560px", width: "100%" }}>
-          <h2 className="h4 fw-bold mb-3">Control Financiero Simple y Eficiente</h2>
+        <div className="principal text-center p-4 p-md-5 rounded-4 shadow-sm text-dark bg-white border" style={{ maxWidth: "560px", width: "100%" }}>
+          <h2 className="h4 fw-bold mb-3 text-dark">Control Financiero Simple y Eficiente</h2>
           <p className="text-muted mb-4 small">
             Gestiona tus ingresos, gastos diarios y metas de ahorro con balances en tiempo real y estadísticas mensuales organizadas.
           </p>
@@ -75,16 +75,16 @@ export default function Home() {
           </div>
         </div>
       ) : (
-        <div className="w-100" style={{ maxWidth: "780px" }}>
+        <div className="w-100" style={{ maxWidth: "800px" }}>
           {isDemo && (
-            <div className="alert bg-warning bg-opacity-10 border border-warning text-warning d-flex align-items-center justify-content-between p-3 rounded-3 mb-4 shadow-sm">
+            <div className="alert bg-warning bg-opacity-10 border border-warning text-dark d-flex align-items-center justify-content-between p-3 rounded-3 mb-4 shadow-sm">
               <div className="d-flex align-items-center gap-2">
-                <i className="bi bi-info-circle-fill fs-5"></i>
+                <i className="bi bi-info-circle-fill text-warning fs-5"></i>
                 <span className="small">Estás explorando en <strong>Modo Demo</strong> (los cambios se guardan localmente).</span>
               </div>
               <button 
                 type="button" 
-                className="btn btn-sm btn-outline-warning"
+                className="btn btn-sm btn-outline-dark"
                 onClick={handleResetDemo}
               >
                 <i className="bi bi-arrow-counterclockwise me-1"></i> Reiniciar
@@ -92,15 +92,15 @@ export default function Home() {
             </div>
           )}
 
-          {/* Tarjetas KPI Hero */}
+          {/* Tarjetas KPI Hero Claros */}
           <div className="row g-3 mb-4">
             <div className="col-12 col-md-6">
-              <div className="hero-balance-card d-flex align-items-center justify-content-between p-4">
+              <div className="hero-balance-card d-flex align-items-center justify-content-between p-4 bg-white border rounded-4 shadow-sm">
                 <div>
                   <div className="kpi-title text-success d-flex align-items-center gap-1">
                     <i className="bi bi-wallet2"></i> Saldo Disponible
                   </div>
-                  <div className="kpi-amount text-white">{formatoMoneda(montoActual)}</div>
+                  <div className="kpi-amount text-dark">{formatoMoneda(montoActual)}</div>
                   <span className="text-muted small">Actualizado en tiempo real</span>
                 </div>
                 <div className="p-3 bg-success bg-opacity-10 rounded-circle text-success fs-2">
@@ -110,15 +110,15 @@ export default function Home() {
             </div>
 
             <div className="col-12 col-md-6">
-              <div className="hero-balance-card d-flex align-items-center justify-content-between p-4">
+              <div className="hero-balance-card d-flex align-items-center justify-content-between p-4 bg-white border rounded-4 shadow-sm">
                 <div>
-                  <div className="kpi-title text-info d-flex align-items-center gap-1">
+                  <div className="kpi-title text-primary d-flex align-items-center gap-1">
                     <i className="bi bi-piggy-bank"></i> Total Ahorrado
                   </div>
-                  <div className="kpi-amount text-white">{formatoMoneda(totalAhorros)}</div>
+                  <div className="kpi-amount text-dark">{formatoMoneda(totalAhorros)}</div>
                   <span className="text-muted small">Fondo acumulado</span>
                 </div>
-                <div className="p-3 bg-info bg-opacity-10 rounded-circle text-info fs-2">
+                <div className="p-3 bg-primary bg-opacity-10 rounded-circle text-primary fs-2">
                   <i className="bi bi-shield-lock"></i>
                 </div>
               </div>
@@ -126,7 +126,7 @@ export default function Home() {
           </div>
 
           {/* Acciones Rápidas */}
-          <div className="principal p-4 rounded-4 shadow">
+          <div className="principal p-4 rounded-4 shadow-sm bg-white border">
             <h5 className="h6 text-muted text-uppercase fw-bold mb-3 tracking-wider">Acciones Rápidas</h5>
             <div className="row g-2">
               <div className="col-6 col-sm-3">
@@ -142,13 +142,13 @@ export default function Home() {
                 </Link>
               </div>
               <div className="col-6 col-sm-3">
-                <Link to="/ahorros" className="btn btn-outline-info w-100 py-3 d-flex flex-column align-items-center rounded-3">
+                <Link to="/ahorros" className="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center rounded-3">
                   <i className="bi bi-safe fs-4 mb-1"></i>
                   <span className="small fw-semibold">Ahorros</span>
                 </Link>
               </div>
               <div className="col-6 col-sm-3">
-                <Link to="/resumen" className="btn btn-outline-warning w-100 py-3 d-flex flex-column align-items-center rounded-3">
+                <Link to="/resumen" className="btn btn-outline-warning text-dark w-100 py-3 d-flex flex-column align-items-center rounded-3">
                   <i className="bi bi-bar-chart fs-4 mb-1"></i>
                   <span className="small fw-semibold">Resumen</span>
                 </Link>

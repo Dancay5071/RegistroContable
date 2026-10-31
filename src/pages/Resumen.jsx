@@ -37,11 +37,11 @@ export default function Resumen() {
 
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
-      {/* Selector de Año y Botón */}
-      <div className="d-flex align-items-center justify-content-center gap-3 p-3 bg-dark bg-opacity-75 rounded-4 shadow border border-secondary border-opacity-25 mb-4">
+      {/* Selector de Año y Botón Claro */}
+      <div className="d-flex align-items-center justify-content-center gap-3 p-3 bg-white rounded-4 shadow-sm border mb-4">
         <div className="d-flex align-items-center gap-2">
           <i className="bi bi-calendar4 text-primary"></i>
-          <span className="fw-semibold text-white">Año:</span>
+          <span className="fw-semibold text-dark">Año:</span>
           <select 
             className="form-select form-select-sm w-auto" 
             id="anioSelect"
@@ -67,33 +67,33 @@ export default function Resumen() {
       {loading && <Loader message="Procesando resumen anual..." />}
 
       {!loading && !resumenData && (
-        <div className="text-center text-muted p-5 bg-dark bg-opacity-50 rounded-4 border border-secondary border-opacity-25" style={{ maxWidth: "600px" }}>
+        <div className="text-center text-muted p-5 bg-white rounded-4 border shadow-sm" style={{ maxWidth: "600px" }}>
           <i className="bi bi-table fs-1 text-secondary opacity-50 mb-3 d-block"></i>
-          <h5 className="text-white">Matriz Financiera Anual</h5>
+          <h5 className="text-dark fw-bold">Matriz Financiera Anual</h5>
           <p className="small mb-0">Selecciona el año que deseas auditar y haz clic en <strong>Consultar Resumen</strong> para ver la tabla comparativa de 12 meses.</p>
         </div>
       )}
 
       {!loading && resumenData && (
-        <div className="w-100 p-4 bg-dark bg-opacity-75 rounded-4 shadow-lg border border-secondary border-opacity-25 table-responsive mt-2" style={{ maxWidth: "1280px" }}>
+        <div className="w-100 p-4 bg-white rounded-4 shadow-sm border table-responsive mt-2" style={{ maxWidth: "1280px" }}>
           <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
-            <h5 className="text-white fw-bold mb-0 d-flex align-items-center gap-2">
+            <h5 className="text-dark fw-bold mb-0 d-flex align-items-center gap-2">
               <i className="bi bi-graph-up-arrow text-success"></i>
               Resumen Financiero Anual — {anio}
             </h5>
-            <span className="badge bg-primary bg-opacity-25 text-primary px-3 py-2">
+            <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fw-semibold">
               12 Meses Auditados
             </span>
           </div>
 
           <table className="table table-bordered text-center align-middle mb-0">
-            <thead className="table-dark">
+            <thead className="table-light">
               <tr>
                 <th scope="col" className="text-start text-muted small" style={{ minWidth: "170px" }}>Concepto / Mes</th>
                 {MESES.map((m) => (
                   <th key={m} scope="col" className="small">{m.substring(0, 3)}</th>
                 ))}
-                <th scope="col" className="bg-primary bg-opacity-25 text-white">Total Anual</th>
+                <th scope="col" className="bg-primary bg-opacity-10 text-primary fw-bold">Total Anual</th>
               </tr>
             </thead>
             <tbody>
@@ -107,7 +107,7 @@ export default function Resumen() {
               </tr>
 
               {/* Ingresos */}
-              <tr style={{ backgroundColor: "rgba(16, 185, 129, 0.08)" }}>
+              <tr style={{ backgroundColor: "rgba(22, 163, 74, 0.05)" }}>
                 <th scope="row" className="text-start text-success fw-bold">
                   <i className="bi bi-arrow-up-short"></i> Ingresos
                 </th>
@@ -118,7 +118,7 @@ export default function Resumen() {
               </tr>
 
               {/* Gastos */}
-              <tr style={{ backgroundColor: "rgba(244, 63, 94, 0.08)" }}>
+              <tr style={{ backgroundColor: "rgba(220, 38, 38, 0.05)" }}>
                 <th scope="row" className="text-start text-danger fw-bold">
                   <i className="bi bi-arrow-down-short"></i> Gastos
                 </th>
@@ -129,23 +129,23 @@ export default function Resumen() {
               </tr>
 
               {/* Ahorros */}
-              <tr style={{ backgroundColor: "rgba(99, 102, 241, 0.08)" }}>
-                <th scope="row" className="text-start text-info fw-bold">
+              <tr style={{ backgroundColor: "rgba(37, 99, 235, 0.05)" }}>
+                <th scope="row" className="text-start text-primary fw-bold">
                   <i className="bi bi-piggy-bank"></i> Ahorros
                 </th>
                 {resumenData.ahorrosMensuales.map((val, idx) => (
-                  <td key={idx} className="text-info fw-semibold">${formatoNumber(val)}</td>
+                  <td key={idx} className="text-primary fw-semibold">${formatoNumber(val)}</td>
                 ))}
-                <td className="fw-bold text-info fs-6">${formatoNumber(resumenData.totalAnualAhorros)}</td>
+                <td className="fw-bold text-primary fs-6">${formatoNumber(resumenData.totalAnualAhorros)}</td>
               </tr>
 
               {/* Resto Total */}
-              <tr className="table-dark">
-                <th scope="row" className="text-start text-white fw-bold">
-                  <i className="bi bi-wallet2 text-warning me-1"></i> Resto Neto
+              <tr className="table-light">
+                <th scope="row" className="text-start text-dark fw-bold">
+                  <i className="bi bi-wallet2 text-success me-1"></i> Resto Neto
                 </th>
                 {resumenData.restosTotales.map((val, idx) => (
-                  <td key={idx} className={`fw-bold ${val >= 0 ? "text-white" : "text-danger"}`}>
+                  <td key={idx} className={`fw-bold ${val >= 0 ? "text-dark" : "text-danger"}`}>
                     ${formatoNumber(val)}
                   </td>
                 ))}

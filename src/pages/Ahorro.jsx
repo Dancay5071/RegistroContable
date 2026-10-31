@@ -129,15 +129,15 @@ export default function Ahorro() {
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
       <div className="container d-flex flex-column align-items-center" style={{ maxWidth: "1000px" }}>
-        {/* Tarjeta de Control de Ahorro */}
-        <div className="tarjeta-ahorro shadow-lg rounded-4 p-4 w-100 border mb-4">
+        {/* Tarjeta de Control de Ahorro Clara */}
+        <div className="tarjeta-ahorro shadow-sm rounded-4 p-4 w-100 border bg-white mb-4">
           <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between pb-3 mb-3 border-bottom gap-2">
             <div>
               <span className="text-muted small text-uppercase fw-semibold tracking-wider d-block">Fondo de Ahorro Total</span>
-              <h3 className="h2 fw-bold text-info mb-0">{formatoMoneda(totalAhorros)}</h3>
+              <h3 className="h2 fw-bold text-primary mb-0">{formatoMoneda(totalAhorros)}</h3>
             </div>
             <div className="d-flex align-items-center gap-2">
-              <label htmlFor="anioAhorro" className="small text-muted mb-0">Año:</label>
+              <label htmlFor="anioAhorro" className="small text-muted mb-0 fw-semibold">Año:</label>
               <select 
                 id="anioAhorro"
                 className="form-select form-select-sm w-auto" 
@@ -180,12 +180,12 @@ export default function Ahorro() {
         {/* Spinner */}
         {loading && <Loader />}
 
-        {/* Tabla de Ahorros Anual */}
+        {/* Tabla de Ahorros Anual Clara */}
         {!loading && tablaAhorros && (
-          <div className="table-responsive w-100 p-4 bg-dark bg-opacity-75 rounded-4 shadow-lg border border-secondary border-opacity-25">
-            <h5 className="mb-3 text-center text-white fw-bold">Evolución de Ahorros del Año {anio}</h5>
+          <div className="table-responsive w-100 p-4 bg-white rounded-4 shadow-sm border">
+            <h5 className="mb-3 text-center text-dark fw-bold">Evolución de Ahorros del Año {anio}</h5>
             <table className="table table-bordered text-center align-middle mb-0">
-              <thead className="table-dark">
+              <thead className="table-light">
                 <tr>
                   <th scope="col" className="text-muted small">Concepto</th>
                   {tablaAhorros.map((item) => (
@@ -195,9 +195,9 @@ export default function Ahorro() {
               </thead>
               <tbody>
                 <tr>
-                  <th scope="row" className="text-start text-info">Ahorros Netos</th>
+                  <th scope="row" className="text-start text-primary fw-semibold">Ahorros Netos</th>
                   {tablaAhorros.map((item) => (
-                    <td key={item.mes} className={item.monto > 0 ? "text-info fw-bold" : "text-muted"}>
+                    <td key={item.mes} className={item.monto > 0 ? "text-primary fw-bold" : "text-muted"}>
                       ${formatoNumber(item.monto)}
                     </td>
                   ))}
@@ -208,23 +208,23 @@ export default function Ahorro() {
         )}
       </div>
 
-      {/* Modal Extracción */}
+      {/* Modal Extracción Claro */}
       {modalExtraccionOpen && (
         <div 
           className="modal fade show d-block" 
           tabIndex="-1" 
           role="dialog"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.75)" }}
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content bg-dark text-white border border-secondary shadow-lg">
-              <div className="modal-header border-bottom border-secondary">
-                <h5 className="modal-title text-danger d-flex align-items-center gap-2">
+            <div className="modal-content bg-white text-dark border-0 shadow-lg">
+              <div className="modal-header border-bottom">
+                <h5 className="modal-title text-danger d-flex align-items-center gap-2 fw-bold">
                   <i className="bi bi-box-arrow-up-right"></i> Registrar Extracción
                 </h5>
                 <button 
                   type="button" 
-                  className="btn-close btn-close-white" 
+                  className="btn-close" 
                   onClick={() => setModalExtraccionOpen(false)}
                   disabled={loadingExtraccion}
                 ></button>
@@ -232,7 +232,7 @@ export default function Ahorro() {
               <form onSubmit={handleExtraerAhorro}>
                 <div className="modal-body">
                   <div className="mb-3">
-                    <label className="form-label text-muted small">Monto a Extraer ($)</label>
+                    <label className="form-label text-muted small fw-semibold">Monto a Extraer ($)</label>
                     <input 
                       type="number" 
                       step="0.01"
@@ -246,7 +246,7 @@ export default function Ahorro() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label text-muted small">Mes</label>
+                    <label className="form-label text-muted small fw-semibold">Mes</label>
                     <select 
                       className="form-select" 
                       value={mesExtraccion}
@@ -259,7 +259,7 @@ export default function Ahorro() {
                     </select>
                   </div>
                 </div>
-                <div className="modal-footer border-top border-secondary">
+                <div className="modal-footer border-top">
                   <button 
                     type="button" 
                     className="btn btn-secondary btn-sm" 
@@ -282,23 +282,23 @@ export default function Ahorro() {
         </div>
       )}
 
-      {/* Modal Agregar Ahorro */}
+      {/* Modal Agregar Ahorro Claro */}
       {modalAgregarOpen && (
         <div 
           className="modal fade show d-block" 
           tabIndex="-1" 
           role="dialog"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.75)" }}
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content bg-dark text-white border border-secondary shadow-lg">
-              <div className="modal-header border-bottom border-secondary">
-                <h5 className="modal-title text-success d-flex align-items-center gap-2">
+            <div className="modal-content bg-white text-dark border-0 shadow-lg">
+              <div className="modal-header border-bottom">
+                <h5 className="modal-title text-success d-flex align-items-center gap-2 fw-bold">
                   <i className="bi bi-piggy-bank-fill"></i> Agregar Ahorro
                 </h5>
                 <button 
                   type="button" 
-                  className="btn-close btn-close-white" 
+                  className="btn-close" 
                   onClick={() => setModalAgregarOpen(false)}
                   disabled={loadingAgregar}
                 ></button>
@@ -306,7 +306,7 @@ export default function Ahorro() {
               <form onSubmit={handleAgregarAhorro}>
                 <div className="modal-body">
                   <div className="mb-3">
-                    <label className="form-label text-muted small">Monto a Depositar ($)</label>
+                    <label className="form-label text-muted small fw-semibold">Monto a Depositar ($)</label>
                     <input 
                       type="number" 
                       step="0.01"
@@ -320,7 +320,7 @@ export default function Ahorro() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label text-muted small">Mes</label>
+                    <label className="form-label text-muted small fw-semibold">Mes</label>
                     <select 
                       className="form-select" 
                       value={mesAgregar}
@@ -333,7 +333,7 @@ export default function Ahorro() {
                     </select>
                   </div>
                 </div>
-                <div className="modal-footer border-top border-secondary">
+                <div className="modal-footer border-top">
                   <button 
                     type="button" 
                     className="btn btn-secondary btn-sm" 

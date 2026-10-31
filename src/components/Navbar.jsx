@@ -44,13 +44,13 @@ export default function Navbar() {
           <div className="balance-item" title="Monto disponible actual">
             <span className="dot dot-green"></span>
             <span className="text-muted small">Saldo:</span>
-            <strong className="text-white">{formatoMoneda(montoActual)}</strong>
+            <strong className="text-dark">{formatoMoneda(montoActual)}</strong>
           </div>
           <span className="text-secondary opacity-50">|</span>
           <div className="balance-item" title="Total ahorrado">
             <span className="dot dot-blue"></span>
             <span className="text-muted small">Ahorro:</span>
-            <strong className="text-info">{formatoMoneda(totalAhorros)}</strong>
+            <strong className="text-primary">{formatoMoneda(totalAhorros)}</strong>
           </div>
         </div>
 
@@ -63,14 +63,14 @@ export default function Navbar() {
 
         {/* Botón Hamburguesa Móvil */}
         <button 
-          className="navbar-toggler border-0 text-white" 
+          className="navbar-toggler border-0 text-dark" 
           type="button" 
           onClick={() => setIsOpen(!isOpen)}
           aria-controls="navbarSupportedContent" 
           aria-expanded={isOpen} 
           aria-label="Toggle navigation"
         >
-          <i className="bi bi-list fs-2 text-white"></i>
+          <i className="bi bi-list fs-2 text-dark"></i>
         </button>
 
         {/* Menú Colapsable */}
@@ -80,12 +80,12 @@ export default function Navbar() {
             <div className="balance-item">
               <span className="dot dot-green"></span>
               <span className="text-muted small">Saldo:</span>
-              <strong className="text-white">{formatoMoneda(montoActual)}</strong>
+              <strong className="text-dark">{formatoMoneda(montoActual)}</strong>
             </div>
             <div className="balance-item">
               <span className="dot dot-blue"></span>
               <span className="text-muted small">Ahorro:</span>
-              <strong className="text-info">{formatoMoneda(totalAhorros)}</strong>
+              <strong className="text-primary">{formatoMoneda(totalAhorros)}</strong>
             </div>
           </div>
 
