@@ -2,12 +2,15 @@
 import React, { useState } from "react";
 import { addDoc, arrayUnion, doc, setDoc } from "firebase/firestore";
 import { gastosCollection, gastosPorMes, actualizarMontoActual } from "../services/firebase";
+import { useAuth } from "../context/AuthContext";
+import { addDemoGasto } from "../services/demoData";
 import { MESES } from "../utils/formatters";
 import MonthYearSelect from "../components/MonthYearSelect";
 import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function NuevoGasto() {
+  const { isDemo } = useAuth();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -33,19 +36,18 @@ export default function NuevoGasto() {
     }
 
     setLoading(true);
-    const claveMesAño = `${mes}_${anio}`;
     const data = { descripcion: descripcion.trim(), monto: montoNum };
 
     try {
-      // 1. Guardar en colección de gastos individual
-      await addDoc(gastosCollection, data);
-
-      // 2. Restar del monto global
-      await actualizarMontoActual(-montoNum);
-
-      // 3. Agregar al documento mensual
-      const gastosMesDoc = doc(gastosPorMes, claveMesAño);
-      await setDoc(gastosMesDoc, { gastos: arrayUnion(data) }, { merge: true });
+      if (isDemo) {
+        addDemoGasto(mes, anio, data);
+      } else {
+        const claveMesAño = `${mes}_${anio}`;
+        await addDoc(gastosCollection, data);
+        await actualizarMontoActual(-montoNum);
+        const gastosMesDoc = doc(gastosPorMes, claveMesAño);
+        await setDoc(gastosMesDoc, { gastos: arrayUnion(data) }, { merge: true });
+      }
 
       mostrarAlerta("Gasto agregado con éxito.", "success");
       setDescripcion("");
@@ -117,4 +119,3 @@ export default function NuevoGasto() {
     </div>
   );
 }
-

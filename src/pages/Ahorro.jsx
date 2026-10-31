@@ -7,12 +7,19 @@ import {
   extraccionCollection, 
   actualizarAhorroActual 
 } from "../services/firebase";
+import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
+import { 
+  getDemoAhorrosPorMes, 
+  addDemoAhorro, 
+  addDemoExtraccion 
+} from "../services/demoData";
 import { MESES, formatoMoneda, formatoNumber } from "../utils/formatters";
 import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function Ahorro() {
+  const { isDemo } = useAuth();
   const { totalAhorros } = useBalance();
   const currentYear = new Date().getFullYear();
   const yearOptions = [currentYear - 1, currentYear, currentYear + 1];
@@ -37,6 +44,14 @@ export default function Ahorro() {
 
   const consultarAhorro = async () => {
     setLoading(true);
+
+    if (isDemo) {
+      const netos = getDemoAhorrosPorMes(anio);
+      setTablaAhorros(netos);
+      setLoading(false);
+      return;
+    }
+
     let netosPorMes = [];
 
     for (const mes of MESES) {
@@ -56,7 +71,6 @@ export default function Ahorro() {
         const snapExtracciones = await getDoc(extraccionRef);
         if (snapExtracciones.exists()) {
           const dataExtracciones = snapExtracciones.data();
-          // Extracciones are stored as negative amounts (e.g. -500), so sum -ext.monto
           extracciones = dataExtracciones.extraccion?.reduce(
             (sum, ext) => sum + (ext.monto < 0 ? -ext.monto : ext.monto), 
             0
@@ -84,15 +98,20 @@ export default function Ahorro() {
     }
 
     setLoadingExtraccion(true);
-    const claveMesAño = `${mesExtraccion}_${anio}`;
-    const data = { monto: -montoNum, fecha: new Date() };
 
     try {
-      await addDoc(extraccionCollection, data);
-      await actualizarAhorroActual(-montoNum);
+      if (isDemo) {
+        addDemoExtraccion(mesExtraccion, anio, montoNum);
+      } else {
+        const claveMesAño = `${mesExtraccion}_${anio}`;
+        const data = { monto: -montoNum, fecha: new Date() };
 
-      const extraccionMesDoc = doc(extraccionPorMes, claveMesAño);
-      await setDoc(extraccionMesDoc, { extraccion: arrayUnion(data) }, { merge: true });
+        await addDoc(extraccionCollection, data);
+        await actualizarAhorroActual(-montoNum);
+
+        const extraccionMesDoc = doc(extraccionPorMes, claveMesAño);
+        await setDoc(extraccionMesDoc, { extraccion: arrayUnion(data) }, { merge: true });
+      }
 
       setAlertaExtraccion({ tipo: "success", mensaje: "Extracción registrada con éxito." });
       setMontoExtraccion("");
@@ -100,7 +119,7 @@ export default function Ahorro() {
         setModalExtraccionOpen(false);
         setAlertaExtraccion({ tipo: "", mensaje: "" });
         if (tablaAhorros) consultarAhorro();
-      }, 1500);
+      }, 1200);
     } catch (error) {
       console.error("Error al registrar extracción:", error);
       setAlertaExtraccion({ tipo: "danger", mensaje: "Error al registrar la extracción." });
@@ -119,12 +138,16 @@ export default function Ahorro() {
     }
 
     setLoadingAgregar(true);
-    const claveMesAño = `${mesAgregar}_${anio}`;
 
     try {
-      const ahorroMesDoc = doc(ahorrosPorMes, claveMesAño);
-      await setDoc(ahorroMesDoc, { totalAhorros: increment(montoNum) }, { merge: true });
-      await actualizarAhorroActual(montoNum);
+      if (isDemo) {
+        addDemoAhorro(mesAgregar, anio, montoNum);
+      } else {
+        const claveMesAño = `${mesAgregar}_${anio}`;
+        const ahorroMesDoc = doc(ahorrosPorMes, claveMesAño);
+        await setDoc(ahorroMesDoc, { totalAhorros: increment(montoNum) }, { merge: true });
+        await actualizarAhorroActual(montoNum);
+      }
 
       setAlertaAgregar({ tipo: "success", mensaje: "Ahorro agregado con éxito." });
       setMontoAgregar("");
@@ -132,7 +155,7 @@ export default function Ahorro() {
         setModalAgregarOpen(false);
         setAlertaAgregar({ tipo: "", mensaje: "" });
         if (tablaAhorros) consultarAhorro();
-      }, 1500);
+      }, 1200);
     } catch (error) {
       console.error("Error al agregar ahorro:", error);
       setAlertaAgregar({ tipo: "danger", mensaje: "Error al agregar el ahorro." });
@@ -378,4 +401,3 @@ export default function Ahorro() {
     </div>
   );
 }
-

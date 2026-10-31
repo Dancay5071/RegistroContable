@@ -2,11 +2,14 @@
 import React, { useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { gastosPorMes, ingresosPorMes, ahorrosPorMes } from "../services/firebase";
+import { useAuth } from "../context/AuthContext";
+import { getDemoResumenAnual } from "../services/demoData";
 import { MESES, formatoNumber } from "../utils/formatters";
 import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function Resumen() {
+  const { isDemo } = useAuth();
   const currentYear = new Date().getFullYear();
   const yearOptions = [currentYear - 1, currentYear, currentYear + 1];
   const [anio, setAnio] = useState(currentYear);
@@ -15,6 +18,13 @@ export default function Resumen() {
 
   const consultarResumenAnual = async () => {
     setLoading(true);
+
+    if (isDemo) {
+      const data = getDemoResumenAnual(anio);
+      setResumenData(data);
+      setLoading(false);
+      return;
+    }
 
     const ingresosMensuales = [];
     const gastosMensuales = [];
@@ -204,4 +214,3 @@ export default function Resumen() {
     </div>
   );
 }
-

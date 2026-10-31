@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { onSnapshot } from "firebase/firestore";
 import { settingsDoc, settingDoc } from "../services/firebase";
+import { useAuth } from "./AuthContext";
+import { getDemoBalances } from "../services/demoData";
 
 const BalanceContext = createContext({
   montoActual: 0,
@@ -10,12 +12,30 @@ const BalanceContext = createContext({
 });
 
 export function BalanceProvider({ children }) {
+  const { isDemo } = useAuth();
   const [montoActual, setMontoActual] = useState(0);
   const [totalAhorros, setTotalAhorros] = useState(0);
   const [loadingBalances, setLoadingBalances] = useState(true);
 
   useEffect(() => {
-    // Escuchar monto actual
+    if (isDemo) {
+      // Modo Demo: cargar desde almacenamiento local demo y escuchar cambios
+      const updateFromDemo = () => {
+        const bal = getDemoBalances();
+        setMontoActual(bal.montoActual || 0);
+        setTotalAhorros(bal.totalAhorros || 0);
+        setLoadingBalances(false);
+      };
+
+      updateFromDemo();
+      window.addEventListener("demo-store-updated", updateFromDemo);
+
+      return () => {
+        window.removeEventListener("demo-store-updated", updateFromDemo);
+      };
+    }
+
+    // Modo Real Firebase
     const unsubMonto = onSnapshot(settingsDoc, (docSnap) => {
       if (docSnap.exists()) {
         const val = docSnap.data().montoActual;
@@ -27,7 +47,6 @@ export function BalanceProvider({ children }) {
       console.error("Error al escuchar montoActual:", error);
     });
 
-    // Escuchar ahorros
     const unsubAhorro = onSnapshot(settingDoc, (docSnap) => {
       if (docSnap.exists()) {
         const val = docSnap.data().totalAhorros;
@@ -45,7 +64,7 @@ export function BalanceProvider({ children }) {
       unsubMonto();
       unsubAhorro();
     };
-  }, []);
+  }, [isDemo]);
 
   return (
     <BalanceContext.Provider value={{ montoActual, totalAhorros, loadingBalances }}>
@@ -61,4 +80,3 @@ export function useBalance() {
   }
   return context;
 }
-

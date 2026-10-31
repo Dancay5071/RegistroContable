@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export default function LoginModal() {
-  const { isLoginModalOpen, closeLoginModal, login } = useAuth();
+  const { isLoginModalOpen, closeLoginModal, login, loginAsDemo } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -37,6 +37,11 @@ export default function LoginModal() {
     }
   };
 
+  const handleDemoLogin = () => {
+    loginAsDemo();
+    closeLoginModal();
+  };
+
   return (
     <>
       <div 
@@ -48,7 +53,7 @@ export default function LoginModal() {
         style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
       >
         <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content text-dark">
+          <div className="modal-content text-dark shadow-lg">
             <div className="modal-header">
               <h5 className="modal-title" id="loginModalLabel">Iniciar Sesión</h5>
               <button 
@@ -96,29 +101,46 @@ export default function LoginModal() {
                     disabled={loading}
                   />
                 </div>
+
+                <div className="d-grid gap-2 mt-4">
+                  <button 
+                    type="submit" 
+                    className="btn btn-outline-success" 
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Iniciando...
+                      </>
+                    ) : (
+                      "Iniciar Sesión"
+                    )}
+                  </button>
+                </div>
+
+                <hr className="my-3" />
+
+                <div className="text-center">
+                  <p className="small text-muted mb-2">¿Quieres explorar la aplicación sin registrarte?</p>
+                  <button 
+                    type="button" 
+                    className="btn btn-warning w-100 fw-semibold"
+                    onClick={handleDemoLogin}
+                  >
+                    <i className="bi bi-rocket-takeoff-fill me-2"></i>
+                    Ingresar en Modo Demo
+                  </button>
+                </div>
               </div>
               <div className="modal-footer">
                 <button 
                   type="button" 
-                  className="btn btn-secondary" 
+                  className="btn btn-secondary btn-sm" 
                   onClick={closeLoginModal}
                   disabled={loading}
                 >
-                  Cancelar
-                </button>
-                <button 
-                  type="submit" 
-                  className="btn btn-outline-success" 
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Iniciando...
-                    </>
-                  ) : (
-                    "Iniciar Sesión"
-                  )}
+                  Cerrar
                 </button>
               </div>
             </form>
@@ -128,4 +150,3 @@ export default function LoginModal() {
     </>
   );
 }
-

@@ -8,12 +8,15 @@ import {
   actualizarMontoActual, 
   actualizarAhorroActual 
 } from "../services/firebase";
+import { useAuth } from "../context/AuthContext";
+import { addDemoIngreso } from "../services/demoData";
 import { MESES } from "../utils/formatters";
 import MonthYearSelect from "../components/MonthYearSelect";
 import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function NuevoIngreso() {
+  const { isDemo } = useAuth();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -45,26 +48,25 @@ export default function NuevoIngreso() {
     const ahorro = (montoNum * porcentajeNum) / 100;
     const ingresoNeto = montoNum - ahorro;
     const data = { descripcion: descripcion.trim(), monto: ingresoNeto, ahorro };
-    const claveMesAño = `${mes}_${anio}`;
 
     try {
-      // 1. Guardar en ingresos colección
-      await addDoc(ingresosCollection, data);
+      if (isDemo) {
+        addDemoIngreso(mes, anio, data);
+      } else {
+        const claveMesAño = `${mes}_${anio}`;
+        await addDoc(ingresosCollection, data);
+        await actualizarMontoActual(ingresoNeto);
+        if (ahorro > 0) {
+          await actualizarAhorroActual(ahorro);
+        }
 
-      // 2. Actualizar monto global disponible y ahorros totales
-      await actualizarMontoActual(ingresoNeto);
-      if (ahorro > 0) {
-        await actualizarAhorroActual(ahorro);
-      }
+        const ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
+        await setDoc(ingresosMesDoc, { ingresos: arrayUnion(data) }, { merge: true });
 
-      // 3. Guardar en ingresosPorMes
-      const ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
-      await setDoc(ingresosMesDoc, { ingresos: arrayUnion(data) }, { merge: true });
-
-      // 4. Guardar en ahorrosPorMes
-      if (ahorro > 0) {
-        const ahorrosMesDoc = doc(ahorrosPorMes, claveMesAño);
-        await setDoc(ahorrosMesDoc, { totalAhorros: increment(ahorro) }, { merge: true });
+        if (ahorro > 0) {
+          const ahorrosMesDoc = doc(ahorrosPorMes, claveMesAño);
+          await setDoc(ahorrosMesDoc, { totalAhorros: increment(ahorro) }, { merge: true });
+        }
       }
 
       mostrarAlerta("Ingreso agregado con éxito.", "success");
@@ -156,4 +158,3 @@ export default function NuevoIngreso() {
     </div>
   );
 }
-

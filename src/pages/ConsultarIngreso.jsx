@@ -2,12 +2,19 @@
 import React, { useState } from "react";
 import { doc, getDoc, updateDoc, deleteField } from "firebase/firestore";
 import { ingresosPorMes, actualizarMontoActual } from "../services/firebase";
+import { useAuth } from "../context/AuthContext";
+import { 
+  getDemoIngresos, 
+  updateDemoIngreso, 
+  deleteDemoIngreso 
+} from "../services/demoData";
 import { MESES, formatoMoneda } from "../utils/formatters";
 import MonthYearSelect from "../components/MonthYearSelect";
 import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function ConsultarIngreso() {
+  const { isDemo } = useAuth();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -23,6 +30,14 @@ export default function ConsultarIngreso() {
 
   const consultarIngreso = async () => {
     setLoading(true);
+
+    if (isDemo) {
+      const lista = getDemoIngresos(mes, anio);
+      setIngresos(lista);
+      setLoading(false);
+      return;
+    }
+
     const claveMesAño = `${mes}_${anio}`;
     const ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
 
@@ -57,24 +72,33 @@ export default function ConsultarIngreso() {
     }
 
     setEditLoading(true);
-    const claveMesAño = `${mes}_${anio}`;
-    const ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
 
     try {
-      const ingresoAntiguo = ingresos[editingIndex];
-      const diferencia = montoNum - ingresoAntiguo.monto;
+      if (isDemo) {
+        updateDemoIngreso(mes, anio, editingIndex, {
+          ...ingresos[editingIndex],
+          descripcion: editDescripcion.trim(),
+          monto: montoNum
+        });
+        setIngresos(getDemoIngresos(mes, anio));
+      } else {
+        const claveMesAño = `${mes}_${anio}`;
+        const ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
+        const ingresoAntiguo = ingresos[editingIndex];
+        const diferencia = montoNum - ingresoAntiguo.monto;
 
-      const nuevaLista = [...ingresos];
-      nuevaLista[editingIndex] = {
-        ...ingresoAntiguo,
-        descripcion: editDescripcion.trim(),
-        monto: montoNum
-      };
+        const nuevaLista = [...ingresos];
+        nuevaLista[editingIndex] = {
+          ...ingresoAntiguo,
+          descripcion: editDescripcion.trim(),
+          monto: montoNum
+        };
 
-      await updateDoc(ingresosMesDoc, { ingresos: nuevaLista });
-      await actualizarMontoActual(diferencia);
+        await updateDoc(ingresosMesDoc, { ingresos: nuevaLista });
+        await actualizarMontoActual(diferencia);
+        setIngresos(nuevaLista);
+      }
 
-      setIngresos(nuevaLista);
       setEditModalOpen(false);
     } catch (error) {
       console.error("Error al guardar edición de ingreso:", error);
@@ -90,21 +114,26 @@ export default function ConsultarIngreso() {
     }
 
     setLoading(true);
-    const claveMesAño = `${mes}_${anio}`;
-    const ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
 
     try {
-      const ingresoEliminado = ingresos[index];
-      const montoEliminado = ingresoEliminado.monto;
+      if (isDemo) {
+        deleteDemoIngreso(mes, anio, index);
+        setIngresos(getDemoIngresos(mes, anio));
+      } else {
+        const claveMesAño = `${mes}_${anio}`;
+        const ingresosMesDoc = doc(ingresosPorMes, claveMesAño);
+        const ingresoEliminado = ingresos[index];
+        const montoEliminado = ingresoEliminado.monto;
 
-      const nuevaLista = ingresos.filter((_, i) => i !== index);
+        const nuevaLista = ingresos.filter((_, i) => i !== index);
 
-      await updateDoc(ingresosMesDoc, {
-        ingresos: nuevaLista.length > 0 ? nuevaLista : deleteField()
-      });
+        await updateDoc(ingresosMesDoc, {
+          ingresos: nuevaLista.length > 0 ? nuevaLista : deleteField()
+        });
 
-      await actualizarMontoActual(-montoEliminado);
-      setIngresos(nuevaLista);
+        await actualizarMontoActual(-montoEliminado);
+        setIngresos(nuevaLista);
+      }
     } catch (error) {
       console.error("Error al eliminar ingreso:", error);
       alert("Hubo un error al eliminar el ingreso.");
@@ -283,4 +312,3 @@ export default function ConsultarIngreso() {
     </div>
   );
 }
-

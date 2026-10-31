@@ -9,14 +9,32 @@ import { auth } from "../services/firebase";
 
 const AuthContext = createContext(null);
 
+const DEMO_USER = {
+  uid: "demo-user-id",
+  email: "demo@registrocontable.com",
+  displayName: "Usuario Demo",
+  isDemo: true
+};
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
+    // Comprobar si estaba en modo demo previamente
+    const storedDemo = localStorage.getItem("registro_contable_demo_active");
+    if (storedDemo === "true") {
+      setUser(DEMO_USER);
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      // Si no es demo, toma el usuario de Firebase
+      if (localStorage.getItem("registro_contable_demo_active") !== "true") {
+        setUser(currentUser ? { ...currentUser, isDemo: false } : null);
+      }
       setLoading(false);
     });
 
@@ -24,11 +42,26 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
+    localStorage.removeItem("registro_contable_demo_active");
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    setUser({ ...cred.user, isDemo: false });
+    return cred;
+  };
+
+  const loginAsDemo = () => {
+    localStorage.setItem("registro_contable_demo_active", "true");
+    setUser(DEMO_USER);
+    setIsLoginModalOpen(false);
   };
 
   const logout = async () => {
-    return signOut(auth);
+    if (user?.isDemo || localStorage.getItem("registro_contable_demo_active") === "true") {
+      localStorage.removeItem("registro_contable_demo_active");
+      setUser(null);
+      return;
+    }
+    await signOut(auth);
+    setUser(null);
   };
 
   const openLoginModal = () => setIsLoginModalOpen(true);
@@ -36,8 +69,10 @@ export function AuthProvider({ children }) {
 
   const value = {
     user,
+    isDemo: Boolean(user?.isDemo),
     loading,
     login,
+    loginAsDemo,
     logout,
     isLoginModalOpen,
     openLoginModal,
@@ -58,4 +93,3 @@ export function useAuth() {
   }
   return context;
 }
-

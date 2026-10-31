@@ -4,7 +4,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, isDemo, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [gastosOpen, setGastosOpen] = useState(false);
   const [ingresosOpen, setIngresosOpen] = useState(false);
@@ -34,6 +34,12 @@ export default function Navbar() {
         <Link className="navbar-brand d-flex align-items-center" to="/" onClick={closeMenu}>
           <img src="/imagen/RC.png" alt="Logo" style={{ height: "30px" }} />
         </Link>
+
+        {isDemo && (
+          <span className="badge bg-warning text-dark d-none d-md-inline-flex align-items-center gap-1 ms-2">
+            <i className="bi bi-rocket-takeoff-fill"></i> Modo Demo
+          </span>
+        )}
 
         <button 
           className="navbar-toggler" 
@@ -145,17 +151,22 @@ export default function Navbar() {
             </li>
           </ul>
 
-          {/* Cerrar sesión */}
-          <button 
-            className="btn btn-outline-danger ms-auto" 
-            type="button"
-            onClick={handleLogout}
-          >
-            Cerrar sesión
-          </button>
+          <div className="d-flex align-items-center gap-2 ms-auto mt-2 mt-lg-0">
+            {isDemo && (
+              <span className="badge bg-warning text-dark d-inline-flex d-md-none align-items-center gap-1">
+                <i className="bi bi-rocket-takeoff-fill"></i> Demo
+              </span>
+            )}
+            <button 
+              className="btn btn-outline-danger" 
+              type="button"
+              onClick={handleLogout}
+            >
+              {isDemo ? "Salir del Demo" : "Cerrar sesión"}
+            </button>
+          </div>
         </div>
       </div>
     </nav>
   );
 }
-
