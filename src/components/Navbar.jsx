@@ -3,11 +3,13 @@ import React, { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
+import { useQuickMovement } from "../context/QuickMovementContext";
 import { formatoMoneda } from "../utils/formatters";
 
 export default function Navbar() {
   const { user, isDemo, logout } = useAuth();
   const { montoActual, totalAhorros } = useBalance();
+  const { openQuickModal } = useQuickMovement();
   const [isOpen, setIsOpen] = useState(false);
   const [gastosOpen, setGastosOpen] = useState(false);
   const [ingresosOpen, setIngresosOpen] = useState(false);
@@ -54,6 +56,17 @@ export default function Navbar() {
           </div>
         </div>
 
+        {/* Botón Acción Rápida Desktop */}
+        <button
+          className="btn btn-sm btn-success rounded-pill px-3 fw-bold d-none d-md-flex align-items-center gap-1 shadow-sm ms-2"
+          type="button"
+          onClick={() => openQuickModal("gasto")}
+          title="Nuevo movimiento rápido"
+        >
+          <i className="bi bi-plus-lg"></i>
+          <span>Nuevo</span>
+        </button>
+
         {/* Badge Modo Demo */}
         {isDemo && (
           <span className="badge bg-warning text-dark d-none d-lg-inline-flex align-items-center gap-1 mx-2">
@@ -88,6 +101,16 @@ export default function Navbar() {
               <strong className="text-warning">{formatoMoneda(totalAhorros)}</strong>
             </div>
           </div>
+
+          {/* Botón Acción Rápida Móvil */}
+          <button
+            className="btn btn-sm btn-success w-100 rounded-pill py-2 fw-bold d-flex d-md-none align-items-center justify-content-center gap-1 shadow-sm mb-2"
+            type="button"
+            onClick={() => { closeMenu(); openQuickModal("gasto"); }}
+          >
+            <i className="bi bi-plus-circle me-1"></i>
+            + Nuevo Movimiento
+          </button>
 
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
             {/* Dropdown Gastos */}

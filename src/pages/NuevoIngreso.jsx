@@ -5,6 +5,7 @@ import { useToast } from "../context/ToastContext";
 import { addDemoIngreso } from "../services/demoData";
 import { addIngresoUser } from "../services/dbService";
 import { MESES } from "../utils/formatters";
+import { CATEGORIAS_INGRESO } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
 import Loader from "../components/Loader";
 
@@ -14,6 +15,7 @@ export default function NuevoIngreso() {
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
+  const [categoria, setCategoria] = useState("Sueldo");
   const [descripcion, setDescripcion] = useState("");
   const [monto, setMonto] = useState("");
   const [porcentaje, setPorcentaje] = useState(0);
@@ -23,9 +25,10 @@ export default function NuevoIngreso() {
     e.preventDefault();
     const montoNum = parseFloat(monto);
     const porcentajeNum = parseFloat(porcentaje);
+    const descFinal = descripcion.trim() || categoria;
 
-    if (!descripcion.trim() || isNaN(montoNum) || montoNum <= 0 || isNaN(porcentajeNum)) {
-      showToast("Por favor completa todos los campos correctamente con un monto mayor a 0.", "warning");
+    if (isNaN(montoNum) || montoNum <= 0 || isNaN(porcentajeNum)) {
+      showToast("Por favor ingresa un monto válido mayor a 0.", "warning");
       return;
     }
 
@@ -36,17 +39,21 @@ export default function NuevoIngreso() {
         const ahorro = (montoNum * porcentajeNum) / 100;
         const ingresoNeto = montoNum - ahorro;
         addDemoIngreso(mes, anio, {
-          descripcion: descripcion.trim(),
+          descripcion: descFinal,
           monto: ingresoNeto,
-          ahorro
+          montoBruto: montoNum,
+          ahorro,
+          porcentajeAhorro: porcentajeNum,
+          categoria
         });
       } else {
         await addIngresoUser(user.uid, {
           mes,
           anio,
-          descripcion: descripcion.trim(),
+          descripcion: descFinal,
           montoBruto: montoNum,
-          porcentajeAhorro: porcentajeNum
+          porcentajeAhorro: porcentajeNum,
+          categoria
         });
       }
 
@@ -80,6 +87,32 @@ export default function NuevoIngreso() {
         <form onSubmit={handleSubmit}>
           <MonthYearSelect mes={mes} setMes={setMes} anio={anio} setAnio={setAnio} />
 
+          {/* Selector de Categorías Pastel */}
+          <div className="mb-3">
+            <label className="form-label text-muted small fw-semibold d-block mb-1">
+              Origen del Ingreso
+            </label>
+            <div className="d-flex flex-wrap gap-1">
+              {CATEGORIAS_INGRESO.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small ${categoria === cat.id ? 'fw-bold border-2 shadow-sm' : 'opacity-80'}`}
+                  style={{
+                    backgroundColor: categoria === cat.id ? cat.bg : "#f1ede4",
+                    color: cat.color,
+                    borderColor: cat.border,
+                    fontSize: "0.82rem"
+                  }}
+                  onClick={() => setCategoria(cat.id)}
+                >
+                  <i className={`bi ${cat.icon}`}></i>
+                  <span>{cat.nombre.split(" ")[0]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="mb-3">
             <label className="form-label text-muted small fw-semibold">Descripción del Ingreso</label>
             <div className="input-group">
@@ -87,11 +120,10 @@ export default function NuevoIngreso() {
               <input 
                 type="text" 
                 className="form-control" 
-                placeholder="Ej. Sueldo, Ventas, Honorarios..."
+                placeholder={`Ej. Cobro por ${categoria}`}
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
                 disabled={loading}
-                required
               />
             </div>
           </div>

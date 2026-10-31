@@ -4,9 +4,12 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { BalanceProvider } from "./context/BalanceContext";
 import { ToastProvider } from "./context/ToastContext";
+import { QuickMovementProvider } from "./context/QuickMovementContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LoginModal from "./components/LoginModal";
+import QuickMovementModal from "./components/QuickMovementModal";
+import FloatingActionButton from "./components/FloatingActionButton";
 import Loader from "./components/Loader";
 
 // Code Splitting (Carga diferida para máxima velocidad)
@@ -34,8 +37,8 @@ function ProtectedRoute({ children }) {
   if (!user) {
     return (
       <div className="fade-in d-flex flex-column align-items-center justify-content-center flex-grow-1 p-3">
-        <div className="principal text-center p-5 rounded-4 text-white shadow-lg border" style={{ maxWidth: "480px" }}>
-          <i className="bi bi-shield-lock-fill text-warning fs-1 mb-3 d-block"></i>
+        <div className="principal text-center p-5 rounded-4 shadow-sm border" style={{ maxWidth: "480px" }}>
+          <i className="bi bi-shield-lock text-warning fs-1 mb-3 d-block"></i>
           <h4 className="fw-bold mb-2">Acceso Restringido</h4>
           <p className="text-muted small mb-4">Debes iniciar sesión con tu cuenta o ingresar en Modo Demo para ver tus finanzas.</p>
           <button className="btn btn-success px-4 py-2 fw-semibold" onClick={openLoginModal}>
@@ -112,6 +115,8 @@ function MainLayout() {
       </main>
       <Footer />
       <LoginModal />
+      <QuickMovementModal />
+      <FloatingActionButton />
     </div>
   );
 }
@@ -122,7 +127,9 @@ export default function App() {
       <AuthProvider>
         <BalanceProvider>
           <ToastProvider>
-            <MainLayout />
+            <QuickMovementProvider>
+              <MainLayout />
+            </QuickMovementProvider>
           </ToastProvider>
         </BalanceProvider>
       </AuthProvider>

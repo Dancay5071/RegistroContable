@@ -558,3 +558,29 @@ footer a {
 footer a:hover {
   color: var(--accent-success);
 }
+
+/* ==========================================================================
+   Floating Action Button (FAB)
+   ========================================================================== */
+.btn-fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 54px;
+  height: 54px;
+  z-index: 1010;
+  background-color: var(--accent-success) !important;
+  border-color: var(--accent-success) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(30, 99, 63, 0.35) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-fab:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 12px 28px rgba(30, 99, 63, 0.5) !important;
+}
+
+.btn-fab:active {
+  transform: scale(0.95);
+}

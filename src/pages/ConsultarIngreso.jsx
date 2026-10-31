@@ -1,8 +1,9 @@
 // src/pages/ConsultarIngreso.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { useQuickMovement } from "../context/QuickMovementContext";
 import { 
   getDemoIngresos, 
   updateDemoIngreso, 
@@ -14,25 +15,38 @@ import {
   deleteIngresoUser 
 } from "../services/dbService";
 import { MESES, formatoMoneda } from "../utils/formatters";
+import { CATEGORIAS_INGRESO, getCategoriaIngreso } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
 import Loader from "../components/Loader";
 
 export default function ConsultarIngreso() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
+  const { movementCounter } = useQuickMovement();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
   const [ingresos, setIngresos] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Filtros en tiempo real
+  const [filtroTexto, setFiltroTexto] = useState("");
+  const [filtroCategoria, setFiltroCategoria] = useState("todas");
+
   // Modal edición
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editDescripcion, setEditDescripcion] = useState("");
+  const [editCategoria, setEditCategoria] = useState("Sueldo");
   const [editMonto, setEditMonto] = useState("");
   const [editLoading, setEditLoading] = useState(false);
+
+  useEffect(() => {
+    if (ingresos !== null) {
+      consultarIngreso();
+    }
+  }, [movementCounter]);
 
   const consultarIngreso = async () => {
     setLoading(true);
@@ -59,6 +73,7 @@ export default function ConsultarIngreso() {
     setEditingIndex(index);
     setEditingItem(item);
     setEditDescripcion(item.descripcion);
+    setEditCategoria(item.categoria || "Sueldo");
     setEditMonto(item.monto.toString());
     setEditModalOpen(true);
   };
@@ -79,7 +94,8 @@ export default function ConsultarIngreso() {
         updateDemoIngreso(mes, anio, editingIndex, {
           ...ingresos[editingIndex],
           descripcion: editDescripcion.trim(),
-          monto: montoNum
+          monto: montoNum,
+          categoria: editCategoria
         });
         setIngresos(getDemoIngresos(mes, anio));
       } else {
@@ -88,7 +104,8 @@ export default function ConsultarIngreso() {
           anio,
           descripcion: editDescripcion.trim(),
           monto: montoNum,
-          montoAnterior: editingItem.monto
+          montoAnterior: editingItem.monto,
+          categoria: editCategoria
         });
         await consultarIngreso();
       }
@@ -132,7 +149,16 @@ export default function ConsultarIngreso() {
     }
   };
 
-  const sumaIngresos = (ingresos || []).reduce((acc, ing) => acc + (Number(ing.monto) || 0), 0);
+  const ingresosFiltrados = (ingresos || []).filter((i) => {
+    const coincideTexto = !filtroTexto.trim() || 
+      i.descripcion.toLowerCase().includes(filtroTexto.toLowerCase()) ||
+      (i.categoria && i.categoria.toLowerCase().includes(filtroTexto.toLowerCase()));
+    const coincideCat = filtroCategoria === "todas" || 
+      (i.categoria || "Sueldo").toLowerCase() === filtroCategoria.toLowerCase();
+    return coincideTexto && coincideCat;
+  });
+
+  const sumaIngresos = ingresosFiltrados.reduce((acc, ing) => acc + (Number(ing.monto) || 0), 0);
 
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
@@ -185,46 +211,115 @@ export default function ConsultarIngreso() {
                 </span>
               </div>
 
+              {/* Barra de Búsqueda y Filtro en Tiempo Real */}
+              <div className="row g-2 mb-3">
+                <div className="col-12 col-md-7">
+                  <div className="input-group input-group-sm">
+                    <span className="input-group-text"><i className="bi bi-search"></i></span>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      placeholder="Buscar por descripción u origen..."
+                      value={filtroTexto}
+                      onChange={(e) => setFiltroTexto(e.target.value)}
+                    />
+                    {filtroTexto && (
+                      <button 
+                        type="button" 
+                        className="btn btn-outline-secondary"
+                        onClick={() => setFiltroTexto("")}
+                      >
+                        <i className="bi bi-x"></i>
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="col-12 col-md-5">
+                  <select 
+                    className="form-select form-select-sm"
+                    value={filtroCategoria}
+                    onChange={(e) => setFiltroCategoria(e.target.value)}
+                  >
+                    <option value="todas">Todos los orígenes</option>
+                    {CATEGORIAS_INGRESO.map((c) => (
+                      <option key={c.id} value={c.id}>{c.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div className="table-responsive">
                 <table className="table table-hover align-middle">
                   <thead>
                     <tr>
-                      <th scope="col" style={{ width: "30px" }}></th>
-                      <th>Descripción</th>
+                      <th scope="col" style={{ width: "36px" }}></th>
+                      <th>Detalle & Origen</th>
                       <th>Monto Neto</th>
                       <th className="text-end">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {ingresos.map((ingreso, index) => (
-                      <tr key={ingreso.id || index}>
-                        <td><i className="bi bi-dot fs-4 text-success"></i></td>
-                        <td className="fw-semibold text-dark">{ingreso.descripcion}</td>
-                        <td className="text-success fw-bold">{formatoMoneda(ingreso.monto)}</td>
-                        <td className="text-end">
-                          <button 
-                            type="button" 
-                            className="btn btn-outline-secondary btn-sm me-2" 
-                            title="Editar" 
-                            onClick={() => handleOpenEdit(index)}
-                          >
-                            <i className="bi bi-pencil-fill text-warning"></i>
-                          </button>
-                          <button 
-                            type="button" 
-                            className="btn btn-outline-secondary btn-sm" 
-                            title="Eliminar" 
-                            onClick={() => handleEliminarIngreso(index)}
-                          >
-                            <i className="bi bi-trash3-fill text-danger"></i>
-                          </button>
+                    {ingresosFiltrados.length === 0 ? (
+                      <tr>
+                        <td colSpan="4" className="text-center text-muted py-4 small">
+                          No se encontraron ingresos que coincidan con los filtros aplicados.
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      ingresosFiltrados.map((ingreso, index) => {
+                        const cat = getCategoriaIngreso(ingreso.categoria);
+                        return (
+                          <tr key={ingreso.id || index}>
+                            <td>
+                              <div 
+                                className="rounded-circle d-flex align-items-center justify-content-center"
+                                style={{ width: "32px", height: "32px", backgroundColor: cat.bg, color: cat.color }}
+                                title={cat.nombre}
+                              >
+                                <i className={`bi ${cat.icon}`}></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="fw-semibold text-dark">{ingreso.descripcion}</div>
+                              <span 
+                                className="badge px-2 py-0 rounded-pill" 
+                                style={{ 
+                                  backgroundColor: cat.bg, 
+                                  color: cat.color, 
+                                  border: `1px solid ${cat.border}`,
+                                  fontSize: "0.72rem"
+                                }}
+                              >
+                                {cat.nombre}
+                              </span>
+                            </td>
+                            <td className="text-success fw-bold">{formatoMoneda(ingreso.monto)}</td>
+                            <td className="text-end">
+                              <button 
+                                type="button" 
+                                className="btn btn-outline-secondary btn-sm me-2" 
+                                title="Editar" 
+                                onClick={() => handleOpenEdit(index)}
+                              >
+                                <i className="bi bi-pencil-fill text-warning"></i>
+                              </button>
+                              <button 
+                                type="button" 
+                                className="btn btn-outline-secondary btn-sm" 
+                                title="Eliminar" 
+                                onClick={() => handleEliminarIngreso(index)}
+                              >
+                                <i className="bi bi-trash3-fill text-danger"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                   <tfoot className="table-light">
                     <tr>
-                      <td colSpan="2" className="fw-bold">Total del Mes</td>
+                      <td colSpan="2" className="fw-bold">Total Consultado ({ingresosFiltrados.length} registros)</td>
                       <td className="fw-bold text-success fs-6">{formatoMoneda(sumaIngresos)}</td>
                       <td></td>
                     </tr>
@@ -257,6 +352,19 @@ export default function ConsultarIngreso() {
               </div>
               <form onSubmit={handleSaveEdit}>
                 <div className="modal-body">
+                  <div className="mb-3">
+                    <label className="form-label text-muted small fw-semibold">Origen / Categoría</label>
+                    <select 
+                      className="form-select form-select-sm"
+                      value={editCategoria}
+                      onChange={(e) => setEditCategoria(e.target.value)}
+                      disabled={editLoading}
+                    >
+                      {CATEGORIAS_INGRESO.map((c) => (
+                        <option key={c.id} value={c.id}>{c.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
                   <div className="mb-3">
                     <label className="form-label text-muted small fw-semibold">Descripción</label>
                     <input 

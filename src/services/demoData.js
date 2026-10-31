@@ -16,25 +16,25 @@ function generarDatosIniciales() {
     },
     gastosPorMes: {
       [`${currentMonthName}_${currentYear}`]: [
-        { descripcion: "Supermercado mensual", monto: 48500.00 },
-        { descripcion: "Factura de Luz (Edenor)", monto: 14200.00 },
-        { descripcion: "Internet y cable fibra", monto: 18900.00 },
-        { descripcion: "Combustible vehículo", monto: 25000.00 },
-        { descripcion: "Farmacia y medicamentos", monto: 8600.00 }
+        { descripcion: "Supermercado mensual", monto: 48500.00, categoria: "Supermercado", fecha: new Date().toISOString() },
+        { descripcion: "Factura de Luz (Edenor)", monto: 14200.00, categoria: "Servicios", fecha: new Date().toISOString() },
+        { descripcion: "Internet y cable fibra", monto: 18900.00, categoria: "Servicios", fecha: new Date().toISOString() },
+        { descripcion: "Combustible vehículo", monto: 25000.00, categoria: "Transporte", fecha: new Date().toISOString() },
+        { descripcion: "Farmacia y medicamentos", monto: 8600.00, categoria: "Salud", fecha: new Date().toISOString() }
       ],
       [`${prevMonthName}_${currentYear}`]: [
-        { descripcion: "Supermercado", monto: 52000.00 },
-        { descripcion: "Servicios varios", monto: 22000.00 },
-        { descripcion: "Salida restaurante", monto: 19500.00 }
+        { descripcion: "Supermercado", monto: 52000.00, categoria: "Supermercado", fecha: new Date().toISOString() },
+        { descripcion: "Servicios varios", monto: 22000.00, categoria: "Servicios", fecha: new Date().toISOString() },
+        { descripcion: "Salida restaurante", monto: 19500.00, categoria: "Comida", fecha: new Date().toISOString() }
       ]
     },
     ingresosPorMes: {
       [`${currentMonthName}_${currentYear}`]: [
-        { descripcion: "Sueldo mensual principal", monto: 243000.00, ahorro: 27000.00 },
-        { descripcion: "Proyecto independiente / Freelance", monto: 58500.00, ahorro: 6500.00 }
+        { descripcion: "Sueldo mensual principal", monto: 243000.00, ahorro: 27000.00, categoria: "Sueldo", fecha: new Date().toISOString() },
+        { descripcion: "Proyecto freelance diseño", monto: 58500.00, ahorro: 6500.00, categoria: "Freelance", fecha: new Date().toISOString() }
       ],
       [`${prevMonthName}_${currentYear}`]: [
-        { descripcion: "Sueldo mensual principal", monto: 243000.00, ahorro: 27000.00 }
+        { descripcion: "Sueldo mensual principal", monto: 243000.00, ahorro: 27000.00, categoria: "Sueldo", fecha: new Date().toISOString() }
       ]
     },
     ahorrosPorMes: {
@@ -108,7 +108,12 @@ export function addDemoGasto(mes, anio, gasto) {
   if (!store.gastosPorMes[clave]) {
     store.gastosPorMes[clave] = [];
   }
-  store.gastosPorMes[clave].push(gasto);
+  const gastoConMeta = {
+    ...gasto,
+    categoria: gasto.categoria || "Otros",
+    fecha: gasto.fecha || new Date().toISOString()
+  };
+  store.gastosPorMes[clave].push(gastoConMeta);
   store.balances.montoActual = Math.max(0, (store.balances.montoActual || 0) - gasto.monto);
   saveDemoStore(store);
 }
@@ -119,7 +124,7 @@ export function updateDemoGasto(mes, anio, index, nuevoGasto) {
   const lista = store.gastosPorMes[clave] || [];
   if (index >= 0 && index < lista.length) {
     const diff = nuevoGasto.monto - lista[index].monto;
-    lista[index] = nuevoGasto;
+    lista[index] = { ...lista[index], ...nuevoGasto };
     store.balances.montoActual = Math.max(0, (store.balances.montoActual || 0) - diff);
     saveDemoStore(store);
   }
@@ -150,7 +155,12 @@ export function addDemoIngreso(mes, anio, ingreso) {
   if (!store.ingresosPorMes[clave]) {
     store.ingresosPorMes[clave] = [];
   }
-  store.ingresosPorMes[clave].push(ingreso);
+  const ingresoConMeta = {
+    ...ingreso,
+    categoria: ingreso.categoria || "Sueldo",
+    fecha: ingreso.fecha || new Date().toISOString()
+  };
+  store.ingresosPorMes[clave].push(ingresoConMeta);
 
   // Actualizar monto actual e increment de ahorro
   store.balances.montoActual = (store.balances.montoActual || 0) + ingreso.monto;
@@ -283,5 +293,45 @@ export function getDemoResumenAnual(anio) {
     totalAnualGastos,
     totalAnualAhorros
   };
+}
+
+// Obtener últimas transacciones combinadas (Demo)
+export function getDemoUltimasTransacciones(limitCount = 5) {
+  const store = getDemoStore();
+  const currentYear = new Date().getFullYear();
+  const currentMonthIdx = new Date().getMonth();
+  const currentMonthName = MESES[currentMonthIdx];
+  const clave = `${currentMonthName}_${currentYear}`;
+
+  const transacciones = [];
+
+  const gastos = store.gastosPorMes[clave] || [];
+  gastos.forEach((g) => {
+    transacciones.push({
+      tipo: "gasto",
+      descripcion: g.descripcion,
+      monto: g.monto,
+      categoria: g.categoria || "Otros",
+      mes: currentMonthName,
+      anio: currentYear,
+      createdAt: g.fecha || new Date().toISOString()
+    });
+  });
+
+  const ingresos = store.ingresosPorMes[clave] || [];
+  ingresos.forEach((i) => {
+    transacciones.push({
+      tipo: "ingreso",
+      descripcion: i.descripcion,
+      monto: i.monto,
+      categoria: i.categoria || "Sueldo",
+      mes: currentMonthName,
+      anio: currentYear,
+      createdAt: i.fecha || new Date().toISOString()
+    });
+  });
+
+  transacciones.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  return transacciones.slice(0, limitCount);
 }
 

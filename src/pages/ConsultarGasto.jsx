@@ -1,8 +1,9 @@
 // src/pages/ConsultarGasto.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { useQuickMovement } from "../context/QuickMovementContext";
 import { 
   getDemoGastos, 
   updateDemoGasto, 
@@ -14,25 +15,38 @@ import {
   deleteGastoUser 
 } from "../services/dbService";
 import { MESES, formatoMoneda } from "../utils/formatters";
+import { CATEGORIAS_GASTO, getCategoriaGasto } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
 import Loader from "../components/Loader";
 
 export default function ConsultarGasto() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
+  const { movementCounter } = useQuickMovement();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
   const [gastos, setGastos] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Filtros en tiempo real
+  const [filtroTexto, setFiltroTexto] = useState("");
+  const [filtroCategoria, setFiltroCategoria] = useState("todas");
+
   // Modal edición
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editDescripcion, setEditDescripcion] = useState("");
+  const [editCategoria, setEditCategoria] = useState("Supermercado");
   const [editMonto, setEditMonto] = useState("");
   const [editLoading, setEditLoading] = useState(false);
+
+  useEffect(() => {
+    if (gastos !== null) {
+      consultarGasto();
+    }
+  }, [movementCounter]);
 
   const consultarGasto = async () => {
     setLoading(true);
@@ -59,6 +73,7 @@ export default function ConsultarGasto() {
     setEditingIndex(index);
     setEditingItem(item);
     setEditDescripcion(item.descripcion);
+    setEditCategoria(item.categoria || "Otros");
     setEditMonto(item.monto.toString());
     setEditModalOpen(true);
   };
@@ -78,7 +93,8 @@ export default function ConsultarGasto() {
       if (isDemo) {
         updateDemoGasto(mes, anio, editingIndex, {
           descripcion: editDescripcion.trim(),
-          monto: montoNum
+          monto: montoNum,
+          categoria: editCategoria
         });
         setGastos(getDemoGastos(mes, anio));
       } else {
@@ -87,7 +103,8 @@ export default function ConsultarGasto() {
           anio,
           descripcion: editDescripcion.trim(),
           monto: montoNum,
-          montoAnterior: editingItem.monto
+          montoAnterior: editingItem.monto,
+          categoria: editCategoria
         });
         await consultarGasto();
       }
@@ -131,7 +148,16 @@ export default function ConsultarGasto() {
     }
   };
 
-  const sumaGastos = (gastos || []).reduce((acc, g) => acc + (Number(g.monto) || 0), 0);
+  const gastosFiltrados = (gastos || []).filter((g) => {
+    const coincideTexto = !filtroTexto.trim() || 
+      g.descripcion.toLowerCase().includes(filtroTexto.toLowerCase()) ||
+      (g.categoria && g.categoria.toLowerCase().includes(filtroTexto.toLowerCase()));
+    const coincideCat = filtroCategoria === "todas" || 
+      (g.categoria || "Otros").toLowerCase() === filtroCategoria.toLowerCase();
+    return coincideTexto && coincideCat;
+  });
+
+  const sumaGastos = gastosFiltrados.reduce((acc, g) => acc + (Number(g.monto) || 0), 0);
 
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
@@ -184,46 +210,115 @@ export default function ConsultarGasto() {
                 </span>
               </div>
 
+              {/* Barra de Búsqueda y Filtro en Tiempo Real */}
+              <div className="row g-2 mb-3">
+                <div className="col-12 col-md-7">
+                  <div className="input-group input-group-sm">
+                    <span className="input-group-text"><i className="bi bi-search"></i></span>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      placeholder="Buscar por descripción o comercio..."
+                      value={filtroTexto}
+                      onChange={(e) => setFiltroTexto(e.target.value)}
+                    />
+                    {filtroTexto && (
+                      <button 
+                        type="button" 
+                        className="btn btn-outline-secondary"
+                        onClick={() => setFiltroTexto("")}
+                      >
+                        <i className="bi bi-x"></i>
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="col-12 col-md-5">
+                  <select 
+                    className="form-select form-select-sm"
+                    value={filtroCategoria}
+                    onChange={(e) => setFiltroCategoria(e.target.value)}
+                  >
+                    <option value="todas">Todas las categorías</option>
+                    {CATEGORIAS_GASTO.map((c) => (
+                      <option key={c.id} value={c.id}>{c.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div className="table-responsive">
                 <table className="table table-hover align-middle">
                   <thead>
                     <tr>
-                      <th scope="col" style={{ width: "30px" }}></th>
-                      <th>Descripción</th>
+                      <th scope="col" style={{ width: "36px" }}></th>
+                      <th>Detalle & Categoría</th>
                       <th>Monto</th>
                       <th className="text-end">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {gastos.map((gasto, index) => (
-                      <tr key={gasto.id || index}>
-                        <td><i className="bi bi-dot fs-4 text-danger"></i></td>
-                        <td className="fw-semibold text-dark">{gasto.descripcion}</td>
-                        <td className="text-danger fw-bold">{formatoMoneda(gasto.monto)}</td>
-                        <td className="text-end">
-                          <button 
-                            type="button" 
-                            className="btn btn-outline-secondary btn-sm me-2" 
-                            title="Editar" 
-                            onClick={() => handleOpenEdit(index)}
-                          >
-                            <i className="bi bi-pencil-fill text-warning"></i>
-                          </button>
-                          <button 
-                            type="button" 
-                            className="btn btn-outline-secondary btn-sm" 
-                            title="Eliminar" 
-                            onClick={() => handleEliminarGasto(index)}
-                          >
-                            <i className="bi bi-trash3-fill text-danger"></i>
-                          </button>
+                    {gastosFiltrados.length === 0 ? (
+                      <tr>
+                        <td colSpan="4" className="text-center text-muted py-4 small">
+                          No se encontraron gastos que coincidan con los filtros aplicados.
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      gastosFiltrados.map((gasto, index) => {
+                        const cat = getCategoriaGasto(gasto.categoria);
+                        return (
+                          <tr key={gasto.id || index}>
+                            <td>
+                              <div 
+                                className="rounded-circle d-flex align-items-center justify-content-center"
+                                style={{ width: "32px", height: "32px", backgroundColor: cat.bg, color: cat.color }}
+                                title={cat.nombre}
+                              >
+                                <i className={`bi ${cat.icon}`}></i>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="fw-semibold text-dark">{gasto.descripcion}</div>
+                              <span 
+                                className="badge px-2 py-0 rounded-pill" 
+                                style={{ 
+                                  backgroundColor: cat.bg, 
+                                  color: cat.color, 
+                                  border: `1px solid ${cat.border}`,
+                                  fontSize: "0.72rem"
+                                }}
+                              >
+                                {cat.nombre}
+                              </span>
+                            </td>
+                            <td className="text-danger fw-bold">{formatoMoneda(gasto.monto)}</td>
+                            <td className="text-end">
+                              <button 
+                                type="button" 
+                                className="btn btn-outline-secondary btn-sm me-2" 
+                                title="Editar" 
+                                onClick={() => handleOpenEdit(index)}
+                              >
+                                <i className="bi bi-pencil-fill text-warning"></i>
+                              </button>
+                              <button 
+                                type="button" 
+                                className="btn btn-outline-secondary btn-sm" 
+                                title="Eliminar" 
+                                onClick={() => handleEliminarGasto(index)}
+                              >
+                                <i className="bi bi-trash3-fill text-danger"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                   <tfoot className="table-light">
                     <tr>
-                      <td colSpan="2" className="fw-bold">Total del Mes</td>
+                      <td colSpan="2" className="fw-bold">Total Consultado ({gastosFiltrados.length} registros)</td>
                       <td className="fw-bold text-danger fs-6">{formatoMoneda(sumaGastos)}</td>
                       <td></td>
                     </tr>
@@ -256,6 +351,19 @@ export default function ConsultarGasto() {
               </div>
               <form onSubmit={handleSaveEdit}>
                 <div className="modal-body">
+                  <div className="mb-3">
+                    <label className="form-label text-muted small fw-semibold">Categoría</label>
+                    <select 
+                      className="form-select form-select-sm"
+                      value={editCategoria}
+                      onChange={(e) => setEditCategoria(e.target.value)}
+                      disabled={editLoading}
+                    >
+                      {CATEGORIAS_GASTO.map((c) => (
+                        <option key={c.id} value={c.id}>{c.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
                   <div className="mb-3">
                     <label className="form-label text-muted small fw-semibold">Descripción</label>
                     <input 

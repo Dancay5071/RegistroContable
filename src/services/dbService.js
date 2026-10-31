@@ -52,7 +52,7 @@ export function listenUserBalances(userId, callback) {
 }
 
 // 2. Registrar nuevo Gasto
-export async function addGastoUser(userId, { mes, anio, descripcion, monto }) {
+export async function addGastoUser(userId, { mes, anio, descripcion, monto, categoria = "Otros" }) {
   const clave = `${mes}_${anio}`;
   const transaccionesRef = collection(db, "users", userId, "transacciones");
   const balancesRef = doc(db, "users", userId, "config", "balances");
@@ -62,6 +62,7 @@ export async function addGastoUser(userId, { mes, anio, descripcion, monto }) {
   const docRef = await addDoc(transaccionesRef, {
     tipo: "gasto",
     descripcion: descripcion.trim(),
+    categoria: categoria || "Otros",
     monto: Number(monto),
     mes,
     anio: Number(anio),
@@ -102,7 +103,7 @@ export async function getGastosUser(userId, mes, anio) {
 }
 
 // 4. Editar Gasto
-export async function updateGastoUser(userId, id, { mes, anio, descripcion, monto, montoAnterior }) {
+export async function updateGastoUser(userId, id, { mes, anio, descripcion, monto, montoAnterior, categoria }) {
   const clave = `${mes}_${anio}`;
   const transaccionRef = doc(db, "users", userId, "transacciones", id);
   const balancesRef = doc(db, "users", userId, "config", "balances");
@@ -110,11 +111,14 @@ export async function updateGastoUser(userId, id, { mes, anio, descripcion, mont
 
   const diferencia = Number(monto) - Number(montoAnterior);
 
-  await updateDoc(transaccionRef, {
+  const updatePayload = {
     descripcion: descripcion.trim(),
     monto: Number(monto),
     updatedAt: serverTimestamp()
-  });
+  };
+  if (categoria) updatePayload.categoria = categoria;
+
+  await updateDoc(transaccionRef, updatePayload);
 
   if (diferencia !== 0) {
     await updateDoc(balancesRef, {
@@ -145,7 +149,7 @@ export async function deleteGastoUser(userId, id, { mes, anio, monto }) {
 }
 
 // 6. Registrar nuevo Ingreso
-export async function addIngresoUser(userId, { mes, anio, descripcion, montoBruto, porcentajeAhorro }) {
+export async function addIngresoUser(userId, { mes, anio, descripcion, montoBruto, porcentajeAhorro, categoria = "Sueldo" }) {
   const clave = `${mes}_${anio}`;
   const ahorro = (Number(montoBruto) * Number(porcentajeAhorro)) / 100;
   const ingresoNeto = Number(montoBruto) - ahorro;
@@ -157,6 +161,7 @@ export async function addIngresoUser(userId, { mes, anio, descripcion, montoBrut
   const docRef = await addDoc(transaccionesRef, {
     tipo: "ingreso",
     descripcion: descripcion.trim(),
+    categoria: categoria || "Sueldo",
     monto: ingresoNeto,
     montoBruto: Number(montoBruto),
     ahorro,
@@ -200,7 +205,7 @@ export async function getIngresosUser(userId, mes, anio) {
 }
 
 // 8. Editar Ingreso
-export async function updateIngresoUser(userId, id, { mes, anio, descripcion, monto, montoAnterior }) {
+export async function updateIngresoUser(userId, id, { mes, anio, descripcion, monto, montoAnterior, categoria }) {
   const clave = `${mes}_${anio}`;
   const transaccionRef = doc(db, "users", userId, "transacciones", id);
   const balancesRef = doc(db, "users", userId, "config", "balances");
@@ -208,11 +213,14 @@ export async function updateIngresoUser(userId, id, { mes, anio, descripcion, mo
 
   const diferencia = Number(monto) - Number(montoAnterior);
 
-  await updateDoc(transaccionRef, {
+  const updatePayload = {
     descripcion: descripcion.trim(),
     monto: Number(monto),
     updatedAt: serverTimestamp()
-  });
+  };
+  if (categoria) updatePayload.categoria = categoria;
+
+  await updateDoc(transaccionRef, updatePayload);
 
   if (diferencia !== 0) {
     await updateDoc(balancesRef, {
@@ -378,5 +386,29 @@ export async function getResumenAnualUser(userId, anio) {
     totalAnualGastos,
     totalAnualAhorros
   };
+}
+
+// 14. Obtener últimas transacciones combinadas (para el Dashboard)
+export async function getUltimasTransaccionesUser(userId, limitCount = 5) {
+  if (!userId) return [];
+  try {
+    const transaccionesRef = collection(db, "users", userId, "transacciones");
+    const snap = await getDocs(transaccionesRef);
+    const items = [];
+    snap.forEach((d) => {
+      items.push({ id: d.id, ...d.data() });
+    });
+
+    items.sort((a, b) => {
+      const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+      const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+      return timeB - timeA;
+    });
+
+    return items.slice(0, limitCount);
+  } catch (error) {
+    console.error("Error al obtener últimas transacciones:", error);
+    return [];
+  }
 }
 

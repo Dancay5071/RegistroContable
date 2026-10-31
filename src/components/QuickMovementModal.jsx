@@ -1,0 +1,449 @@
+// src/components/QuickMovementModal.jsx
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useQuickMovement } from "../context/QuickMovementContext";
+import { useToast } from "../context/ToastContext";
+import { MESES } from "../utils/formatters";
+import { CATEGORIAS_GASTO, CATEGORIAS_INGRESO } from "../utils/categories";
+import { 
+  addGastoUser, 
+  addIngresoUser, 
+  addAhorroDirectoUser, 
+  addExtraccionUser 
+} from "../services/dbService";
+import { 
+  addDemoGasto, 
+  addDemoIngreso, 
+  addDemoAhorro, 
+  addDemoExtraccion 
+} from "../services/demoData";
+import MonthYearSelect from "./MonthYearSelect";
+
+export default function QuickMovementModal() {
+  const { user, isDemo } = useAuth();
+  const { isOpen, activeTab, setActiveTab, closeQuickModal, notifyMovementSaved } = useQuickMovement();
+  const { showToast } = useToast();
+
+  const currentDate = new Date();
+  const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
+  const [anio, setAnio] = useState(currentDate.getFullYear());
+
+  // Form states
+  const [descripcion, setDescripcion] = useState("");
+  const [monto, setMonto] = useState("");
+  const [categoriaGasto, setCategoriaGasto] = useState("Supermercado");
+  const [categoriaIngreso, setCategoriaIngreso] = useState("Sueldo");
+  const [porcentajeAhorro, setPorcentajeAhorro] = useState(0);
+  const [tipoAhorro, setTipoAhorro] = useState("agregar"); // "agregar" | "extraer"
+  const [loading, setLoading] = useState(false);
+
+  if (!isOpen || !user) return null;
+
+  const resetFields = () => {
+    setDescripcion("");
+    setMonto("");
+    setPorcentajeAhorro(0);
+    setTipoAhorro("agregar");
+  };
+
+  const handleClose = () => {
+    resetFields();
+    closeQuickModal();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const montoNum = parseFloat(monto);
+
+    if (isNaN(montoNum) || montoNum <= 0) {
+      showToast("Ingresa un monto válido mayor a 0.", "warning");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      if (activeTab === "gasto") {
+        const descFinal = descripcion.trim() || categoriaGasto;
+        if (isDemo) {
+          addDemoGasto(mes, anio, {
+            descripcion: descFinal,
+            monto: montoNum,
+            categoria: categoriaGasto
+          });
+        } else {
+          await addGastoUser(user.uid, {
+            mes,
+            anio,
+            descripcion: descFinal,
+            monto: montoNum,
+            categoria: categoriaGasto
+          });
+        }
+        showToast(`Gasto de $${montoNum.toLocaleString()} registrado.`, "success");
+      } else if (activeTab === "ingreso") {
+        const descFinal = descripcion.trim() || categoriaIngreso;
+        if (isDemo) {
+          const ahorro = (montoNum * porcentajeAhorro) / 100;
+          addDemoIngreso(mes, anio, {
+            descripcion: descFinal,
+            monto: montoNum - ahorro,
+            montoBruto: montoNum,
+            ahorro,
+            porcentajeAhorro,
+            categoria: categoriaIngreso
+          });
+        } else {
+          await addIngresoUser(user.uid, {
+            mes,
+            anio,
+            descripcion: descFinal,
+            montoBruto: montoNum,
+            porcentajeAhorro,
+            categoria: categoriaIngreso
+          });
+        }
+        showToast(`Ingreso registrado correctamente.`, "success");
+      } else if (activeTab === "ahorro") {
+        if (tipoAhorro === "agregar") {
+          if (isDemo) {
+            addDemoAhorro(mes, anio, montoNum);
+          } else {
+            await addAhorroDirectoUser(user.uid, { mes, anio, monto: montoNum });
+          }
+          showToast(`Se agregaron $${montoNum.toLocaleString()} a tus ahorros.`, "success");
+        } else {
+          if (isDemo) {
+            addDemoExtraccion(mes, anio, montoNum);
+          } else {
+            await addExtraccionUser(user.uid, { mes, anio, monto: montoNum });
+          }
+          showToast(`Extracción de $${montoNum.toLocaleString()} registrada.`, "info");
+        }
+      }
+
+      notifyMovementSaved();
+      handleClose();
+    } catch (error) {
+      console.error("Error al registrar movimiento:", error);
+      showToast("Error al guardar: " + error.message, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const montoNum = parseFloat(monto) || 0;
+  const ahorroCalculado = (montoNum * porcentajeAhorro) / 100;
+  const netoCalculado = montoNum - ahorroCalculado;
+
+  return (
+    <div 
+      className="modal fade show d-block" 
+      tabIndex="-1" 
+      role="dialog"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.6)", zIndex: 1055 }}
+    >
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content shadow-lg border-0" style={{ backgroundColor: "#fdfbf7" }}>
+          
+          {/* Header con Pestañas */}
+          <div className="modal-header border-bottom pb-2 pt-3 flex-column align-items-stretch">
+            <div className="d-flex justify-content-between align-items-center w-100 mb-2">
+              <h5 className="modal-title fw-bold text-dark d-flex align-items-center gap-2">
+                <i className="bi bi-plus-circle text-success"></i>
+                Nuevo Movimiento
+              </h5>
+              <button 
+                type="button" 
+                className="btn-close" 
+                onClick={handleClose} 
+                disabled={loading}
+              ></button>
+            </div>
+
+            {/* Pestañas de Acción */}
+            <div className="btn-group w-100 p-1 rounded-3" style={{ backgroundColor: "#ede5d5" }} role="group">
+              <button 
+                type="button" 
+                className={`btn btn-sm fw-semibold rounded-2 ${activeTab === 'gasto' ? 'btn-danger shadow-sm' : 'btn-link text-dark text-decoration-none'}`}
+                onClick={() => setActiveTab('gasto')}
+                disabled={loading}
+              >
+                <i className="bi bi-arrow-down-circle me-1"></i> Gasto
+              </button>
+              <button 
+                type="button" 
+                className={`btn btn-sm fw-semibold rounded-2 ${activeTab === 'ingreso' ? 'btn-success shadow-sm' : 'btn-link text-dark text-decoration-none'}`}
+                onClick={() => setActiveTab('ingreso')}
+                disabled={loading}
+              >
+                <i className="bi bi-arrow-up-circle me-1"></i> Ingreso
+              </button>
+              <button 
+                type="button" 
+                className={`btn btn-sm fw-semibold rounded-2 ${activeTab === 'ahorro' ? 'btn-warning shadow-sm text-white' : 'btn-link text-dark text-decoration-none'}`}
+                onClick={() => setActiveTab('ahorro')}
+                disabled={loading}
+              >
+                <i className="bi bi-piggy-bank me-1"></i> Ahorro
+              </button>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            <div className="modal-body pt-3">
+              {/* Selector de Período */}
+              <MonthYearSelect mes={mes} setMes={setMes} anio={anio} setAnio={setAnio} />
+
+              {/* 1. SECCIÓN GASTO */}
+              {activeTab === "gasto" && (
+                <>
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted mb-1 d-block">
+                      Categoría
+                    </label>
+                    <div className="d-flex flex-wrap gap-1 mb-2">
+                      {CATEGORIAS_GASTO.map((cat) => (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small ${categoriaGasto === cat.id ? 'fw-bold border-2' : 'opacity-75'}`}
+                          style={{
+                            backgroundColor: categoriaGasto === cat.id ? cat.bg : "#f1ede4",
+                            color: cat.color,
+                            borderColor: cat.border,
+                            fontSize: "0.8rem"
+                          }}
+                          onClick={() => setCategoriaGasto(cat.id)}
+                        >
+                          <i className={`bi ${cat.icon}`}></i>
+                          <span>{cat.nombre.split(" ")[0]}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted mb-1">
+                      Descripción (opcional)
+                    </label>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      placeholder={`Ej. Compra en ${categoriaGasto}`}
+                      value={descripcion}
+                      onChange={(e) => setDescripcion(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted mb-1">
+                      Monto del Gasto
+                    </label>
+                    <div className="input-group">
+                      <span className="input-group-text">$</span>
+                      <input 
+                        type="number" 
+                        step="0.01" 
+                        min="0.01"
+                        className="form-control fs-5 fw-bold text-danger" 
+                        placeholder="0.00"
+                        value={monto}
+                        onChange={(e) => setMonto(e.target.value)}
+                        required
+                        disabled={loading}
+                        autoFocus
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* 2. SECCIÓN INGRESO */}
+              {activeTab === "ingreso" && (
+                <>
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted mb-1 d-block">
+                      Origen del Ingreso
+                    </label>
+                    <div className="d-flex flex-wrap gap-1 mb-2">
+                      {CATEGORIAS_INGRESO.map((cat) => (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small ${categoriaIngreso === cat.id ? 'fw-bold border-2' : 'opacity-75'}`}
+                          style={{
+                            backgroundColor: categoriaIngreso === cat.id ? cat.bg : "#f1ede4",
+                            color: cat.color,
+                            borderColor: cat.border,
+                            fontSize: "0.8rem"
+                          }}
+                          onClick={() => setCategoriaIngreso(cat.id)}
+                        >
+                          <i className={`bi ${cat.icon}`}></i>
+                          <span>{cat.nombre.split(" ")[0]}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted mb-1">
+                      Descripción (opcional)
+                    </label>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      placeholder={`Ej. Cobro por ${categoriaIngreso}`}
+                      value={descripcion}
+                      onChange={(e) => setDescripcion(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted mb-1">
+                      Monto Bruto
+                    </label>
+                    <div className="input-group">
+                      <span className="input-group-text">$</span>
+                      <input 
+                        type="number" 
+                        step="0.01" 
+                        min="0.01"
+                        className="form-control fs-5 fw-bold text-success" 
+                        placeholder="0.00"
+                        value={monto}
+                        onChange={(e) => setMonto(e.target.value)}
+                        required
+                        disabled={loading}
+                        autoFocus
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted mb-1">
+                      Apartar porcentaje para Ahorro
+                    </label>
+                    <select 
+                      className="form-select form-select-sm"
+                      value={porcentajeAhorro}
+                      onChange={(e) => setPorcentajeAhorro(Number(e.target.value))}
+                      disabled={loading}
+                    >
+                      <option value="0">0% - Sin ahorro</option>
+                      <option value="5">5% para Ahorro</option>
+                      <option value="10">10% para Ahorro</option>
+                      <option value="15">15% para Ahorro</option>
+                      <option value="20">20% para Ahorro</option>
+                    </select>
+                  </div>
+
+                  {montoNum > 0 && porcentajeAhorro > 0 && (
+                    <div className="p-2 rounded-3 border small mb-2" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
+                      <div className="d-flex justify-content-between text-muted">
+                        <span>Disponible: <strong className="text-success">${netoCalculado.toFixed(2)}</strong></span>
+                        <span>Ahorro: <strong className="text-warning">${ahorroCalculado.toFixed(2)}</strong></span>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* 3. SECCIÓN AHORRO */}
+              {activeTab === "ahorro" && (
+                <>
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted mb-1">Tipo de Operación</label>
+                    <div className="btn-group w-100" role="group">
+                      <input 
+                        type="radio" 
+                        className="btn-check" 
+                        name="tipoAhorro" 
+                        id="opcAgregar" 
+                        checked={tipoAhorro === "agregar"} 
+                        onChange={() => setTipoAhorro("agregar")} 
+                      />
+                      <label className="btn btn-outline-success btn-sm fw-semibold" htmlFor="opcAgregar">
+                        <i className="bi bi-plus-circle me-1"></i> Agregar a Ahorros
+                      </label>
+
+                      <input 
+                        type="radio" 
+                        className="btn-check" 
+                        name="tipoAhorro" 
+                        id="opcExtraer" 
+                        checked={tipoAhorro === "extraer"} 
+                        onChange={() => setTipoAhorro("extraer")} 
+                      />
+                      <label className="btn btn-outline-danger btn-sm fw-semibold" htmlFor="opcExtraer">
+                        <i className="bi bi-dash-circle me-1"></i> Extraer de Ahorros
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label small fw-bold text-muted mb-1">
+                      Monto {tipoAhorro === "agregar" ? "a Ahorrar" : "a Extraer"}
+                    </label>
+                    <div className="input-group">
+                      <span className="input-group-text">$</span>
+                      <input 
+                        type="number" 
+                        step="0.01" 
+                        min="0.01"
+                        className={`form-control fs-5 fw-bold ${tipoAhorro === 'agregar' ? 'text-warning' : 'text-danger'}`}
+                        placeholder="0.00"
+                        value={monto}
+                        onChange={(e) => setMonto(e.target.value)}
+                        required
+                        disabled={loading}
+                        autoFocus
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="modal-footer border-top pt-2">
+              <button 
+                type="button" 
+                className="btn btn-secondary btn-sm" 
+                onClick={handleClose}
+                disabled={loading}
+              >
+                Cancelar
+              </button>
+              <button 
+                type="submit" 
+                className={`btn btn-sm px-4 fw-semibold shadow-sm ${
+                  activeTab === 'gasto' ? 'btn-danger' :
+                  activeTab === 'ingreso' ? 'btn-success' :
+                  tipoAhorro === 'agregar' ? 'btn-warning text-white' : 'btn-danger'
+                }`}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-1" role="status"></span>
+                    Guardando...
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-check2-circle me-1"></i>
+                    {activeTab === 'gasto' && "Guardar Gasto"}
+                    {activeTab === 'ingreso' && "Guardar Ingreso"}
+                    {activeTab === 'ahorro' && (tipoAhorro === 'agregar' ? "Guardar Ahorro" : "Confirmar Extracción")}
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
