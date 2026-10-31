@@ -1,4 +1,21 @@
 /* src/App.css */
+/* ==========================================================================
+   Fintech Modern Design System (0 KB Background - 100% Performance)
+   ========================================================================== */
+
+:root {
+  --bg-main: #090d16;
+  --bg-card: rgba(22, 30, 46, 0.85);
+  --bg-card-hover: rgba(30, 41, 59, 0.95);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(99, 102, 241, 0.5);
+  --accent-primary: #6366f1;
+  --accent-success: #10b981;
+  --accent-danger: #f43f5e;
+  --accent-warning: #f59e0b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+}
 
 html, body, #root {
   margin: 0;
@@ -8,11 +25,14 @@ html, body, #root {
 }
 
 body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 .app-wrapper {
@@ -22,25 +42,32 @@ body {
   position: relative;
 }
 
-/* Fondo de pantalla */
+/* ==========================================================================
+   Fondo Mesh Gradient (0 KB, Rápido, Sin fotografía de 7 MB)
+   ========================================================================== */
 .fondo {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url('/imagen/fondo.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: #080c14;
+  background-image:
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.16) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(244, 63, 94, 0.09) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.12) 0px, transparent 50%);
+  background-attachment: fixed;
   z-index: -1;
 }
 
-/* Animación de entrada */
+/* ==========================================================================
+   Animaciones Fluidas
+   ========================================================================== */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -49,114 +76,301 @@ body {
 }
 
 .fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Estilos de la página principal (Home) */
-.principal {
-  background-color: rgba(0, 0, 0, 0.8);
-  border-radius: 12px;
-  max-width: 600px;
-  width: 90%;
-  backdrop-filter: blur(4px);
+/* ==========================================================================
+   Navbar Superior Fintech
+   ========================================================================== */
+.navbar {
+  background-color: rgba(11, 15, 25, 0.85) !important;
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.75rem 1.25rem;
+  z-index: 1020;
 }
 
-#diaDeHoy {
-  font-size: 1.8rem;
-  color: azure;
-  opacity: 0.9;
-  font-weight: 300;
+.navbar-brand {
+  transition: transform 0.2s ease;
 }
 
-/* Indicador flotante de saldo actual */
-.float-xl-end {
-  position: fixed;
-  bottom: 35px;
-  right: 20px;
-  z-index: 1000;
+.navbar-brand:hover {
+  transform: scale(1.03);
 }
 
-@media (max-width: 768px) {
-  .float-xl-end {
-    position: static;
-    margin-top: 1.5rem;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
+.nav-link {
+  color: #cbd5e1 !important;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.85rem !important;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
-/* Tarjetas y Contenedores */
+.nav-link:hover, 
+.nav-link.active {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.06);
+  text-decoration: none !important;
+}
+
+.dropdown-menu {
+  background-color: #131b2e !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45) !important;
+  padding: 0.5rem !important;
+}
+
+.dropdown-item {
+  color: #e2e8f0 !important;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  transition: background 0.15s ease;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(99, 102, 241, 0.18) !important;
+  color: #ffffff !important;
+}
+
+/* Pastilla de Saldos en Navbar */
+.navbar-balance-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.balance-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.balance-item .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot-green {
+  background-color: var(--accent-success);
+  box-shadow: 0 0 8px var(--accent-success);
+}
+
+.dot-blue {
+  background-color: var(--accent-primary);
+  box-shadow: 0 0 8px var(--accent-primary);
+}
+
+/* ==========================================================================
+   Tarjetas & Glassmorphism
+   ========================================================================== */
 .tarjeta-gasto,
 .tarjeta-ingreso,
 .tarjeta-ahorro,
 .card-consulta,
-.consulta {
-  background-color: rgba(255, 255, 255, 0.92);
-  border-radius: 10px;
-  backdrop-filter: blur(6px);
+.consulta,
+.principal {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  color: var(--text-main);
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .tarjeta-gasto,
 .tarjeta-ingreso {
   width: 100%;
-  max-width: 440px;
+  max-width: 460px;
 }
 
 .card-consulta {
   width: 100%;
-  max-width: 320px;
+  max-width: 340px;
   height: fit-content;
 }
 
 .consulta {
   flex: 1;
-  min-width: 300px;
-  max-width: 700px;
+  min-width: 320px;
+  max-width: 780px;
+}
+
+.tarjeta-ahorro {
+  max-width: 580px;
 }
 
 .tituloCard {
-  border-bottom: 2px solid #6c757d;
-  padding-bottom: 6px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 0.65rem;
+  margin-bottom: 1.25rem;
 }
 
-/* Tablas */
-.table th:first-child,
-.table td:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 2;
-  background-color: inherit;
+/* Inputs y Selects */
+.form-control,
+.form-select {
+  background-color: rgba(11, 15, 25, 0.6) !important;
+  border: 1px solid var(--border-subtle) !important;
+  color: #ffffff !important;
+  border-radius: 10px !important;
+  padding: 0.65rem 0.9rem !important;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Navbar */
-.navbar-nav .nav-link {
-  transition: color 0.2s ease, text-decoration 0.2s ease;
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--border-focus) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+}
+
+.input-group-text {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid var(--border-subtle) !important;
+  color: var(--text-muted) !important;
+  border-radius: 10px;
+}
+
+/* ==========================================================================
+   Home Hero & KPI Cards
+   ========================================================================== */
+.home-page {
+  padding: 2.5rem 1rem;
+}
+
+.hero-balance-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 1.75rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease;
+}
+
+.hero-balance-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.kpi-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.kpi-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  font-feature-settings: "tnum";
+}
+
+/* ==========================================================================
+   Tablas Fintech
+   ========================================================================== */
+.table {
+  color: #e2e8f0 !important;
+  margin-bottom: 0;
+}
+
+.table th {
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+.table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+  font-size: 0.95rem;
+  vertical-align: middle;
+}
+
+.table-hover tbody tr:hover td {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* ==========================================================================
+   Sistema de Toasts Flotantes Modernos
+   ========================================================================== */
+.toast-container-custom {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast-custom {
+  pointer-events: auto;
+  min-width: 300px;
+  max-width: 420px;
+  background-color: #1e293b;
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 0.9rem 1.1rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  border-left: 4px solid var(--accent-primary);
+  border-top: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  backdrop-filter: blur(12px);
+}
+
+.toast-custom.toast-success {
+  border-left-color: var(--accent-success);
+}
+
+.toast-custom.toast-error {
+  border-left-color: var(--accent-danger);
+}
+
+.toast-custom.toast-warning {
+  border-left-color: var(--accent-warning);
+}
+
+.toast-message {
+  font-size: 0.9rem;
   font-weight: 500;
 }
 
-.navbar-nav .nav-link:hover,
-.navbar-nav .nav-link.active {
-  color: #198754 !important;
-  text-decoration: underline;
-}
-
-/* Footer */
+/* ==========================================================================
+   Footer
+   ========================================================================== */
 footer {
-  flex-shrink: 0;
-  font-size: 12px;
-  z-index: 10;
+  background-color: rgba(8, 12, 20, 0.8) !important;
+  border-top: 1px solid var(--border-subtle);
+  backdrop-filter: blur(8px);
+  padding: 0.65rem 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
-.footer {
-  padding: 6px 12px;
+footer a {
+  color: #cbd5e1;
+  transition: color 0.2s;
 }
 
-.footer a {
-  transition: opacity 0.2s;
+footer a:hover {
+  color: var(--accent-primary);
 }
-
-.footer a:hover {
-  opacity: 0.8;
-}
-

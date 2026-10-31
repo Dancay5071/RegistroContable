@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
+import { useToast } from "../context/ToastContext";
 import { 
   getDemoAhorrosPorMes, 
   addDemoAhorro, 
@@ -13,12 +14,12 @@ import {
   addExtraccionUser 
 } from "../services/dbService";
 import { MESES, formatoMoneda, formatoNumber } from "../utils/formatters";
-import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function Ahorro() {
   const { user, isDemo } = useAuth();
   const { totalAhorros } = useBalance();
+  const { showToast } = useToast();
   const currentYear = new Date().getFullYear();
   const yearOptions = [currentYear - 1, currentYear, currentYear + 1];
 
@@ -30,14 +31,12 @@ export default function Ahorro() {
   const [modalExtraccionOpen, setModalExtraccionOpen] = useState(false);
   const [montoExtraccion, setMontoExtraccion] = useState("");
   const [mesExtraccion, setMesExtraccion] = useState(MESES[new Date().getMonth()]);
-  const [alertaExtraccion, setAlertaExtraccion] = useState({ tipo: "", mensaje: "" });
   const [loadingExtraccion, setLoadingExtraccion] = useState(false);
 
   // Modal Agregar Ahorro
   const [modalAgregarOpen, setModalAgregarOpen] = useState(false);
   const [montoAgregar, setMontoAgregar] = useState("");
   const [mesAgregar, setMesAgregar] = useState(MESES[new Date().getMonth()]);
-  const [alertaAgregar, setAlertaAgregar] = useState({ tipo: "", mensaje: "" });
   const [loadingAgregar, setLoadingAgregar] = useState(false);
 
   const consultarAhorro = async () => {
@@ -53,7 +52,7 @@ export default function Ahorro() {
       }
     } catch (error) {
       console.error("Error al consultar ahorros:", error);
-      alert("Error al obtener datos de ahorro: " + error.message);
+      showToast("Error al obtener datos de ahorro: " + error.message, "error");
     } finally {
       setLoading(false);
     }
@@ -64,7 +63,7 @@ export default function Ahorro() {
     const montoNum = parseFloat(montoExtraccion);
 
     if (isNaN(montoNum) || montoNum <= 0) {
-      setAlertaExtraccion({ tipo: "danger", mensaje: "Por favor, ingresa un monto válido." });
+      showToast("Por favor ingresa un monto válido mayor a 0.", "warning");
       return;
     }
 
@@ -81,16 +80,13 @@ export default function Ahorro() {
         });
       }
 
-      setAlertaExtraccion({ tipo: "success", mensaje: "Extracción registrada con éxito." });
+      showToast("Extracción registrada con éxito.", "success");
       setMontoExtraccion("");
-      setTimeout(() => {
-        setModalExtraccionOpen(false);
-        setAlertaExtraccion({ tipo: "", mensaje: "" });
-        if (tablaAhorros) consultarAhorro();
-      }, 1200);
+      setModalExtraccionOpen(false);
+      if (tablaAhorros) consultarAhorro();
     } catch (error) {
       console.error("Error al registrar extracción:", error);
-      setAlertaExtraccion({ tipo: "danger", mensaje: "Error al registrar la extracción: " + error.message });
+      showToast("Error al registrar la extracción: " + error.message, "error");
     } finally {
       setLoadingExtraccion(false);
     }
@@ -101,7 +97,7 @@ export default function Ahorro() {
     const montoNum = parseFloat(montoAgregar);
 
     if (isNaN(montoNum) || montoNum <= 0) {
-      setAlertaAgregar({ tipo: "danger", mensaje: "Por favor, ingresa un monto válido." });
+      showToast("Por favor ingresa un monto válido mayor a 0.", "warning");
       return;
     }
 
@@ -118,32 +114,30 @@ export default function Ahorro() {
         });
       }
 
-      setAlertaAgregar({ tipo: "success", mensaje: "Ahorro agregado con éxito." });
+      showToast("Ahorro agregado con éxito.", "success");
       setMontoAgregar("");
-      setTimeout(() => {
-        setModalAgregarOpen(false);
-        setAlertaAgregar({ tipo: "", mensaje: "" });
-        if (tablaAhorros) consultarAhorro();
-      }, 1200);
+      setModalAgregarOpen(false);
+      if (tablaAhorros) consultarAhorro();
     } catch (error) {
       console.error("Error al agregar ahorro:", error);
-      setAlertaAgregar({ tipo: "danger", mensaje: "Error al agregar el ahorro: " + error.message });
+      showToast("Error al agregar el ahorro: " + error.message, "error");
     } finally {
       setLoadingAgregar(false);
     }
   };
 
   return (
-    <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3 position-relative">
-      <div className="container d-flex flex-column align-items-center">
+    <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
+      <div className="container d-flex flex-column align-items-center" style={{ maxWidth: "1000px" }}>
         {/* Tarjeta de Control de Ahorro */}
-        <div className="tarjeta-ahorro shadow rounded p-3 w-100" style={{ maxWidth: "550px", height: "auto" }}>
-          <div className="card-header d-flex align-items-center justify-content-between p-2 rounded bg-light mb-3">
-            <h5 className="mb-0 fs-6 fw-bold" id="totalAhorros">
-              Ahorro Actual: <span className="text-success">{formatoMoneda(totalAhorros)}</span>
-            </h5>
+        <div className="tarjeta-ahorro shadow-lg rounded-4 p-4 w-100 border mb-4">
+          <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between pb-3 mb-3 border-bottom gap-2">
+            <div>
+              <span className="text-muted small text-uppercase fw-semibold tracking-wider d-block">Fondo de Ahorro Total</span>
+              <h3 className="h2 fw-bold text-info mb-0">{formatoMoneda(totalAhorros)}</h3>
+            </div>
             <div className="d-flex align-items-center gap-2">
-              <label htmlFor="anioAhorro" className="small mb-0">Año:</label>
+              <label htmlFor="anioAhorro" className="small text-muted mb-0">Año:</label>
               <select 
                 id="anioAhorro"
                 className="form-select form-select-sm w-auto" 
@@ -157,28 +151,28 @@ export default function Ahorro() {
             </div>
           </div>
 
-          <div className="card-body d-flex flex-wrap justify-content-center gap-2 p-0 mt-2">
+          <div className="d-flex flex-wrap justify-content-center gap-2 pt-2">
             <button 
-              className="btn btn-secondary btn-sm px-3" 
+              className="btn btn-primary px-4 fw-semibold shadow-sm" 
               type="button" 
               onClick={consultarAhorro}
               disabled={loading}
             >
-              Consultar
+              <i className="bi bi-search me-1"></i> Consultar Año
             </button>
             <button 
-              className="btn btn-secondary btn-sm px-3" 
+              className="btn btn-outline-danger px-4 fw-semibold" 
               type="button" 
               onClick={() => setModalExtraccionOpen(true)}
             >
-              Extraer
+              <i className="bi bi-dash-circle me-1"></i> Extraer
             </button>
             <button 
-              className="btn btn-secondary btn-sm px-3" 
+              className="btn btn-success px-4 fw-semibold shadow-sm" 
               type="button" 
               onClick={() => setModalAgregarOpen(true)}
             >
-              Agregar ahorro
+              <i className="bi bi-plus-circle me-1"></i> Agregar ahorro
             </button>
           </div>
         </div>
@@ -188,22 +182,24 @@ export default function Ahorro() {
 
         {/* Tabla de Ahorros Anual */}
         {!loading && tablaAhorros && (
-          <div className="table-responsive mt-4 w-100 p-3 bg-white rounded shadow" style={{ maxWidth: "1000px" }}>
-            <h5 className="mb-3 text-center">Ahorros del año {anio}</h5>
-            <table className="table table-bordered table-striped text-center align-middle mb-0">
+          <div className="table-responsive w-100 p-4 bg-dark bg-opacity-75 rounded-4 shadow-lg border border-secondary border-opacity-25">
+            <h5 className="mb-3 text-center text-white fw-bold">Evolución de Ahorros del Año {anio}</h5>
+            <table className="table table-bordered text-center align-middle mb-0">
               <thead className="table-dark">
                 <tr>
-                  <th scope="col">Concepto</th>
+                  <th scope="col" className="text-muted small">Concepto</th>
                   {tablaAhorros.map((item) => (
-                    <th key={item.mes} scope="col">{item.mes}</th>
+                    <th key={item.mes} scope="col" className="small">{item.mes}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <th scope="row" className="table-secondary">Ahorros</th>
+                  <th scope="row" className="text-start text-info">Ahorros Netos</th>
                   {tablaAhorros.map((item) => (
-                    <td key={item.mes}>${formatoNumber(item.monto)}</td>
+                    <td key={item.mes} className={item.monto > 0 ? "text-info fw-bold" : "text-muted"}>
+                      ${formatoNumber(item.monto)}
+                    </td>
                   ))}
                 </tr>
               </tbody>
@@ -217,35 +213,32 @@ export default function Ahorro() {
         <div 
           className="modal fade show d-block" 
           tabIndex="-1" 
-          role="dialog" 
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+          role="dialog"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.75)" }}
         >
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content text-dark">
-              <div className="modal-header">
-                <h5 className="modal-title">Registrar Extracción</h5>
+            <div className="modal-content bg-dark text-white border border-secondary shadow-lg">
+              <div className="modal-header border-bottom border-secondary">
+                <h5 className="modal-title text-danger d-flex align-items-center gap-2">
+                  <i className="bi bi-box-arrow-up-right"></i> Registrar Extracción
+                </h5>
                 <button 
                   type="button" 
-                  className="btn-close" 
+                  className="btn-close btn-close-white" 
                   onClick={() => setModalExtraccionOpen(false)}
                   disabled={loadingExtraccion}
                 ></button>
               </div>
               <form onSubmit={handleExtraerAhorro}>
                 <div className="modal-body">
-                  {alertaExtraccion.mensaje && (
-                    <div className={`alert alert-${alertaExtraccion.tipo}`} role="alert">
-                      {alertaExtraccion.mensaje}
-                    </div>
-                  )}
                   <div className="mb-3">
-                    <label className="form-label">Monto</label>
+                    <label className="form-label text-muted small">Monto a Extraer ($)</label>
                     <input 
                       type="number" 
-                      step="0.01" 
+                      step="0.01"
                       min="0.01"
-                      className="form-control" 
-                      placeholder="Monto a extraer"
+                      className="form-control fs-5 text-danger fw-bold" 
+                      placeholder="0.00"
                       value={montoExtraccion}
                       onChange={(e) => setMontoExtraccion(e.target.value)}
                       required
@@ -253,7 +246,7 @@ export default function Ahorro() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label">Mes</label>
+                    <label className="form-label text-muted small">Mes</label>
                     <select 
                       className="form-select" 
                       value={mesExtraccion}
@@ -266,21 +259,21 @@ export default function Ahorro() {
                     </select>
                   </div>
                 </div>
-                <div className="modal-footer">
+                <div className="modal-footer border-top border-secondary">
                   <button 
                     type="button" 
-                    className="btn btn-secondary" 
+                    className="btn btn-secondary btn-sm" 
                     onClick={() => setModalExtraccionOpen(false)}
                     disabled={loadingExtraccion}
                   >
-                    Cerrar
+                    Cancelar
                   </button>
                   <button 
                     type="submit" 
-                    className="btn btn-danger"
+                    className="btn btn-danger btn-sm fw-semibold"
                     disabled={loadingExtraccion}
                   >
-                    {loadingExtraccion ? "Procesando..." : "Realizar extracción"}
+                    {loadingExtraccion ? "Procesando..." : "Confirmar Extracción"}
                   </button>
                 </div>
               </form>
@@ -294,35 +287,32 @@ export default function Ahorro() {
         <div 
           className="modal fade show d-block" 
           tabIndex="-1" 
-          role="dialog" 
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+          role="dialog"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.75)" }}
         >
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content text-dark">
-              <div className="modal-header">
-                <h5 className="modal-title">Nuevo ahorro</h5>
+            <div className="modal-content bg-dark text-white border border-secondary shadow-lg">
+              <div className="modal-header border-bottom border-secondary">
+                <h5 className="modal-title text-success d-flex align-items-center gap-2">
+                  <i className="bi bi-piggy-bank-fill"></i> Agregar Ahorro
+                </h5>
                 <button 
                   type="button" 
-                  className="btn-close" 
+                  className="btn-close btn-close-white" 
                   onClick={() => setModalAgregarOpen(false)}
                   disabled={loadingAgregar}
                 ></button>
               </div>
               <form onSubmit={handleAgregarAhorro}>
                 <div className="modal-body">
-                  {alertaAgregar.mensaje && (
-                    <div className={`alert alert-${alertaAgregar.tipo}`} role="alert">
-                      {alertaAgregar.mensaje}
-                    </div>
-                  )}
                   <div className="mb-3">
-                    <label className="form-label">Monto</label>
+                    <label className="form-label text-muted small">Monto a Depositar ($)</label>
                     <input 
                       type="number" 
-                      step="0.01" 
+                      step="0.01"
                       min="0.01"
-                      className="form-control" 
-                      placeholder="Monto a agregar"
+                      className="form-control fs-5 text-success fw-bold" 
+                      placeholder="0.00"
                       value={montoAgregar}
                       onChange={(e) => setMontoAgregar(e.target.value)}
                       required
@@ -330,7 +320,7 @@ export default function Ahorro() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label">Mes</label>
+                    <label className="form-label text-muted small">Mes</label>
                     <select 
                       className="form-select" 
                       value={mesAgregar}
@@ -343,21 +333,21 @@ export default function Ahorro() {
                     </select>
                   </div>
                 </div>
-                <div className="modal-footer">
+                <div className="modal-footer border-top border-secondary">
                   <button 
                     type="button" 
-                    className="btn btn-secondary" 
+                    className="btn btn-secondary btn-sm" 
                     onClick={() => setModalAgregarOpen(false)}
                     disabled={loadingAgregar}
                   >
-                    Cerrar
+                    Cancelar
                   </button>
                   <button 
                     type="submit" 
-                    className="btn btn-success"
+                    className="btn btn-success btn-sm fw-semibold"
                     disabled={loadingAgregar}
                   >
-                    {loadingAgregar ? "Guardando..." : "Agregar ahorro"}
+                    {loadingAgregar ? "Guardando..." : "Confirmar Ahorro"}
                   </button>
                 </div>
               </form>
@@ -365,8 +355,6 @@ export default function Ahorro() {
           </div>
         </div>
       )}
-
-      <BalanceDisplay />
     </div>
   );
 }

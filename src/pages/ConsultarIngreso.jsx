@@ -1,6 +1,8 @@
 // src/pages/ConsultarIngreso.jsx
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { 
   getDemoIngresos, 
   updateDemoIngreso, 
@@ -13,11 +15,11 @@ import {
 } from "../services/dbService";
 import { MESES, formatoMoneda } from "../utils/formatters";
 import MonthYearSelect from "../components/MonthYearSelect";
-import BalanceDisplay from "../components/BalanceDisplay";
 import Loader from "../components/Loader";
 
 export default function ConsultarIngreso() {
   const { user, isDemo } = useAuth();
+  const { showToast } = useToast();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -45,7 +47,7 @@ export default function ConsultarIngreso() {
       }
     } catch (error) {
       console.error("Error al obtener ingresos:", error);
-      alert("Error al consultar los ingresos: " + error.message);
+      showToast("Error al consultar ingresos: " + error.message, "error");
     } finally {
       setLoading(false);
     }
@@ -66,7 +68,7 @@ export default function ConsultarIngreso() {
     const montoNum = parseFloat(editMonto);
 
     if (!editDescripcion.trim() || isNaN(montoNum) || montoNum <= 0) {
-      alert("Por favor, ingresa una descripción y un monto válido.");
+      showToast("Por favor ingresa una descripción y un monto válido.", "warning");
       return;
     }
 
@@ -91,10 +93,11 @@ export default function ConsultarIngreso() {
         await consultarIngreso();
       }
 
+      showToast("Ingreso actualizado con éxito.", "success");
       setEditModalOpen(false);
     } catch (error) {
       console.error("Error al guardar edición de ingreso:", error);
-      alert("Hubo un error al actualizar el ingreso: " + error.message);
+      showToast("Hubo un error al actualizar el ingreso: " + error.message, "error");
     } finally {
       setEditLoading(false);
     }
@@ -120,9 +123,10 @@ export default function ConsultarIngreso() {
         });
         await consultarIngreso();
       }
+      showToast("Ingreso eliminado correctamente.", "info");
     } catch (error) {
       console.error("Error al eliminar ingreso:", error);
-      alert("Hubo un error al eliminar el ingreso: " + error.message);
+      showToast("Hubo un error al eliminar el ingreso: " + error.message, "error");
     } finally {
       setLoading(false);
     }
@@ -131,80 +135,88 @@ export default function ConsultarIngreso() {
   const sumaIngresos = (ingresos || []).reduce((acc, ing) => acc + (Number(ing.monto) || 0), 0);
 
   return (
-    <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3 position-relative">
+    <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
       <div className="container d-flex flex-wrap justify-content-center gap-4">
         {/* Tarjeta de Selección */}
-        <div className="card-consulta p-3 rounded shadow">
-          <p className="tituloCard h5 fw-bold mb-3">Consulta de ingreso:</p>
+        <div className="card-consulta p-4 rounded-4 shadow border">
+          <p className="tituloCard text-white d-flex align-items-center gap-2">
+            <i className="bi bi-funnel text-success"></i> Filtrar Ingresos
+          </p>
           <MonthYearSelect mes={mes} setMes={setMes} anio={anio} setAnio={setAnio} />
           <button 
-            className="btn btn-secondary w-100" 
+            className="btn btn-success w-100 py-2 fw-semibold shadow-sm" 
             type="button" 
             onClick={consultarIngreso}
             disabled={loading}
           >
+            <i className="bi bi-search me-1"></i>
             {loading ? "Consultando..." : "Consultar"}
           </button>
         </div>
 
         {/* Resultados de Ingresos */}
-        <div className="consulta p-3 rounded shadow">
+        <div className="consulta p-4 rounded-4 shadow border">
           {loading && <Loader />}
 
           {!loading && ingresos === null && (
-            <div className="text-center text-muted p-4">
-              <p>Selecciona un mes y año y haz clic en <strong>Consultar</strong>.</p>
+            <div className="text-center text-muted p-5">
+              <i className="bi bi-cash-stack fs-1 text-secondary opacity-50 mb-2 d-block"></i>
+              <p className="mb-0">Selecciona el mes y año para consultar tus ingresos registrados.</p>
             </div>
           )}
 
           {!loading && ingresos !== null && ingresos.length === 0 && (
-            <table className="table table-striped table-hover mb-0">
-              <thead>
-                <tr>
-                  <td><h4>Ingresos de {mes} {anio}</h4></td>
-                </tr>
-                <tr>
-                  <td><p className="text-muted mb-0">El mes seleccionado no posee ingresos</p></td>
-                </tr>
-              </thead>
-            </table>
+            <div className="text-center p-5">
+              <i className="bi bi-inbox fs-1 text-muted mb-3 d-block opacity-50"></i>
+              <h5 className="text-white">Sin ingresos en {mes} {anio}</h5>
+              <p className="text-muted small mb-3">No tienes ningún ingreso registrado en este período.</p>
+              <Link to="/ingresos/nuevo" className="btn btn-sm btn-outline-success">
+                <i className="bi bi-plus-circle me-1"></i> Agregar primer ingreso
+              </Link>
+            </div>
           )}
 
           {!loading && ingresos !== null && ingresos.length > 0 && (
             <div>
-              <h4 className="mb-3">Ingresos de {mes} {anio}</h4>
+              <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                <h4 className="h5 fw-bold text-white mb-0">Ingresos de {mes} {anio}</h4>
+                <span className="badge bg-success bg-opacity-25 text-success px-3 py-2 fs-6">
+                  Total: {formatoMoneda(sumaIngresos)}
+                </span>
+              </div>
+
               <div className="table-responsive">
-                <table className="table table-striped table-hover align-middle">
+                <table className="table table-hover align-middle">
                   <thead>
                     <tr>
                       <th scope="col" style={{ width: "30px" }}></th>
                       <th>Descripción</th>
-                      <th>Monto</th>
+                      <th>Monto Neto</th>
                       <th className="text-end">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     {ingresos.map((ingreso, index) => (
                       <tr key={ingreso.id || index}>
-                        <td><i className="bi bi-dot fs-5"></i></td>
-                        <td>{ingreso.descripcion}</td>
-                        <td>{formatoMoneda(ingreso.monto)}</td>
+                        <td><i className="bi bi-dot fs-4 text-success"></i></td>
+                        <td className="fw-semibold text-white">{ingreso.descripcion}</td>
+                        <td className="text-success fw-bold">{formatoMoneda(ingreso.monto)}</td>
                         <td className="text-end">
                           <button 
                             type="button" 
-                            className="btn btn-outline-dark btn-sm me-2" 
+                            className="btn btn-outline-light btn-sm me-2 border-secondary" 
                             title="Editar" 
                             onClick={() => handleOpenEdit(index)}
                           >
-                            <i className="bi bi-pencil-fill"></i>
+                            <i className="bi bi-pencil-fill text-warning"></i>
                           </button>
                           <button 
                             type="button" 
-                            className="btn btn-outline-dark btn-sm" 
+                            className="btn btn-outline-light btn-sm border-secondary" 
                             title="Eliminar" 
                             onClick={() => handleEliminarIngreso(index)}
                           >
-                            <i className="bi bi-x fs-6"></i>
+                            <i className="bi bi-trash3-fill text-danger"></i>
                           </button>
                         </td>
                       </tr>
@@ -212,9 +224,8 @@ export default function ConsultarIngreso() {
                   </tbody>
                   <tfoot className="table-dark">
                     <tr>
-                      <td>Total</td>
-                      <td></td>
-                      <td>{formatoMoneda(sumaIngresos)}</td>
+                      <td colSpan="2" className="fw-bold">Total del Mes</td>
+                      <td className="fw-bold text-success fs-6">{formatoMoneda(sumaIngresos)}</td>
                       <td></td>
                     </tr>
                   </tfoot>
@@ -231,15 +242,15 @@ export default function ConsultarIngreso() {
           className="modal fade show d-block" 
           tabIndex="-1" 
           role="dialog" 
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.75)" }}
         >
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content text-dark">
-              <div className="modal-header">
+            <div className="modal-content bg-dark text-white border border-secondary shadow-lg">
+              <div className="modal-header border-bottom border-secondary">
                 <h5 className="modal-title">Editar Ingreso</h5>
                 <button 
                   type="button" 
-                  className="btn-close" 
+                  className="btn-close btn-close-white" 
                   onClick={() => setEditModalOpen(false)}
                   disabled={editLoading}
                 ></button>
@@ -247,7 +258,7 @@ export default function ConsultarIngreso() {
               <form onSubmit={handleSaveEdit}>
                 <div className="modal-body">
                   <div className="mb-3">
-                    <label className="form-label">Descripción</label>
+                    <label className="form-label text-muted small">Descripción</label>
                     <input 
                       type="text" 
                       className="form-control" 
@@ -258,7 +269,7 @@ export default function ConsultarIngreso() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label">Monto</label>
+                    <label className="form-label text-muted small">Monto ($)</label>
                     <input 
                       type="number" 
                       step="0.01" 
@@ -271,18 +282,18 @@ export default function ConsultarIngreso() {
                     />
                   </div>
                 </div>
-                <div className="modal-footer">
+                <div className="modal-footer border-top border-secondary">
                   <button 
                     type="button" 
-                    className="btn btn-secondary" 
+                    className="btn btn-secondary btn-sm" 
                     onClick={() => setEditModalOpen(false)}
                     disabled={editLoading}
                   >
-                    Cerrar
+                    Cancelar
                   </button>
                   <button 
                     type="submit" 
-                    className="btn btn-primary"
+                    className="btn btn-primary btn-sm fw-semibold"
                     disabled={editLoading}
                   >
                     {editLoading ? "Guardando..." : "Guardar cambios"}
@@ -293,8 +304,6 @@ export default function ConsultarIngreso() {
           </div>
         </div>
       )}
-
-      <BalanceDisplay />
     </div>
   );
 }
