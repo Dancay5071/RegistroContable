@@ -49,7 +49,7 @@ export default function Navbar() {
           <div className="balance-item" title="Total ahorrado">
             <span className="dot dot-amber"></span>
             <span className="text-muted small">Ahorro:</span>
-            <strong className="text-warning">{formatoMoneda(totalAhorros)}</strong>
+            <strong style={{ color: "#854d0e" }}>{formatoMoneda(totalAhorros)}</strong>
           </div>
         </div>
 
@@ -95,7 +95,7 @@ export default function Navbar() {
             <div className="balance-item">
               <span className="dot dot-amber"></span>
               <span className="text-muted small">Ahorro:</span>
-              <strong className="text-warning">{formatoMoneda(totalAhorros)}</strong>
+              <strong style={{ color: "#854d0e" }}>{formatoMoneda(totalAhorros)}</strong>
             </div>
           </div>
 

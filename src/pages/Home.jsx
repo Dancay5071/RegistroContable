@@ -86,21 +86,12 @@ export default function Home() {
 
   return (
     <div className="home-page fade-in d-flex flex-column align-items-center justify-content-center flex-grow-1 p-3">
-      {/* Encabezado Principal */}
-      <div className="logo-container mb-4 text-center">
-        <div className="d-flex justify-content-center mb-1">
-          <FinTrackLogo size={46} showText={true} textClass="h3" />
-        </div>
-        <p className="text-muted small mb-2">Control Financiero & Ahorro Inteligente</p>
-        <div className="badge shadow-sm border px-3 py-2 text-dark fw-medium rounded-pill mt-1" style={{ backgroundColor: "var(--bg-card)" }}>
-          <i className="bi bi-calendar3 me-2 text-success"></i>
-          {fecha}
-        </div>
-      </div>
-
       {/* Vista para usuarios no autenticados */}
       {!user ? (
         <div className="principal text-center p-4 p-md-5 rounded-4 shadow-sm border" style={{ maxWidth: "560px", width: "100%" }}>
+          <div className="d-flex justify-content-center mb-3">
+            <FinTrackLogo size={56} showText={true} textClass="h2" />
+          </div>
           <h2 className="h4 fw-bold mb-3">Control Financiero Simple y Eficiente</h2>
           <p className="text-muted mb-4 small">
             Gestiona tus ingresos, gastos diarios y metas de ahorro con balances en tiempo real y estadísticas mensuales organizadas.
@@ -127,6 +118,19 @@ export default function Home() {
         </div>
       ) : (
         <div className="w-100" style={{ maxWidth: "1020px" }}>
+          {/* Encabezado del Dashboard: Saludo & Fecha (Sin duplicar logo) */}
+          <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+            <div>
+              <h1 className="h4 fw-bold text-dark mb-1">
+                {user?.displayName ? `Hola, ${user.displayName.split(" ")[0]} 👋` : "Panel Financiero"}
+              </h1>
+              <p className="text-muted small mb-0">Resumen de tus saldos y actividad mensual</p>
+            </div>
+            <div className="badge shadow-sm border px-3 py-2 text-dark fw-medium rounded-pill" style={{ backgroundColor: "var(--bg-card)" }}>
+              {fecha}
+            </div>
+          </div>
+
           {isDemo && (
             <div className="alert bg-warning bg-opacity-10 border border-warning text-dark d-flex align-items-center justify-content-between p-3 rounded-3 mb-4 shadow-sm">
               <div className="d-flex align-items-center gap-2">
@@ -143,34 +147,30 @@ export default function Home() {
             </div>
           )}
 
-          {/* Tarjetas KPI Hero Pastel */}
+          {/* Tarjetas KPI Hero Pastel (Puro Minimalismo Tipográfico, SIN ÍCONOS) */}
           <div className="row g-3 mb-4">
             <div className="col-12 col-md-6">
-              <div className="hero-balance-card hero-saldo d-flex align-items-center justify-content-between p-4 rounded-4 shadow-sm">
-                <div>
-                  <div className="kpi-title text-success d-flex align-items-center gap-1">
-                    <i className="bi bi-wallet2"></i> Saldo Disponible
-                  </div>
-                  <div className="kpi-amount">{formatoMoneda(montoActual)}</div>
-                  <span className="text-muted small">Actualizado en tiempo real</span>
+              <div className="hero-balance-card hero-saldo p-4 rounded-4 shadow-sm">
+                <div className="kpi-title text-success mb-2">
+                  Saldo Disponible
                 </div>
-                <div className="p-3 bg-success bg-opacity-15 rounded-circle text-success fs-2">
-                  <i className="bi bi-cash-stack"></i>
+                <div className="kpi-amount mb-2">{formatoMoneda(montoActual)}</div>
+                <div className="d-flex align-items-center gap-2">
+                  <span className="dot dot-green"></span>
+                  <span className="text-muted small">Actualizado en tiempo real</span>
                 </div>
               </div>
             </div>
 
             <div className="col-12 col-md-6">
-              <div className="hero-balance-card hero-ahorro d-flex align-items-center justify-content-between p-4 rounded-4 shadow-sm">
-                <div>
-                  <div className="kpi-title text-warning d-flex align-items-center gap-1">
-                    <i className="bi bi-piggy-bank"></i> Total Ahorrado
-                  </div>
-                  <div className="kpi-amount">{formatoMoneda(totalAhorros)}</div>
-                  <span className="text-muted small">Fondo acumulado en ARS</span>
+              <div className="hero-balance-card hero-ahorro p-4 rounded-4 shadow-sm">
+                <div className="kpi-title text-warning mb-2">
+                  Total Ahorrado
                 </div>
-                <div className="p-3 bg-warning bg-opacity-15 rounded-circle text-warning fs-2">
-                  <i className="bi bi-shield-lock"></i>
+                <div className="kpi-amount mb-2">{formatoMoneda(totalAhorros)}</div>
+                <div className="d-flex align-items-center gap-2">
+                  <span className="dot dot-amber"></span>
+                  <span className="text-muted small">Fondo acumulado en ARS</span>
                 </div>
               </div>
             </div>
