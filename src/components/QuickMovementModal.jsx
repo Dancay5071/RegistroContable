@@ -167,7 +167,7 @@ export default function QuickMovementModal() {
       style={{ backgroundColor: "rgba(0, 0, 0, 0.6)", zIndex: 1055 }}
     >
       <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content shadow-lg border-0" style={{ backgroundColor: "#fdfbf7" }}>
+        <div className="modal-content shadow-lg border-0">
           
           {/* Header con Pestañas */}
           <div className="modal-header border-bottom pb-2 pt-3 flex-column align-items-stretch">
@@ -184,11 +184,11 @@ export default function QuickMovementModal() {
               ></button>
             </div>
 
-            {/* Pestañas de Acción */}
-            <div className="btn-group w-100 p-1 rounded-3" style={{ backgroundColor: "#ede5d5" }} role="group">
+            {/* Pestañas de Acción Segmentadas */}
+            <div className="btn-group w-100 p-1 rounded-3 quick-tabs-container" role="group">
               <button 
                 type="button" 
-                className={`btn btn-sm fw-semibold rounded-2 ${activeTab === 'gasto' ? 'btn-danger shadow-sm' : 'btn-link text-dark text-decoration-none'}`}
+                className={`btn btn-sm fw-semibold rounded-2 quick-tab-btn ${activeTab === 'gasto' ? 'active-gasto' : ''}`}
                 onClick={() => setActiveTab('gasto')}
                 disabled={loading}
               >
@@ -196,7 +196,7 @@ export default function QuickMovementModal() {
               </button>
               <button 
                 type="button" 
-                className={`btn btn-sm fw-semibold rounded-2 ${activeTab === 'ingreso' ? 'btn-success shadow-sm' : 'btn-link text-dark text-decoration-none'}`}
+                className={`btn btn-sm fw-semibold rounded-2 quick-tab-btn ${activeTab === 'ingreso' ? 'active-ingreso' : ''}`}
                 onClick={() => setActiveTab('ingreso')}
                 disabled={loading}
               >
@@ -204,7 +204,7 @@ export default function QuickMovementModal() {
               </button>
               <button 
                 type="button" 
-                className={`btn btn-sm fw-semibold rounded-2 ${activeTab === 'ahorro' ? 'btn-warning shadow-sm text-white' : 'btn-link text-dark text-decoration-none'}`}
+                className={`btn btn-sm fw-semibold rounded-2 quick-tab-btn ${activeTab === 'ahorro' ? 'active-ahorro' : ''}`}
                 onClick={() => setActiveTab('ahorro')}
                 disabled={loading}
               >
@@ -230,11 +230,11 @@ export default function QuickMovementModal() {
                         <button
                           key={cat.id}
                           type="button"
-                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small ${categoriaGasto === cat.id ? 'fw-bold border-2' : 'opacity-75'}`}
+                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small category-chip-btn ${categoriaGasto === cat.id ? 'active fw-bold border-2 shadow-sm' : 'opacity-85'}`}
                           style={{
-                            backgroundColor: categoriaGasto === cat.id ? cat.bg : "#f1ede4",
-                            color: cat.color,
-                            borderColor: cat.border,
+                            backgroundColor: categoriaGasto === cat.id ? cat.bg : undefined,
+                            color: categoriaGasto === cat.id ? cat.color : undefined,
+                            borderColor: categoriaGasto === cat.id ? cat.border : undefined,
                             fontSize: "0.8rem"
                           }}
                           onClick={() => setCategoriaGasto(cat.id)}
@@ -309,11 +309,11 @@ export default function QuickMovementModal() {
                         <button
                           key={cat.id}
                           type="button"
-                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small ${categoriaIngreso === cat.id ? 'fw-bold border-2' : 'opacity-75'}`}
+                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small category-chip-btn ${categoriaIngreso === cat.id ? 'active fw-bold border-2 shadow-sm' : 'opacity-85'}`}
                           style={{
-                            backgroundColor: categoriaIngreso === cat.id ? cat.bg : "#f1ede4",
-                            color: cat.color,
-                            borderColor: cat.border,
+                            backgroundColor: categoriaIngreso === cat.id ? cat.bg : undefined,
+                            color: categoriaIngreso === cat.id ? cat.color : undefined,
+                            borderColor: categoriaIngreso === cat.id ? cat.border : undefined,
                             fontSize: "0.8rem"
                           }}
                           onClick={() => setCategoriaIngreso(cat.id)}
@@ -465,11 +465,11 @@ export default function QuickMovementModal() {
                         <button
                           key={cat.id}
                           type="button"
-                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small ${categoriaAhorro === cat.id ? 'fw-bold border-2 shadow-sm' : 'opacity-80'}`}
+                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small category-chip-btn ${categoriaAhorro === cat.id ? 'active fw-bold border-2 shadow-sm' : 'opacity-85'}`}
                           style={{
-                            backgroundColor: categoriaAhorro === cat.id ? cat.bg : "#f1ede4",
-                            color: cat.color,
-                            borderColor: cat.border,
+                            backgroundColor: categoriaAhorro === cat.id ? cat.bg : undefined,
+                            color: categoriaAhorro === cat.id ? cat.color : undefined,
+                            borderColor: categoriaAhorro === cat.id ? cat.border : undefined,
                             fontSize: "0.82rem"
                           }}
                           onClick={() => setCategoriaAhorro(cat.id)}

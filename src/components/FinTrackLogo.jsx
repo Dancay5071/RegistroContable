@@ -14,16 +14,16 @@ export default function FinTrackLogo({ size = 32, showText = true, textClass = "
       >
         <defs>
           <linearGradient id="logoBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#246845" />
-            <stop offset="100%" stop-color="#16432b" />
+            <stop offset="0%" stopColor="#246845" />
+            <stop offset="100%" stopColor="#16432b" />
           </linearGradient>
           <linearGradient id="logoAmberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#fbbf24" />
-            <stop offset="100%" stop-color="#d97706" />
+            <stop offset="0%" stopColor="#fbbf24" />
+            <stop offset="100%" stopColor="#d97706" />
           </linearGradient>
           <linearGradient id="logoTrendGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#34d399" />
-            <stop offset="100%" stop-color="#6ee7b7" />
+            <stop offset="0%" stopColor="#34d399" />
+            <stop offset="100%" stopColor="#6ee7b7" />
           </linearGradient>
         </defs>
 
@@ -47,10 +47,10 @@ export default function FinTrackLogo({ size = 32, showText = true, textClass = "
         </g>
       </svg>
 
-      {/* Tipografía FinTrack */}
+      {/* Tipografía FinTrack Adaptable a Temas */}
       {showText && (
-        <span className={`fw-bold text-dark tracking-tight mb-0 lh-1 ${textClass}`} style={{ letterSpacing: "-0.5px" }}>
-          Fin<span style={{ color: "#246845" }}>Track</span>
+        <span className={`fw-bold fintrack-brand-text tracking-tight mb-0 lh-1 ${textClass}`} style={{ letterSpacing: "-0.5px" }}>
+          Fin<span className="fintrack-brand-track">Track</span>
         </span>
       )}
     </div>

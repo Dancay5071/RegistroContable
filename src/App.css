@@ -257,13 +257,90 @@ body {
 
 /* Adaptaciones Modo Oscuro */
 [data-theme="dark"] #navbar {
-  background-color: rgba(19, 28, 46, 0.95) !important;
+  background-color: rgba(19, 28, 46, 0.96) !important;
   border-bottom-color: var(--border-subtle) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
 }
 
 [data-theme="dark"] .navbar-balance-pill {
   background: #1a253a !important;
   border-color: #2b3a55 !important;
+}
+
+[data-theme="dark"] .navbar-balance-pill .text-muted {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .nav-link {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .nav-link:hover,
+[data-theme="dark"] .nav-link.active {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .btn-outline-danger {
+  color: #fb7185 !important;
+  border-color: #f43f5e !important;
+  background-color: rgba(244, 63, 94, 0.08) !important;
+}
+
+[data-theme="dark"] .btn-outline-danger:hover {
+  background-color: #f43f5e !important;
+  color: #ffffff !important;
+  border-color: #f43f5e !important;
+}
+
+[data-theme="dark"] .btn-outline-secondary {
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+[data-theme="dark"] .btn-outline-secondary:hover {
+  border-color: #64748b !important;
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-success {
+  background-color: #059669 !important;
+  border-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-success:hover {
+  background-color: #10b981 !important;
+  border-color: #34d399 !important;
+}
+
+[data-theme="dark"] .text-success {
+  color: #34d399 !important;
+}
+
+[data-theme="dark"] .text-danger {
+  color: #fb7185 !important;
+}
+
+[data-theme="dark"] .text-warning {
+  color: #fbbf24 !important;
+}
+
+[data-theme="dark"] .dot-green {
+  background-color: #34d399 !important;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.6) !important;
+}
+
+[data-theme="dark"] .dot-amber {
+  background-color: #fbbf24 !important;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.6) !important;
+}
+
+[data-theme="dark"] .navbar-toggler,
+[data-theme="dark"] .navbar-toggler i {
+  color: #f8fafc !important;
 }
 
 [data-theme="dark"] .principal,
@@ -378,6 +455,82 @@ body {
   border-color: var(--border-subtle) !important;
 }
 
+/* Botón cerrar modal en Modo Oscuro */
+[data-theme="dark"] .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%) !important;
+  opacity: 0.8;
+}
+
+[data-theme="dark"] .btn-close:hover {
+  opacity: 1;
+}
+
+/* Tabs del Modal de Movimiento Rápido en Modo Oscuro */
+[data-theme="dark"] .quick-tabs-container {
+  background-color: #0b1322 !important;
+  border-color: #1e2c45 !important;
+}
+
+[data-theme="dark"] .quick-tab-btn {
+  color: #94a3b8 !important; /* Gris plateado legible con alto contraste (> 7:1) */
+}
+
+[data-theme="dark"] .quick-tab-btn:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .quick-tab-btn.active-gasto {
+  background-color: #e11d48 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(225, 29, 72, 0.4) !important;
+}
+
+[data-theme="dark"] .quick-tab-btn.active-ingreso {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.4) !important;
+}
+
+[data-theme="dark"] .quick-tab-btn.active-ahorro {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(217, 119, 6, 0.4) !important;
+}
+
+/* Categorías y Pills en Modo Oscuro */
+[data-theme="dark"] .category-chip-btn {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .category-chip-btn:hover {
+  background-color: #2b3a55 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .category-chip-btn.active {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="dark"] .quick-amount-pill {
+  color: #34d399 !important;
+  border-color: rgba(52, 211, 153, 0.35) !important;
+  background-color: rgba(16, 185, 129, 0.12) !important;
+}
+
+[data-theme="dark"] .quick-amount-pill:hover {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .amount-preview-badge {
+  color: #f8fafc !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: #334155 !important;
+}
+
 /* Animaciones */
 @keyframes fadeIn {
   from {
@@ -394,8 +547,39 @@ body {
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Tipografía e Identidad FinTrack */
+.fintrack-brand-text {
+  color: #1e293b;
+  transition: color 0.2s ease;
+}
+
+.fintrack-brand-track {
+  color: #246845;
+  transition: color 0.2s ease;
+}
+
+[data-theme="dark"] .fintrack-brand-text {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .fintrack-brand-track {
+  color: #34d399 !important; /* Menta/esmeralda brillante de máxima legibilidad en oscuro */
+}
+
+[data-theme="mint"] .fintrack-brand-track {
+  color: #059669 !important;
+}
+
+[data-theme="ocean"] .fintrack-brand-track {
+  color: #0284c7 !important;
+}
+
+[data-theme="lavender"] .fintrack-brand-track {
+  color: #7c3aed !important;
+}
+
 /* ==========================================================================
-   Navbar Superior Pastel
+   Navbar Superior Adaptable a Todos los Temas
    ========================================================================== */
 .navbar {
   background-color: rgba(246, 241, 232, 0.95) !important;
@@ -404,6 +588,18 @@ body {
   padding: 0.75rem 1.25rem;
   z-index: 1020;
   box-shadow: 0 2px 10px rgba(80, 65, 45, 0.05);
+}
+
+[data-theme="mint"] .navbar {
+  background-color: rgba(248, 252, 249, 0.95) !important;
+}
+
+[data-theme="ocean"] .navbar {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+}
+
+[data-theme="lavender"] .navbar {
+  background-color: rgba(250, 248, 253, 0.95) !important;
 }
 
 .nav-link {
@@ -420,6 +616,24 @@ body {
   color: var(--accent-success) !important;
   background-color: #e0eee3 !important;
   text-decoration: none !important;
+}
+
+[data-theme="mint"] .nav-link:hover,
+[data-theme="mint"] .nav-link.active {
+  color: #059669 !important;
+  background-color: rgba(5, 150, 105, 0.12) !important;
+}
+
+[data-theme="ocean"] .nav-link:hover,
+[data-theme="ocean"] .nav-link.active {
+  color: #0284c7 !important;
+  background-color: rgba(2, 132, 199, 0.12) !important;
+}
+
+[data-theme="lavender"] .nav-link:hover,
+[data-theme="lavender"] .nav-link.active {
+  color: #7c3aed !important;
+  background-color: rgba(124, 58, 237, 0.12) !important;
 }
 
 .dropdown-menu {
@@ -454,6 +668,29 @@ body {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.balance-savings-amount {
+  color: #854d0e;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+[data-theme="dark"] .balance-savings-amount {
+  color: #fbbf24 !important; /* Ámbar nítido para fondo oscuro */
+}
+
+[data-theme="mint"] .balance-savings-amount {
+  color: #92400e;
+}
+
+[data-theme="ocean"] .balance-savings-amount {
+  color: #9a3412;
+}
+
+[data-theme="lavender"] .balance-savings-amount {
+  color: #86198f;
 }
 
 .balance-item {
@@ -481,6 +718,76 @@ body {
 .dot-amber {
   background-color: var(--accent-warning);
   box-shadow: 0 0 6px rgba(148, 82, 3, 0.4);
+}
+
+/* ==========================================================================
+   Controles Segmentados / Tabs del Modal de Movimiento Rápido
+   ========================================================================== */
+.quick-tabs-container {
+  background-color: #ede5d5;
+  border: 1px solid #ded5c2;
+  transition: all 0.2s ease;
+}
+
+[data-theme="mint"] .quick-tabs-container {
+  background-color: #d8ece0 !important;
+  border-color: #c0ded0 !important;
+}
+
+[data-theme="ocean"] .quick-tabs-container {
+  background-color: #dbe8f3 !important;
+  border-color: #c4daf0 !important;
+}
+
+[data-theme="lavender"] .quick-tabs-container {
+  background-color: #e6ddf5 !important;
+  border-color: #d4c5ee !important;
+}
+
+.quick-tab-btn {
+  color: #475569 !important;
+  border: none !important;
+  background-color: transparent !important;
+  padding: 0.45rem 0.75rem !important;
+  font-size: 0.9rem !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  text-decoration: none !important;
+}
+
+.quick-tab-btn:hover {
+  color: #1e293b !important;
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+.quick-tab-btn.active-gasto {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25) !important;
+}
+
+.quick-tab-btn.active-ingreso {
+  background-color: #166534 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(22, 101, 52, 0.25) !important;
+}
+
+.quick-tab-btn.active-ahorro {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25) !important;
+}
+
+/* Chips de Categorías en Modales y Formularios */
+.category-chip-btn {
+  background-color: #f1ede4;
+  color: #334155;
+  border: 1px solid #ded5c4;
+  transition: all 0.15s ease;
+}
+
+.category-chip-btn:hover {
+  background-color: #e7dfd1;
+  color: #0f172a;
 }
 
 /* ==========================================================================
