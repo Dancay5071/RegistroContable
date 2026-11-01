@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { addDemoGasto } from "../services/demoData";
 import { addGastoUser } from "../services/dbService";
-import { MESES } from "../utils/formatters";
+import { MESES, formatoMoneda } from "../utils/formatters";
 import { CATEGORIAS_GASTO } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
 import Loader from "../components/Loader";
@@ -19,6 +19,11 @@ export default function NuevoGasto() {
   const [descripcion, setDescripcion] = useState("");
   const [monto, setMonto] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const addQuickAmount = (val) => {
+    const current = parseFloat(monto) || 0;
+    setMonto((current + val).toString());
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -112,7 +117,15 @@ export default function NuevoGasto() {
           </div>
 
           <div className="mb-4">
-            <label className="form-label text-muted small fw-semibold">Monto</label>
+            <div className="d-flex justify-content-between align-items-center mb-1">
+              <label className="form-label text-muted small fw-semibold mb-0">Monto</label>
+              <div className="d-flex gap-1">
+                <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(1000)}>+1k</button>
+                <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(5000)}>+5k</button>
+                <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(10000)}>+10k</button>
+                <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(50000)}>+50k</button>
+              </div>
+            </div>
             <div className="input-group">
               <span className="input-group-text">$</span>
               <input 
@@ -127,6 +140,12 @@ export default function NuevoGasto() {
                 required
               />
             </div>
+            {Number(monto) > 0 && (
+              <div className="amount-preview-badge">
+                <i className="bi bi-tag text-danger"></i>
+                Vista previa: {formatoMoneda(Number(monto))}
+              </div>
+            )}
           </div>
 
           <button 

@@ -18,6 +18,7 @@ import { MESES, formatoMoneda } from "../utils/formatters";
 import { CATEGORIAS_GASTO, getCategoriaGasto } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
 import Loader from "../components/Loader";
+import { exportGastosToCSV, printFinancialReport } from "../utils/exportUtils";
 
 export default function ConsultarGasto() {
   const { user, isDemo } = useAuth();
@@ -203,11 +204,41 @@ export default function ConsultarGasto() {
 
           {!loading && gastos !== null && gastos.length > 0 && (
             <div>
-              <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
-                <h4 className="h5 fw-bold text-dark mb-0">Gastos de {mes} {anio}</h4>
-                <span className="badge bg-danger bg-opacity-10 text-danger px-3 py-2 fs-6">
-                  Total: {formatoMoneda(sumaGastos)}
-                </span>
+              {/* Encabezado especial para PDF/Impresión */}
+              <div className="print-header">
+                <h1>Registro Contable — Reporte de Gastos</h1>
+                <p>Período: <strong>{mes} {anio}</strong> | Total Gastos: <strong>{formatoMoneda(sumaGastos)}</strong> | Generado el {new Date().toLocaleDateString()}</p>
+              </div>
+
+              <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 border-bottom pb-2">
+                <div>
+                  <h4 className="h5 fw-bold text-dark mb-0">Gastos de {mes} {anio}</h4>
+                  <span className="badge bg-danger bg-opacity-10 text-danger px-3 py-1 fs-6 mt-1">
+                    Total: {formatoMoneda(sumaGastos)}
+                  </span>
+                </div>
+
+                {/* Botones de Exportación Pro (Fase 4) */}
+                <div className="d-flex align-items-center gap-2 no-print">
+                  <button 
+                    type="button" 
+                    className="btn btn-outline-success btn-sm d-flex align-items-center gap-1 shadow-sm"
+                    onClick={() => exportGastosToCSV(gastos, mes, anio)}
+                    title="Descargar tabla en formato Excel (CSV)"
+                  >
+                    <i className="bi bi-file-earmark-excel"></i>
+                    <span>Exportar Excel</span>
+                  </button>
+                  <button 
+                    type="button" 
+                    className="btn btn-outline-dark btn-sm d-flex align-items-center gap-1 shadow-sm"
+                    onClick={printFinancialReport}
+                    title="Imprimir reporte o guardar como PDF"
+                  >
+                    <i className="bi bi-printer"></i>
+                    <span>PDF / Imprimir</span>
+                  </button>
+                </div>
               </div>
 
               {/* Barra de Búsqueda y Filtro en Tiempo Real */}
@@ -387,6 +418,12 @@ export default function ConsultarGasto() {
                       required
                       disabled={editLoading}
                     />
+                    {Number(editMonto) > 0 && (
+                      <div className="amount-preview-badge">
+                        <i className="bi bi-tag text-danger"></i>
+                        Vista previa: {formatoMoneda(Number(editMonto))}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="modal-footer border-top">

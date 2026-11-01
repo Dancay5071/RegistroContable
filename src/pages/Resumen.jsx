@@ -7,6 +7,7 @@ import { getResumenAnualUser } from "../services/dbService";
 import { MESES, formatoNumber } from "../utils/formatters";
 import Loader from "../components/Loader";
 import MonthlyComparisonChart from "../components/charts/MonthlyComparisonChart";
+import { exportResumenAnualToCSV, printFinancialReport } from "../utils/exportUtils";
 
 export default function Resumen() {
   const { user, isDemo } = useAuth();
@@ -77,14 +78,41 @@ export default function Resumen() {
 
       {!loading && resumenData && (
         <div className="w-100 p-4 bg-white rounded-4 shadow-sm border mt-2" style={{ maxWidth: "1280px" }}>
-          <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+          {/* Encabezado especial para PDF/Impresión */}
+          <div className="print-header">
+            <h1>Registro Contable — Resumen Anual {anio}</h1>
+            <p>Auditoría de 12 Meses | Total Ingresos: ${formatoNumber(resumenData.totalAnualIngresos)} | Total Gastos: ${formatoNumber(resumenData.totalAnualGastos)} | Total Ahorros: ${formatoNumber(resumenData.totalAnualAhorros)}</p>
+          </div>
+
+          <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 border-bottom pb-2">
             <h5 className="text-dark fw-bold mb-0 d-flex align-items-center gap-2">
               <i className="bi bi-graph-up-arrow text-success"></i>
               Resumen Financiero Anual — {anio}
             </h5>
-            <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fw-semibold">
-              12 Meses Auditados
-            </span>
+
+            <div className="d-flex align-items-center gap-2">
+              <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fw-semibold">
+                12 Meses Auditados
+              </span>
+              <button 
+                type="button" 
+                className="btn btn-outline-success btn-sm d-flex align-items-center gap-1 no-print shadow-sm"
+                onClick={() => exportResumenAnualToCSV(resumenData, anio)}
+                title="Descargar matriz en Excel (CSV)"
+              >
+                <i className="bi bi-file-earmark-excel"></i>
+                <span>Exportar Excel</span>
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-outline-dark btn-sm d-flex align-items-center gap-1 no-print shadow-sm"
+                onClick={printFinancialReport}
+                title="Imprimir reporte anual o guardar en PDF"
+              >
+                <i className="bi bi-printer"></i>
+                <span>PDF / Imprimir</span>
+              </button>
+            </div>
           </div>
 
           {/* Gráfico Comparativo Anual */}

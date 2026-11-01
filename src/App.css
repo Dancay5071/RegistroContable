@@ -584,3 +584,110 @@ footer a:hover {
 .btn-fab:active {
   transform: scale(0.95);
 }
+
+/* ==========================================================================
+   Fase 4: Atajos de Monto y Vista Previa en Inputs
+   ========================================================================== */
+.quick-amount-pill {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  background-color: rgba(30, 99, 63, 0.08);
+  border: 1px solid rgba(30, 99, 63, 0.2);
+  color: var(--accent-success);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.quick-amount-pill:hover {
+  background-color: var(--accent-success);
+  color: #ffffff;
+  border-color: var(--accent-success);
+  transform: translateY(-1px);
+}
+
+.amount-preview-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1e293b;
+  background-color: rgba(0, 0, 0, 0.04);
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  border: 1px dashed var(--border-subtle);
+  margin-top: 0.35rem;
+}
+
+/* ==========================================================================
+   Fase 4: Estilos de Impresión / Guardar en PDF (@media print)
+   ========================================================================== */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #000000 !important;
+    font-size: 10pt;
+  }
+
+  /* Ocultar elementos no imprimibles */
+  .navbar,
+  footer,
+  .btn-fab,
+  .floating-action-button,
+  .btn,
+  .no-print,
+  .badge-filter,
+  .alert,
+  .modal-backdrop,
+  input,
+  select {
+    display: none !important;
+  }
+
+  .principal,
+  .card,
+  .table {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    background-color: #ffffff !important;
+  }
+
+  /* Asegurar tabla completa */
+  .table-responsive {
+    overflow: visible !important;
+  }
+
+  .table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  .table th,
+  .table td {
+    padding: 6px 8px !important;
+    border: 1px solid #bbb !important;
+  }
+
+  /* Encabezado especial para impresión */
+  .print-header {
+    display: block !important;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #246845;
+  }
+
+  .print-header h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #246845;
+    margin: 0;
+  }
+}
+
+.print-header {
+  display: none;
+}
+

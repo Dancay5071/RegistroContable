@@ -15,6 +15,7 @@ import {
 import { MESES, formatoMoneda, formatoNumber } from "../utils/formatters";
 import { CATEGORIAS_AHORRO, getCategoriaAhorro } from "../utils/categories";
 import Loader from "../components/Loader";
+import { exportAhorrosToCSV } from "../utils/exportUtils";
 
 export default function Ahorro() {
   const { user, isDemo } = useAuth();
@@ -256,9 +257,22 @@ export default function Ahorro() {
             <h5 className="h6 text-muted text-uppercase fw-bold mb-0 tracking-wider d-flex align-items-center gap-2">
               <i className="bi bi-clock-history text-secondary"></i> Historial Reciente de Ahorro
             </h5>
-            <span className="badge px-3 py-1 rounded-pill small" style={{ backgroundColor: "#fef0cd", color: "#854d0e" }}>
-              {historialAhorros.length} registros
-            </span>
+            <div className="d-flex align-items-center gap-2">
+              <span className="badge px-3 py-1 rounded-pill small" style={{ backgroundColor: "#fef0cd", color: "#854d0e" }}>
+                {historialAhorros.length} registros
+              </span>
+              {historialAhorros.length > 0 && (
+                <button 
+                  type="button" 
+                  className="btn btn-outline-success btn-sm d-flex align-items-center gap-1 shadow-sm"
+                  onClick={() => exportAhorrosToCSV(historialAhorros)}
+                  title="Exportar movimientos de ahorro a Excel (CSV)"
+                >
+                  <i className="bi bi-file-earmark-excel"></i>
+                  <span>Exportar</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {historialAhorros.length === 0 ? (

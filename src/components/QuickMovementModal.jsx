@@ -53,6 +53,11 @@ export default function QuickMovementModal() {
     closeQuickModal();
   };
 
+  const addQuickAmount = (val) => {
+    const current = parseFloat(monto) || 0;
+    setMonto((current + val).toString());
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const montoNum = parseFloat(monto);
@@ -256,9 +261,17 @@ export default function QuickMovementModal() {
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label small fw-bold text-muted mb-1">
-                      Monto del Gasto
-                    </label>
+                    <div className="d-flex justify-content-between align-items-center mb-1">
+                      <label className="form-label small fw-bold text-muted mb-0">
+                        Monto del Gasto
+                      </label>
+                      <div className="d-flex gap-1">
+                        <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(1000)}>+1k</button>
+                        <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(5000)}>+5k</button>
+                        <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(10000)}>+10k</button>
+                        <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(50000)}>+50k</button>
+                      </div>
+                    </div>
                     <div className="input-group">
                       <span className="input-group-text">$</span>
                       <input 
@@ -274,6 +287,12 @@ export default function QuickMovementModal() {
                         autoFocus
                       />
                     </div>
+                    {Number(monto) > 0 && (
+                      <div className="amount-preview-badge">
+                        <i className="bi bi-tag text-danger"></i>
+                        Vista previa: {formatoMoneda(Number(monto))}
+                      </div>
+                    )}
                   </div>
                 </>
               )}
@@ -321,9 +340,16 @@ export default function QuickMovementModal() {
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label small fw-bold text-muted mb-1">
-                      Monto Bruto
-                    </label>
+                    <div className="d-flex justify-content-between align-items-center mb-1">
+                      <label className="form-label small fw-bold text-muted mb-0">
+                        Monto Bruto
+                      </label>
+                      <div className="d-flex gap-1">
+                        <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(10000)}>+10k</button>
+                        <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(50000)}>+50k</button>
+                        <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(100000)}>+100k</button>
+                      </div>
+                    </div>
                     <div className="input-group">
                       <span className="input-group-text">$</span>
                       <input 
@@ -339,6 +365,12 @@ export default function QuickMovementModal() {
                         autoFocus
                       />
                     </div>
+                    {Number(monto) > 0 && (
+                      <div className="amount-preview-badge">
+                        <i className="bi bi-tag text-success"></i>
+                        Vista previa: {formatoMoneda(Number(monto))}
+                      </div>
+                    )}
                   </div>
 
                   <div className="mb-3">
@@ -465,9 +497,26 @@ export default function QuickMovementModal() {
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label small fw-bold text-muted mb-1">
-                      Monto {tipoAhorro === "agregar" ? "a Ahorrar" : "a Extraer"}
-                    </label>
+                    <div className="d-flex justify-content-between align-items-center mb-1">
+                      <label className="form-label small fw-bold text-muted mb-0">
+                        Monto {tipoAhorro === "agregar" ? "a Ahorrar" : "a Extraer"}
+                      </label>
+                      <div className="d-flex gap-1">
+                        {monedaAhorro === "ARS" ? (
+                          <>
+                            <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(1000)}>+1k</button>
+                            <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(5000)}>+5k</button>
+                            <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(10000)}>+10k</button>
+                          </>
+                        ) : (
+                          <>
+                            <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(10)}>+10</button>
+                            <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(50)}>+50</button>
+                            <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(100)}>+100</button>
+                          </>
+                        )}
+                      </div>
+                    </div>
                     <div className="input-group">
                       <span className="input-group-text fw-bold">
                         {MONEDAS.find((m) => m.id === monedaAhorro)?.simbolo || "$"}
@@ -485,6 +534,12 @@ export default function QuickMovementModal() {
                         autoFocus
                       />
                     </div>
+                    {Number(monto) > 0 && (
+                      <div className="amount-preview-badge">
+                        <i className="bi bi-tag text-warning"></i>
+                        Vista previa: {formatoMoneda(Number(monto), monedaAhorro)}
+                      </div>
+                    )}
                   </div>
                 </>
               )}
