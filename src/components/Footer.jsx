@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="bg-dark text-white py-1 mt-auto">
       <div className="footer text-center">
         <p className="mb-0 small">
-          Created by: Daniela Cabrera &nbsp;||&nbsp; &copy; 2024 Registro Contable. Todos los derechos reservados. &nbsp;||&nbsp;
+          Created by: Daniela Cabrera &nbsp;||&nbsp; &copy; {new Date().getFullYear()} FinTrack. Todos los derechos reservados. &nbsp;||&nbsp;
           <a 
             href="https://github.com/Dancay5071" 
             target="_blank" 

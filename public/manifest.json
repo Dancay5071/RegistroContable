@@ -1,18 +1,12 @@
 {
-  "short_name": "Registro Contable",
-  "name": "Registro Contable - Finanzas Personales",
-  "description": "Control financiero personal simple, transparente y eficiente.",
+  "short_name": "FinTrack",
+  "name": "FinTrack - Finanzas Personales",
+  "description": "Control financiero personal y ahorro inteligente.",
   "icons": [
     {
-      "src": "/imagen/home.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/imagen/RC.png",
-      "sizes": "512x512",
-      "type": "image/png",
+      "src": "/fintrack-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ],

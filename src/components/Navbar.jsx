@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { formatoMoneda } from "../utils/formatters";
+import FinTrackLogo from "./FinTrackLogo";
 
 export default function Navbar() {
   const { user, isDemo, logout } = useAuth();
@@ -34,7 +35,7 @@ export default function Navbar() {
       <div className="container-fluid">
         {/* Brand / Logo */}
         <Link className="navbar-brand d-flex align-items-center me-3" to="/" onClick={closeMenu}>
-          <img src="/imagen/RC.png" alt="Logo" style={{ height: "32px" }} />
+          <FinTrackLogo size={34} showText={true} />
         </Link>
 
         {/* Indicador de Saldos en Navbar (Desktop y Tablet) */}

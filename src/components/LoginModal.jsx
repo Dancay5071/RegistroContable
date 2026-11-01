@@ -1,6 +1,7 @@
 // src/components/LoginModal.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import FinTrackLogo from "./FinTrackLogo";
 
 export default function LoginModal() {
   const { 
@@ -121,10 +122,13 @@ export default function LoginModal() {
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content text-dark shadow-lg border-0">
           <div className="modal-header border-bottom-0 pb-0">
-            <h5 className="modal-title fw-bold" id="loginModalLabel">
-              {mode === "login" && "Iniciar Sesión"}
-              {mode === "register" && "Crear Cuenta"}
-              {mode === "forgot" && "Recuperar Contraseña"}
+            <h5 className="modal-title fw-bold d-flex align-items-center gap-2" id="loginModalLabel">
+              <FinTrackLogo size={26} showText={false} />
+              <span>
+                {mode === "login" && "Iniciar Sesión en FinTrack"}
+                {mode === "register" && "Crear Cuenta en FinTrack"}
+                {mode === "forgot" && "Recuperar Contraseña"}
+              </span>
             </h5>
             <button 
               type="button" 

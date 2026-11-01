@@ -80,7 +80,7 @@ export default function Resumen() {
         <div className="w-100 p-4 bg-white rounded-4 shadow-sm border mt-2" style={{ maxWidth: "1280px" }}>
           {/* Encabezado especial para PDF/Impresión */}
           <div className="print-header">
-            <h1>Registro Contable — Resumen Anual {anio}</h1>
+            <h1>FinTrack — Resumen Anual {anio}</h1>
             <p>Auditoría de 12 Meses | Total Ingresos: ${formatoNumber(resumenData.totalAnualIngresos)} | Total Gastos: ${formatoNumber(resumenData.totalAnualGastos)} | Total Ahorros: ${formatoNumber(resumenData.totalAnualAhorros)}</p>
           </div>
 

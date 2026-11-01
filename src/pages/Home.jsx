@@ -11,6 +11,7 @@ import { getCategoriaGasto, getCategoriaIngreso } from "../utils/categories";
 import { useToast } from "../context/ToastContext";
 import ExpenseCategoryChart from "../components/charts/ExpenseCategoryChart";
 import MonthlyComparisonChart from "../components/charts/MonthlyComparisonChart";
+import FinTrackLogo from "../components/FinTrackLogo";
 
 export default function Home() {
   const { user, isDemo, openLoginModal, loginAsDemo } = useAuth();
@@ -87,7 +88,10 @@ export default function Home() {
     <div className="home-page fade-in d-flex flex-column align-items-center justify-content-center flex-grow-1 p-3">
       {/* Encabezado Principal */}
       <div className="logo-container mb-4 text-center">
-        <h1 className="h4 fw-bold mt-2 text-dark tracking-wide">Registro Contable</h1>
+        <div className="d-flex justify-content-center mb-1">
+          <FinTrackLogo size={46} showText={true} textClass="h3" />
+        </div>
+        <p className="text-muted small mb-2">Control Financiero & Ahorro Inteligente</p>
         <div className="badge shadow-sm border px-3 py-2 text-dark fw-medium rounded-pill mt-1" style={{ backgroundColor: "var(--bg-card)" }}>
           <i className="bi bi-calendar3 me-2 text-success"></i>
           {fecha}

@@ -207,7 +207,7 @@ export default function ConsultarIngreso() {
             <div>
               {/* Encabezado especial para PDF/Impresión */}
               <div className="print-header">
-                <h1>Registro Contable — Reporte de Ingresos</h1>
+                <h1>FinTrack — Reporte de Ingresos</h1>
                 <p>Período: <strong>{mes} {anio}</strong> | Total Ingresos: <strong>{formatoMoneda(sumaIngresos)}</strong> | Generado el {new Date().toLocaleDateString()}</p>
               </div>
 

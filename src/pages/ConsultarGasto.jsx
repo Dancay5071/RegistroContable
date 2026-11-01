@@ -206,7 +206,7 @@ export default function ConsultarGasto() {
             <div>
               {/* Encabezado especial para PDF/Impresión */}
               <div className="print-header">
-                <h1>Registro Contable — Reporte de Gastos</h1>
+                <h1>FinTrack — Reporte de Gastos</h1>
                 <p>Período: <strong>{mes} {anio}</strong> | Total Gastos: <strong>{formatoMoneda(sumaGastos)}</strong> | Generado el {new Date().toLocaleDateString()}</p>
               </div>
 
