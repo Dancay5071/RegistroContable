@@ -5,10 +5,12 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { BalanceProvider } from "./context/BalanceContext";
 import { ToastProvider } from "./context/ToastContext";
 import { QuickMovementProvider } from "./context/QuickMovementContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LoginModal from "./components/LoginModal";
 import QuickMovementModal from "./components/QuickMovementModal";
+import CustomizeModal from "./components/CustomizeModal";
 import FloatingActionButton from "./components/FloatingActionButton";
 import Loader from "./components/Loader";
 
@@ -116,6 +118,7 @@ function MainLayout() {
       <Footer />
       <LoginModal />
       <QuickMovementModal />
+      <CustomizeModal />
       <FloatingActionButton />
     </div>
   );
@@ -124,15 +127,17 @@ function MainLayout() {
 export default function App() {
   return (
     <Router>
-      <AuthProvider>
-        <BalanceProvider>
-          <ToastProvider>
-            <QuickMovementProvider>
-              <MainLayout />
-            </QuickMovementProvider>
-          </ToastProvider>
-        </BalanceProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <BalanceProvider>
+            <ToastProvider>
+              <QuickMovementProvider>
+                <MainLayout />
+              </QuickMovementProvider>
+            </ToastProvider>
+          </BalanceProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </Router>
   );
 }

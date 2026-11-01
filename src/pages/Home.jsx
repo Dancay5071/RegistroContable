@@ -122,7 +122,7 @@ export default function Home() {
           <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
             <div>
               <h1 className="h4 fw-bold text-dark mb-1">
-                {user?.displayName ? `Hola, ${user.displayName.split(" ")[0]} 👋` : "Panel Financiero"}
+                {user?.displayName ? `Hola, ${user.displayName.split(" ")[0]}` : "Panel Financiero"}
               </h1>
               <p className="text-muted small mb-0">Resumen de tus saldos y actividad mensual</p>
             </div>

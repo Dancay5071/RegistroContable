@@ -33,6 +33,109 @@
   --badge-primary-border: #b8d3ee;
 }
 
+/* ==========================================================================
+   Temas de Color Adicionales (data-theme)
+   ========================================================================== */
+[data-theme="dark"] {
+  --bg-main: #0b0f19;
+  --bg-card: #131c2e;
+  --bg-card-alt: #1c273d;
+  --border-subtle: #25334c;
+  --border-focus: #10b981;
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+
+  --accent-primary: #38bdf8;
+  --accent-success: #10b981;
+  --accent-danger: #f43f5e;
+  --accent-warning: #fbbf24;
+
+  --badge-success-bg: rgba(16, 185, 129, 0.16);
+  --badge-success-border: rgba(16, 185, 129, 0.35);
+  --badge-danger-bg: rgba(244, 63, 94, 0.16);
+  --badge-danger-border: rgba(244, 63, 94, 0.35);
+  --badge-warning-bg: rgba(251, 191, 36, 0.16);
+  --badge-warning-border: rgba(251, 191, 36, 0.35);
+  --badge-primary-bg: rgba(56, 189, 248, 0.16);
+  --badge-primary-border: rgba(56, 189, 248, 0.35);
+}
+
+[data-theme="mint"] {
+  --bg-main: #edf6f1;
+  --bg-card: #f8fcf9;
+  --bg-card-alt: #e3f0e8;
+  --border-subtle: #cde0d5;
+  --border-focus: #059669;
+
+  --text-main: #0f2d1e;
+  --text-muted: #2f5642;
+
+  --accent-primary: #0d9488;
+  --accent-success: #059669;
+  --accent-danger: #be123c;
+  --accent-warning: #b45309;
+
+  --badge-success-bg: #d1fae5;
+  --badge-success-border: #a7f3d0;
+  --badge-danger-bg: #ffe4e6;
+  --badge-danger-border: #fecdd3;
+  --badge-warning-bg: #fef3c7;
+  --badge-warning-border: #fde68a;
+  --badge-primary-bg: #ccfbf1;
+  --badge-primary-border: #99f6e4;
+}
+
+[data-theme="ocean"] {
+  --bg-main: #edf3f8;
+  --bg-card: #f8fafc;
+  --bg-card-alt: #e1ebf4;
+  --border-subtle: #c8dbe9;
+  --border-focus: #0284c7;
+
+  --text-main: #0f2942;
+  --text-muted: #335c80;
+
+  --accent-primary: #0284c7;
+  --accent-success: #15803d;
+  --accent-danger: #b91c1c;
+  --accent-warning: #b45309;
+
+  --badge-success-bg: #dcfce7;
+  --badge-success-border: #bbf7d0;
+  --badge-danger-bg: #fee2e2;
+  --badge-danger-border: #fca5a5;
+  --badge-warning-bg: #fef3c7;
+  --badge-warning-border: #fde68a;
+  --badge-primary-bg: #e0f2fe;
+  --badge-primary-border: #bae6fd;
+}
+
+[data-theme="lavender"] {
+  --bg-main: #f3f0f9;
+  --bg-card: #faf8fd;
+  --bg-card-alt: #ece5f5;
+  --border-subtle: #dccef0;
+  --border-focus: #7c3aed;
+
+  --text-main: #271b40;
+  --text-muted: #594578;
+
+  --accent-primary: #7c3aed;
+  --accent-success: #16a34a;
+  --accent-danger: #dc2626;
+  --accent-warning: #d97706;
+
+  --badge-success-bg: #dcfce7;
+  --badge-success-border: #bbf7d0;
+  --badge-danger-bg: #fee2e2;
+  --badge-danger-border: #fca5a5;
+  --badge-warning-bg: #fef3c7;
+  --badge-warning-border: #fde68a;
+  --badge-primary-bg: #ede9fe;
+  --badge-primary-border: #ddd6fe;
+}
+
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -59,7 +162,7 @@ body {
 }
 
 /* ==========================================================================
-   Fondo Pastel Cálido (0 KB, Rápido, Sin fotografía de 7 MB)
+   Fondo Dinámico Adaptable a Temas y Fondos Personalizados
    ========================================================================== */
 .fondo {
   position: fixed;
@@ -67,14 +170,175 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #f5f1e8;
+  background-color: var(--bg-main);
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  transition: background-color 0.3s ease;
+}
+
+/* 1. Fondo Mesh (Gradiente 4 Esquinas Dinámico) */
+.fondo,
+[data-bg="mesh"] .fondo {
   background-image:
     radial-gradient(at 0% 0%, rgba(175, 212, 185, 0.32) 0px, transparent 50%),
     radial-gradient(at 100% 0%, rgba(248, 220, 198, 0.35) 0px, transparent 50%),
     radial-gradient(at 100% 100%, rgba(205, 220, 239, 0.28) 0px, transparent 50%),
     radial-gradient(at 0% 100%, rgba(253, 246, 227, 0.45) 0px, transparent 50%);
-  background-attachment: fixed;
-  z-index: -1;
+}
+
+[data-theme="dark"] .fondo,
+[data-theme="dark"][data-bg="mesh"] .fondo {
+  background-image:
+    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.18) 0px, transparent 55%),
+    radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.16) 0px, transparent 55%),
+    radial-gradient(at 100% 100%, rgba(244, 63, 94, 0.12) 0px, transparent 55%),
+    radial-gradient(at 0% 100%, rgba(251, 191, 36, 0.12) 0px, transparent 55%);
+}
+
+[data-theme="mint"][data-bg="mesh"] .fondo {
+  background-image:
+    radial-gradient(at 0% 0%, rgba(5, 150, 105, 0.22) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(13, 148, 136, 0.20) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(167, 243, 208, 0.30) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(209, 250, 229, 0.35) 0px, transparent 50%);
+}
+
+[data-theme="ocean"][data-bg="mesh"] .fondo {
+  background-image:
+    radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.22) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.18) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(186, 230, 253, 0.30) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(224, 242, 254, 0.35) 0px, transparent 50%);
+}
+
+[data-theme="lavender"][data-bg="mesh"] .fondo {
+  background-image:
+    radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.18) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.16) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(221, 214, 254, 0.30) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(243, 232, 255, 0.35) 0px, transparent 50%);
+}
+
+/* 2. Fondo Puntos Sutiles (Dots) */
+[data-bg="dots"] .fondo {
+  background-image: radial-gradient(var(--border-subtle) 1.5px, transparent 1.5px) !important;
+  background-size: 24px 24px !important;
+}
+
+/* 3. Fondo Liso Minimalista */
+[data-bg="solid"] .fondo {
+  background-image: none !important;
+}
+
+/* 4. Fondo Personalizado (Foto con Scrim Protector de Alta Legibilidad) */
+[data-bg="custom"] .fondo {
+  background-image: var(--custom-bg-image) !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+[data-bg="custom"] .fondo::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-main);
+  opacity: 0.88;
+  backdrop-filter: blur(3px);
+}
+
+/* Adaptaciones Modo Oscuro */
+[data-theme="dark"] #navbar {
+  background-color: rgba(19, 28, 46, 0.95) !important;
+  border-bottom-color: var(--border-subtle) !important;
+}
+
+[data-theme="dark"] .navbar-balance-pill {
+  background: #1a253a !important;
+  border-color: #2b3a55 !important;
+}
+
+[data-theme="dark"] .principal,
+[data-theme="dark"] .card,
+[data-theme="dark"] .modal-content {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-subtle) !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .modal-footer {
+  border-color: var(--border-subtle) !important;
+}
+
+[data-theme="dark"] .modal-title,
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background-color: #0f1624 !important;
+  border-color: var(--border-subtle) !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+  color: #64748b !important;
+}
+
+[data-theme="dark"] .input-group-text {
+  background-color: #1a2436 !important;
+  border-color: var(--border-subtle) !important;
+  color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .table {
+  color: var(--text-main) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+[data-theme="dark"] .table-light,
+[data-theme="dark"] .table-light th,
+[data-theme="dark"] .table-light td {
+  background-color: #182235 !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .list-group-item {
+  color: var(--text-main) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+[data-theme="dark"] .hero-balance-card.hero-saldo {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.04) 100%) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+[data-theme="dark"] .hero-balance-card.hero-saldo .kpi-amount {
+  color: #34d399 !important;
+}
+
+[data-theme="dark"] .hero-balance-card.hero-ahorro {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.12) 0%, rgba(251, 191, 36, 0.04) 100%) !important;
+  border-color: rgba(251, 191, 36, 0.3) !important;
+}
+
+[data-theme="dark"] .hero-balance-card.hero-ahorro .kpi-amount {
+  color: #fbbf24 !important;
+}
+
+[data-theme="dark"] footer {
+  background-color: #0f1624 !important;
+  border-color: var(--border-subtle) !important;
 }
 
 /* Animaciones */

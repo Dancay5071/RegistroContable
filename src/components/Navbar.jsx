@@ -4,6 +4,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
+import { useTheme } from "../context/ThemeContext";
 import { formatoMoneda } from "../utils/formatters";
 import FinTrackLogo from "./FinTrackLogo";
 
@@ -11,6 +12,7 @@ export default function Navbar() {
   const { user, isDemo, logout } = useAuth();
   const { montoActual, totalAhorros } = useBalance();
   const { openQuickModal } = useQuickMovement();
+  const { openCustomizeModal } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -145,8 +147,20 @@ export default function Navbar() {
                 <i className="bi bi-eye"></i> Demo
               </span>
             )}
+
+            {/* Botón Personalizar Apariencia */}
+            <button
+              className="btn btn-outline-secondary btn-sm px-2 px-md-3 d-flex align-items-center gap-1 rounded-pill shadow-sm"
+              type="button"
+              onClick={() => { closeMenu(); openCustomizeModal(); }}
+              title="Personalizar colores y fondo"
+            >
+              <i className="bi bi-palette2"></i>
+              <span className="d-none d-sm-inline">Tema</span>
+            </button>
+
             <button 
-              className="btn btn-outline-danger btn-sm px-3" 
+              className="btn btn-outline-danger btn-sm px-3 rounded-pill" 
               type="button"
               onClick={handleLogout}
             >
