@@ -135,3 +135,4 @@ export function exportResumenAnualToCSV(resumenData, anio) {
 export function printFinancialReport() {
   window.print();
 }
+
