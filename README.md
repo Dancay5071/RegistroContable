@@ -1,72 +1,81 @@
-# Registro Contable (Migración a React)
+# FinTrack — Finanzas Personales & Ahorro Inteligente
 
-Aplicación web de gestión contable personal y familiar migrada a **React** con **Vite**, **Bootstrap 5**, **React Router** y **Firebase** (Firestore y Authentication).
-
----
-
-## 🚀 Tecnologías Utilizadas
-
-- **React 19**
-- **Vite** (bundler ultrarrápido y servidor de desarrollo)
-- **React Router 7** (navegación SPA con rutas protegidas)
-- **Firebase 10** (Authentication y Firestore en tiempo real con `onSnapshot`)
-- **Bootstrap 5** & **Bootstrap Icons**
+Aplicación web progresiva (PWA) de gestión financiera personal desarrollada en **React 19** con **Vite**, **Bootstrap 5**, **Chart.js** y **Firebase** (Firestore en tiempo real y Authentication).
 
 ---
 
-## 📁 Estructura del Proyecto
+## Tecnologías Utilizadas
+
+- **React 19** (SPA con `React.lazy` y `Suspense` para carga ultrarrápida)
+- **Vite** (Bundler optimizado con división de código en chunks)
+- **Chart.js** (Gráficos interactivos de donas de categorías y barras comparativas anuales)
+- **Firebase 10** (Authentication con Google/Email y Firestore en tiempo real con `onSnapshot`)
+- **Bootstrap 5 & Bootstrap Icons** (Sistema de diseño pastel con alto contraste)
+- **PWA & Web Manifest** (Instalable en teléfonos Android e iOS)
+
+---
+
+## Estructura del Proyecto
 
 ```text
 RegistroContable/
-├── dist/                          # Build para producción
-├── public/                        # Archivos estáticos e imágenes (logo, favicon, fondo)
-│   └── imagen/
-│       ├── fondo.jpg
-│       ├── home.png
-│       └── RC.png
+├── dist/                          # Build optimizado para producción
+├── public/                        # Archivos estáticos públicos
+│   ├── fintrack-icon.svg          # Isotipo vectorial de la marca
+│   └── manifest.json              # Manifiesto para Progressive Web App (PWA)
 ├── src/
 │   ├── components/                # Componentes reutilizables
-│   │   ├── BalanceDisplay.jsx     # Badge reactivo de saldo y ahorros
-│   │   ├── Footer.jsx             # Pie de página con créditos
-│   │   ├── Loader.jsx             # Spinner de carga
-│   │   ├── LoginModal.jsx         # Modal de inicio de sesión
-│   │   ├── MonthYearSelect.jsx    # Selector de mes y año
-│   │   └── Navbar.jsx             # Barra de navegación principal y logout
-│   ├── context/                   # Estados globales
-│   │   ├── AuthContext.jsx        # Sesión con Firebase Auth (login/logout/user)
-│   │   └── BalanceContext.jsx     # Saldos en tiempo real con onSnapshot
-│   ├── pages/                     # Módulos y vistas principales
-│   │   ├── Home.jsx               # Pantalla de inicio con fecha y bienvenida
-│   │   ├── NuevoGasto.jsx         # Registro de nuevo gasto
-│   │   ├── ConsultarGasto.jsx     # Listado, edición y eliminación de gastos
-│   │   ├── NuevoIngreso.jsx       # Registro de ingreso y % destinado a ahorro
-│   │   ├── ConsultarIngreso.jsx   # Listado, edición y eliminación de ingresos
-│   │   ├── Ahorro.jsx             # Consulta anual, extracciones y depósitos
-│   │   └── Resumen.jsx            # Tabla comparativa financiera anual
+│   │   ├── charts/                # Visualizadores interactivos Chart.js
+│   │   │   ├── ExpenseCategoryChart.jsx
+│   │   │   └── MonthlyComparisonChart.jsx
+│   │   ├── FinTrackLogo.jsx       # Logotipo e isotipo vectorial
+│   │   ├── FloatingActionButton.jsx
+│   │   ├── Footer.jsx             # Pie de página
+│   │   ├── Loader.jsx             # Spinners de carga
+│   │   ├── LoginModal.jsx         # Modal de autenticación y Modo Demo
+│   │   ├── MonthYearSelect.jsx    # Selectores de período
+│   │   ├── Navbar.jsx             # Barra de navegación principal y saldos
+│   │   └── QuickMovementModal.jsx # Modal universal de registro rápido
+│   ├── context/                   # Estados globales de React
+│   │   ├── AuthContext.jsx        # Gestión de sesión, Firebase Auth y Modo Demo
+│   │   ├── BalanceContext.jsx     # Balances en tiempo real multimoneda
+│   │   ├── QuickMovementContext.jsx
+│   │   └── ToastContext.jsx       # Notificaciones Toast sin alerts intrusivos
+│   ├── pages/                     # Vistas y pantallas
+│   │   ├── Home.jsx               # Dashboard analítico con KPIs y gráficos
+│   │   ├── NuevoGasto.jsx         # Registro individual de gasto
+│   │   ├── ConsultarGasto.jsx     # Búsqueda, filtros y exportación Excel/PDF
+│   │   ├── NuevoIngreso.jsx       # Registro de ingresos y ahorro programado
+│   │   ├── ConsultarIngreso.jsx   # Historial y exportación de ingresos
+│   │   ├── Ahorro.jsx             # Ahorro multimoneda (ARS/USD/EUR/USDT) y metas
+│   │   └── Resumen.jsx            # Matriz comparativa de 12 meses
 │   ├── services/
-│   │   └── firebase.js            # Conexión modular a Firebase y helpers
+│   │   ├── dbService.js           # Consultas y escrituras en Firestore
+│   │   ├── demoData.js            # Base de datos local para Modo Demo
+│   │   └── firebase.js            # Conexión modular a Firebase
 │   ├── utils/
-│   │   └── formatters.js          # Formateo de números, moneda ($) y fechas
-│   ├── App.jsx                    # Enrutador y layout principal
-│   ├── App.css                    # Estilos visuales personalizados
-│   └── main.jsx                   # Entrada principal
-├── legacy-vanilla/                # Respaldo completo del código original en Vanilla JS
-├── index.html
-├── vite.config.js
-└── package.json
+│   │   ├── categories.js          # Catálogos de categorías con iconos
+│   │   ├── exportUtils.js         # Exportador nativo a Excel (CSV UTF-8) y PDF
+│   │   └── formatters.js          # Formato de monedas, números y fechas
+│   ├── App.jsx                    # Enrutador principal y code splitting
+│   ├── App.css                    # Sistema de estilos y reglas @media print
+│   └── main.jsx                   # Punto de entrada
+├── .github/workflows/             # Despliegue CI/CD continuo a Firebase Hosting
+├── firebase.json                  # Configuración de hosting y reglas
+├── firestore.rules                # Reglas de seguridad por usuario
+├── index.html                     # HTML principal con metaetiquetas PWA
+└── vite.config.js                 # Configuración de Vite y chunking
 ```
 
 ---
 
-## ⚡ Comandos Disponibles
-
-En la terminal (dentro de la carpeta `RegistroContable`):
+## Comandos Disponibles
 
 ```bash
 # Iniciar servidor de desarrollo local
 npm run dev
 
-# Generar versión optimizada para producción
+# Generar versión de producción (en /dist)
 npm run build
 
 # Previsualizar el build de producción localmente
@@ -75,15 +84,10 @@ npm run preview
 
 ---
 
-## ✨ Características y Mejoras Implementadas
+## Funcionalidades Principales
 
-1. **Arquitectura SPA (Single Page Application)**:
-   - Navegación instantánea sin recarga de página entre Gastos, Ingresos, Ahorros y Resumen.
-2. **Contexto Global y Reactividad**:
-   - `AuthContext`: Administra el estado de autenticación y modales de forma limpia sin manipular el DOM manualmente.
-   - `BalanceContext`: Sincroniza en tiempo real el monto disponible (`montoActual`) y el total de ahorros (`totalAhorros`) con Firestore.
-3. **Rutas Protegidas**:
-   - Si no se ha iniciado sesión, se solicita autenticación antes de acceder a los datos contables.
-4. **Respaldo Seguro**:
-   - Todo el código original en Vanilla JS está respaldado en la carpeta `legacy-vanilla/` y en la rama git `vanilla-original`.
-
+1. **Dashboard Financiero Completo**: KPIs de saldos disponibles y ahorros, gráfico de dona por categoría de gastos y evolución mensual.
+2. **Modal Rápido Universal (`+ Movimiento`)**: Registro ágil en un solo clic de gastos, ingresos o ahorros con atajos numéricos y vista previa de importes.
+3. **Ahorros Multimoneda & Categorizados**: Soporte para ARS ($), USD (US$), EUR (€) y USDT (₮) con metas de ahorro (Emergencia, Vacaciones, Vehículo, Vivienda, etc.).
+4. **Exportación Profesional a Excel y PDF**: Descarga directa de archivos `.csv` compatibles con Microsoft Excel y modo de impresión limpio para reportes en PDF.
+5. **Modo Demo Interactivo**: Permite probar todas las funcionalidades con datos simulados y persistencia local sin registrarse.
