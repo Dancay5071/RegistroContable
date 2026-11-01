@@ -245,7 +245,7 @@ export default function Home() {
                 className="btn btn-sm btn-outline-success rounded-pill px-3 fw-semibold shadow-sm"
                 onClick={() => openQuickModal("gasto")}
               >
-                <i className="bi bi-plus-lg me-1"></i> + Movimiento
+                <i className="bi bi-plus-lg me-1"></i>  Movimiento
               </button>
             </div>
 
@@ -255,9 +255,11 @@ export default function Home() {
                 Cargando movimientos...
               </div>
             ) : ultimasTransacciones.length === 0 ? (
-              <div className="text-center py-4 text-muted">
-                <i className="bi bi-inbox fs-2 text-secondary opacity-50 mb-2 d-block"></i>
-                <p className="small mb-2">Aún no hay movimientos registrados este mes.</p>
+              <div className="d-flex flex-column align-items-center justify-content-center py-4 text-center">
+                <i className="bi bi-inbox fs-1 mb-2 opacity-75" style={{ color: "var(--text-muted)" }}></i>
+                <p className="small mb-3" style={{ color: "var(--text-muted)" }}>
+                  Aún no hay movimientos registrados este mes.
+                </p>
                 <button 
                   type="button" 
                   className="btn btn-sm btn-success rounded-pill px-3 shadow-sm"

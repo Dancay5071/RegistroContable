@@ -10,6 +10,7 @@ import {
   BarController
 } from "chart.js";
 import { MESES, formatoMoneda, formatoNumber } from "../../utils/formatters";
+import { useTheme } from "../../context/ThemeContext";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, BarController);
 
@@ -21,6 +22,12 @@ export default function MonthlyComparisonChart({
 }) {
   const canvasRef = useRef(null);
   const chartInstanceRef = useRef(null);
+  const { theme } = useTheme();
+
+  const isDark = theme === "dark";
+  const labelColor = isDark ? "#f1f5f9" : "#1e293b";
+  const tickColor = isDark ? "#cbd5e1" : "#475569";
+  const gridColor = isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(222, 212, 194, 0.5)";
 
   // Abreviar nombres de meses: Ene, Feb, Mar...
   const labels = MESES.map((m) => m.substring(0, 3));
@@ -42,24 +49,24 @@ export default function MonthlyComparisonChart({
           {
             label: "Ingresos",
             data: ingresosMensuales,
-            backgroundColor: "rgba(36, 104, 69, 0.75)",
-            borderColor: "#1e633f",
+            backgroundColor: isDark ? "rgba(16, 185, 129, 0.85)" : "rgba(36, 104, 69, 0.75)",
+            borderColor: isDark ? "#34d399" : "#1e633f",
             borderWidth: 1.5,
             borderRadius: 6
           },
           {
             label: "Gastos",
             data: gastosMensuales,
-            backgroundColor: "rgba(178, 53, 53, 0.75)",
-            borderColor: "#991b1b",
+            backgroundColor: isDark ? "rgba(244, 63, 94, 0.85)" : "rgba(178, 53, 53, 0.75)",
+            borderColor: isDark ? "#fb7185" : "#991b1b",
             borderWidth: 1.5,
             borderRadius: 6
           },
           {
             label: "Ahorros",
             data: ahorrosMensuales,
-            backgroundColor: "rgba(196, 109, 3, 0.75)",
-            borderColor: "#854d0e",
+            backgroundColor: isDark ? "rgba(251, 191, 36, 0.85)" : "rgba(196, 109, 3, 0.75)",
+            borderColor: isDark ? "#fcd34d" : "#854d0e",
             borderWidth: 1.5,
             borderRadius: 6
           }
@@ -74,7 +81,7 @@ export default function MonthlyComparisonChart({
             labels: {
               boxWidth: 12,
               padding: 14,
-              color: "#1e293b",
+              color: labelColor,
               font: {
                 family: "'Plus Jakarta Sans', sans-serif",
                 size: 11,
@@ -83,7 +90,9 @@ export default function MonthlyComparisonChart({
             }
           },
           tooltip: {
-            backgroundColor: "#1e293b",
+            backgroundColor: isDark ? "#1e293b" : "#1e293b",
+            titleColor: "#ffffff",
+            bodyColor: "#ffffff",
             titleFont: { family: "'Plus Jakarta Sans', sans-serif", size: 12 },
             bodyFont: { family: "'Plus Jakarta Sans', sans-serif", size: 12 },
             padding: 10,
@@ -102,17 +111,17 @@ export default function MonthlyComparisonChart({
               display: false
             },
             ticks: {
-              color: "#475569",
-              font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 }
+              color: tickColor,
+              font: { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: "600" }
             }
           },
           y: {
             grid: {
-              color: "rgba(222, 212, 194, 0.5)"
+              color: gridColor
             },
             ticks: {
-              color: "#475569",
-              font: { family: "'Plus Jakarta Sans', sans-serif", size: 10 },
+              color: tickColor,
+              font: { family: "'Plus Jakarta Sans', sans-serif", size: 10, weight: "600" },
               callback: (value) => `$${formatoNumber(value)}`
             }
           }
@@ -125,7 +134,7 @@ export default function MonthlyComparisonChart({
         chartInstanceRef.current.destroy();
       }
     };
-  }, [ingresosMensuales, gastosMensuales, ahorrosMensuales, anio]);
+  }, [ingresosMensuales, gastosMensuales, ahorrosMensuales, anio, theme]);
 
   return (
     <div className="position-relative w-100" style={{ height: "260px" }}>

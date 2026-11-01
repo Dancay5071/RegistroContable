@@ -218,7 +218,7 @@ export default function ConsultarGasto() {
                   </span>
                 </div>
 
-                {/* Botones de Exportación Pro (Fase 4) */}
+                {/* Botones de Exportación Pro */}
                 <div className="d-flex align-items-center gap-2 no-print">
                   <button 
                     type="button" 

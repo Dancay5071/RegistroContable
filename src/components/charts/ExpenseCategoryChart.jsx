@@ -9,12 +9,17 @@ import {
 } from "chart.js";
 import { formatoMoneda } from "../../utils/formatters";
 import { getCategoriaGasto } from "../../utils/categories";
+import { useTheme } from "../../context/ThemeContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend, DoughnutController);
 
 export default function ExpenseCategoryChart({ gastos = [], mes = "", anio = "" }) {
   const canvasRef = useRef(null);
   const chartInstanceRef = useRef(null);
+  const { theme } = useTheme();
+
+  const isDark = theme === "dark";
+  const legendColor = isDark ? "#f1f5f9" : "#1e293b";
 
   // Agrupar gastos por categoría
   const categoriasMap = {};
@@ -70,7 +75,7 @@ export default function ExpenseCategoryChart({ gastos = [], mes = "", anio = "" 
             labels: {
               boxWidth: 12,
               padding: 12,
-              color: "#1e293b",
+              color: legendColor,
               font: {
                 family: "'Plus Jakarta Sans', sans-serif",
                 size: 11,
@@ -80,6 +85,8 @@ export default function ExpenseCategoryChart({ gastos = [], mes = "", anio = "" 
           },
           tooltip: {
             backgroundColor: "#1e293b",
+            titleColor: "#ffffff",
+            bodyColor: "#ffffff",
             titleFont: { family: "'Plus Jakarta Sans', sans-serif", size: 12 },
             bodyFont: { family: "'Plus Jakarta Sans', sans-serif", size: 12 },
             padding: 10,
@@ -102,13 +109,15 @@ export default function ExpenseCategoryChart({ gastos = [], mes = "", anio = "" 
         chartInstanceRef.current.destroy();
       }
     };
-  }, [gastos]);
+  }, [gastos, theme]);
 
   if (labels.length === 0) {
     return (
-      <div className="d-flex flex-column align-items-center justify-content-center p-4 text-center h-100 text-muted">
-        <i className="bi bi-pie-chart fs-1 text-secondary opacity-50 mb-2"></i>
-        <p className="small mb-0">Sin gastos registrados en {mes} {anio} para graficar.</p>
+      <div className="d-flex flex-column align-items-center justify-content-center p-4 text-center h-100">
+        <i className="bi bi-pie-chart fs-1 mb-2 opacity-75" style={{ color: "var(--text-muted)" }}></i>
+        <p className="small mb-0" style={{ color: "var(--text-muted)" }}>
+          Sin gastos registrados en {mes} {anio} para graficar.
+        </p>
       </div>
     );
   }
