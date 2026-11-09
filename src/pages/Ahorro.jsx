@@ -20,12 +20,14 @@ import { MESES, MONEDAS, formatoMoneda, formatoNumber } from "../utils/formatter
 import { CATEGORIAS_AHORRO, getCategoriaAhorro } from "../utils/categories";
 import Loader from "../components/Loader";
 import { exportAhorrosToCSV } from "../utils/exportUtils";
+import { useDolar } from "../hooks/useDolar";
 
 export default function Ahorro() {
   const { user, isDemo } = useAuth();
   const { totalAhorros, totalAhorrosUSD, totalAhorrosEUR } = useBalance();
   const { openQuickModal, movementCounter, notifyMovementSaved } = useQuickMovement();
   const { showToast } = useToast();
+  const { blue } = useDolar();
   const currentYear = new Date().getFullYear();
   const yearOptions = [currentYear - 3, currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
 
@@ -219,21 +221,39 @@ export default function Ahorro() {
 
           {/* Dólares Estadounidenses */}
           <div className="col-12 col-md-4">
-            <div className="hero-balance-card p-3 rounded-4 shadow-sm h-100" style={{ background: "linear-gradient(135deg, #f0f7f2 0%, #e6f3ec 100%)", borderColor: "#b8ddc1" }}>
+            <div className="hero-balance-card hero-usd p-3 rounded-4 shadow-sm h-100" style={{ background: "linear-gradient(135deg, #f0f7f2 0%, #e6f3ec 100%)", borderColor: "#b8ddc1" }}>
               <div className="d-flex align-items-center justify-content-between mb-1">
                 <span className="badge px-2 py-1 rounded-pill small fw-semibold" style={{ backgroundColor: "#e2f2e5", color: "#166534" }}>
                   🇺🇸 Dólares (USD)
                 </span>
-                <i className="bi bi-currency-dollar text-success fs-4"></i>
+                <div className="d-flex align-items-center gap-1">
+                  {blue?.venta > 0 && (
+                    <span 
+                      className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 py-1 px-2"
+                      style={{ fontSize: "0.72rem" }}
+                      title={`Cotización Dólar Blue (Venta): $${blue.venta.toLocaleString('es-AR')}`}
+                    >
+                      Blue: ${blue.venta.toLocaleString("es-AR")}
+                    </span>
+                  )}
+                  <i className="bi bi-currency-dollar text-success fs-4"></i>
+                </div>
               </div>
               <div className="h3 fw-bold mb-0 text-success">{formatoMoneda(totalAhorrosUSD, "USD")}</div>
-              <span className="text-muted small">Reserva en moneda fuerte</span>
+              {blue?.venta > 0 && totalAhorrosUSD > 0 ? (
+                <div className="small mt-1 d-flex align-items-center gap-1 text-muted" title={`Valuación estimada en pesos: ${totalAhorrosUSD} USD × $${blue.venta.toLocaleString('es-AR')}`}>
+                  <span>≈ <strong className="text-dark">{formatoMoneda(totalAhorrosUSD * blue.venta, "ARS")}</strong></span>
+                  <span className="badge bg-light text-secondary border px-1" style={{ fontSize: "0.68rem" }}>al Blue</span>
+                </div>
+              ) : (
+                <span className="text-muted small">Reserva en moneda fuerte</span>
+              )}
             </div>
           </div>
 
           {/* Euros u otras divisas */}
           <div className="col-12 col-md-4">
-            <div className="hero-balance-card p-3 rounded-4 shadow-sm h-100" style={{ background: "linear-gradient(135deg, #f2f5f9 0%, #e6edf6 100%)", borderColor: "#bed3e8" }}>
+            <div className="hero-balance-card hero-eur p-3 rounded-4 shadow-sm h-100" style={{ background: "linear-gradient(135deg, #f2f5f9 0%, #e6edf6 100%)", borderColor: "#bed3e8" }}>
               <div className="d-flex align-items-center justify-content-between mb-1">
                 <span className="badge px-2 py-1 rounded-pill small fw-semibold" style={{ backgroundColor: "#ddeaf6", color: "#1e40af" }}>
                   🇪🇺 Euros (EUR)

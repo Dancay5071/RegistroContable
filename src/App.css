@@ -267,6 +267,15 @@ body {
   border-color: #2b3a55 !important;
 }
 
+[data-theme="dark"] .navbar-dolar-pill {
+  background: #1a253a !important;
+  border-color: #2b3a55 !important;
+}
+
+[data-theme="dark"] .text-dolar-value {
+  color: #34d399 !important;
+}
+
 [data-theme="dark"] .navbar-balance-pill .text-muted {
   color: #94a3b8 !important;
 }
@@ -494,6 +503,16 @@ body {
 
 [data-theme="dark"] .hero-balance-card.hero-ahorro .kpi-amount {
   color: #fbbf24 !important;
+}
+
+[data-theme="dark"] .hero-balance-card.hero-usd {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(16, 185, 129, 0.04) 100%) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+[data-theme="dark"] .hero-balance-card.hero-eur {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.14) 0%, rgba(56, 189, 248, 0.04) 100%) !important;
+  border-color: rgba(56, 189, 248, 0.3) !important;
 }
 
 /* Footer en Modo Oscuro */
@@ -758,6 +777,52 @@ body {
 
 [data-theme="lavender"] .balance-savings-amount {
   color: #86198f;
+}
+
+/* Pastilla de Cotización del Dólar en Navbar */
+.navbar-dolar-pill {
+  background: #ebe3d3;
+  border: 1px solid #dcd1be;
+  border-radius: 20px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.text-dolar-value {
+  color: #1e633f;
+  font-weight: 700;
+}
+
+.dot-dolar-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
+  animation: pulseDolarDot 2.5s infinite;
+}
+
+@keyframes pulseDolarDot {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+[data-theme="mint"] .navbar-dolar-pill {
+  background: #d8ece0 !important;
+  border-color: #c0ded0 !important;
+}
+
+[data-theme="ocean"] .navbar-dolar-pill {
+  background: #dbe8f3 !important;
+  border-color: #c4daf0 !important;
+}
+
+[data-theme="lavender"] .navbar-dolar-pill {
+  background: #e6ddf5 !important;
+  border-color: #d4c5ee !important;
 }
 
 .balance-item {

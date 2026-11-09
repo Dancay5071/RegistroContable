@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useTheme } from "../context/ThemeContext";
+import { useDolar } from "../hooks/useDolar";
 import { formatoMoneda } from "../utils/formatters";
 import FinTrackLogo from "./FinTrackLogo";
 
@@ -13,6 +14,7 @@ export default function Navbar() {
   const { montoActual, totalAhorros } = useBalance();
   const { openQuickModal } = useQuickMovement();
   const { openCustomizeModal } = useTheme();
+  const { blue, oficial, mep, refresh: refreshDolar } = useDolar();
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -41,7 +43,7 @@ export default function Navbar() {
         </Link>
 
         {/* Indicador de Saldos en Navbar (Desktop y Tablet) */}
-        <div className="navbar-balance-pill d-none d-md-flex align-items-center me-auto">
+        <div className="navbar-balance-pill d-none d-md-flex align-items-center">
           <div className="balance-item" title="Monto disponible actual">
             <span className="dot dot-green"></span>
             <span className="text-muted small">Saldo:</span>
@@ -55,9 +57,26 @@ export default function Navbar() {
           </div>
         </div>
 
+        {/* Ticker Cotización Dólar en Tiempo Real (Desktop) */}
+        {blue?.venta > 0 && (
+          <div 
+            className="navbar-dolar-pill d-none d-xl-flex align-items-center gap-2 ms-2"
+            title={`Cotizaciones en tiempo real (DolarApi):\n• Blue: Compra $${blue.compra.toLocaleString('es-AR')} | Venta $${blue.venta.toLocaleString('es-AR')}\n• Oficial: Compra $${oficial.compra.toLocaleString('es-AR')} | Venta $${oficial.venta.toLocaleString('es-AR')}\n• MEP: $${mep.venta.toLocaleString('es-AR')}\n\nHaz clic para refrescar`}
+            onClick={() => refreshDolar()}
+            style={{ cursor: "pointer" }}
+          >
+            <span className="dot dot-dolar-pulse"></span>
+            <span className="text-muted small">Blue:</span>
+            <strong className="text-dolar-value">${blue.venta.toLocaleString("es-AR")}</strong>
+            <span className="text-secondary opacity-50" style={{ fontSize: "0.75rem" }}>|</span>
+            <span className="text-muted small">Oficial:</span>
+            <span className="small fw-semibold text-secondary">${oficial.venta.toLocaleString("es-AR")}</span>
+          </div>
+        )}
+
         {/* Botón Acción Rápida Desktop */}
         <button
-          className="btn btn-sm btn-success rounded-pill px-3 fw-bold d-none d-md-flex align-items-center gap-1 shadow-sm ms-2"
+          className="btn btn-sm btn-success rounded-pill px-3 fw-bold d-none d-md-flex align-items-center gap-1 shadow-sm ms-2 me-auto"
           type="button"
           onClick={() => openQuickModal("gasto")}
           title="Nuevo movimiento rápido"
@@ -100,6 +119,24 @@ export default function Navbar() {
               <strong className="balance-savings-amount">{formatoMoneda(totalAhorros)}</strong>
             </div>
           </div>
+
+          {/* Ticker Cotización Dólar en Móvil */}
+          {blue?.venta > 0 && (
+            <div 
+              className="navbar-dolar-pill d-flex d-md-none my-2 justify-content-between align-items-center w-100 px-3 py-2"
+              onClick={() => refreshDolar()}
+              title="Toca para refrescar cotizaciones"
+            >
+              <div className="d-flex align-items-center gap-2">
+                <span className="dot dot-dolar-pulse"></span>
+                <span className="small fw-semibold">Dólar Blue:</span>
+                <strong className="text-dolar-value">${blue.venta.toLocaleString("es-AR")}</strong>
+              </div>
+              <div className="text-muted small">
+                Oficial: <strong>${oficial.venta.toLocaleString("es-AR")}</strong>
+              </div>
+            </div>
+          )}
 
           {/* Botón Acción Rápida Móvil */}
           <button
