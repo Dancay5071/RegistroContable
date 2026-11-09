@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { getDemoStore, saveDemoStore } from "./demoData";
 import { logActivity } from "./auditService";
+import { encryptBackupPayload, decryptBackupPayload } from "./cryptoService";
 
 function calculateChecksum(dataStr) {
   let hash = 0;
@@ -21,7 +22,7 @@ function calculateChecksum(dataStr) {
   return Math.abs(hash).toString(16);
 }
 
-export async function createFullBackup(user, isDemo) {
+export async function createFullBackup(user, isDemo, { password = null } = {}) {
   let balances = { montoActual: 0, totalAhorros: 0, totalAhorrosUSD: 0, totalAhorrosEUR: 0 };
   let transacciones = [];
   let resumenesMensuales = {};
@@ -136,6 +137,29 @@ export async function createFullBackup(user, isDemo) {
   const jsonString = JSON.stringify(backupData, null, 2);
   backupData.checksum = calculateChecksum(jsonString);
 
+  try {
+    localStorage.setItem("fintrack_last_backup_date", dateStr);
+  } catch {}
+
+  if (password && password.trim().length > 0) {
+    const encryptedPayload = await encryptBackupPayload(JSON.stringify(backupData, null, 2), password);
+    const encContent = JSON.stringify(encryptedPayload, null, 2);
+
+    await logActivity(user?.uid, isDemo, {
+      action: "EXPORTAR_RESPALDO_CIFRADO",
+      category: "RESPALDOS",
+      details: `Copia de seguridad cifrada con AES-256 (${transacciones.length} transacciones)`
+    });
+
+    return {
+      filename: `FinTrack_Backup_Cifrado_${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}.json`,
+      jsonContent: encContent,
+      stats: backupData.stats,
+      createdAt: dateStr,
+      isEncrypted: true
+    };
+  }
+
   await logActivity(user?.uid, isDemo, {
     action: "EXPORTAR_RESPALDO",
     category: "RESPALDOS",
@@ -146,7 +170,8 @@ export async function createFullBackup(user, isDemo) {
     filename: `FinTrack_Backup_${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}.json`,
     jsonContent: JSON.stringify(backupData, null, 2),
     stats: backupData.stats,
-    createdAt: dateStr
+    createdAt: dateStr,
+    isEncrypted: false
   };
 }
 
@@ -162,7 +187,7 @@ export function downloadBackupFile(filename, jsonContent) {
   URL.revokeObjectURL(url);
 }
 
-export function parseAndValidateBackup(jsonString) {
+export async function parseAndValidateBackup(jsonString, password = null) {
   try {
     const data = JSON.parse(jsonString);
 
@@ -172,6 +197,26 @@ export function parseAndValidateBackup(jsonString) {
 
     if (data.app !== "FinTrack") {
       return { valid: false, error: "El archivo seleccionado no es una copia de seguridad oficial de FinTrack." };
+    }
+
+    if (data.encrypted === true) {
+      if (!password) {
+        return {
+          valid: false,
+          isEncrypted: true,
+          error: "Este archivo de respaldo está protegido con cifrado AES-256. Ingresa la contraseña para desbloquearlo."
+        };
+      }
+      try {
+        const decryptedStr = await decryptBackupPayload(data, password);
+        return parseAndValidateBackup(decryptedStr);
+      } catch (err) {
+        return {
+          valid: false,
+          isEncrypted: true,
+          error: err.message || "Contraseña de descifrado incorrecta."
+        };
+      }
     }
 
     if (!data.balances || typeof data.balances !== "object") {

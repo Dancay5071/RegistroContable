@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useToast } from "../context/ToastContext";
-import { MESES, MONEDAS, formatoMoneda } from "../utils/formatters";
+import { MESES, MONEDAS, formatoMoneda, sanitizeTextInput } from "../utils/formatters";
 import { CATEGORIAS_GASTO, CATEGORIAS_INGRESO, CATEGORIAS_AHORRO } from "../utils/categories";
 import { 
   addGastoUser, 
@@ -74,7 +74,7 @@ export default function QuickMovementModal() {
 
     try {
       if (activeTab === "gasto") {
-        const descFinal = descripcion.trim() || categoriaGasto;
+        const descFinal = sanitizeTextInput(descripcion) || categoriaGasto;
         if (isDemo) {
           addDemoGasto(mes, anio, {
             descripcion: descFinal,
@@ -99,7 +99,7 @@ export default function QuickMovementModal() {
         });
         showToast(`Gasto de $${montoNum.toLocaleString()} registrado.`, "success");
       } else if (activeTab === "ingreso") {
-        const descFinal = descripcion.trim() || categoriaIngreso;
+        const descFinal = sanitizeTextInput(descripcion) || categoriaIngreso;
         let ahorroFinal = 0;
         let porcentajeFinal = 0;
 
@@ -141,7 +141,7 @@ export default function QuickMovementModal() {
         });
         showToast(`Ingreso registrado correctamente.`, "success");
       } else if (activeTab === "ahorro") {
-        const descFinal = descripcion.trim() || `${tipoAhorro === 'agregar' ? 'Aporte a' : 'Extracción de'} ${categoriaAhorro}`;
+        const descFinal = sanitizeTextInput(descripcion) || `${tipoAhorro === 'agregar' ? 'Aporte a' : 'Extracción de'} ${categoriaAhorro}`;
         const simboloMoneda = MONEDAS.find((m) => m.id === monedaAhorro)?.simbolo || "$";
         if (tipoAhorro === "agregar") {
           if (isDemo) {

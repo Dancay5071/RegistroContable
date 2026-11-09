@@ -26,7 +26,38 @@ export function SecurityProvider({ children }) {
 
   const [confirmModalConfig, setConfirmModalConfig] = useState(null);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const [tabShieldEnabled, setTabShieldState] = useState(() => {
+    try {
+      return localStorage.getItem("fintrack_tab_shield") !== "false";
+    } catch {
+      return true;
+    }
+  });
+  const [isTabHidden, setIsTabHidden] = useState(false);
   const timerRef = useRef(null);
+
+  const setTabShieldEnabled = useCallback((enabled) => {
+    setTabShieldState(enabled);
+    try {
+      localStorage.setItem("fintrack_tab_shield", enabled ? "true" : "false");
+    } catch (e) {
+      console.warn("Error al guardar preferencia de escudo de pestaña:", e);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!tabShieldEnabled || !user) {
+      setIsTabHidden(false);
+      return;
+    }
+
+    const handleVisibilityChange = () => {
+      setIsTabHidden(document.hidden);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [tabShieldEnabled, user]);
 
   const openAuditModal = useCallback(() => setIsAuditModalOpen(true), []);
   const closeAuditModal = useCallback(() => setIsAuditModalOpen(false), []);
@@ -139,9 +170,23 @@ export function SecurityProvider({ children }) {
         confirmModalConfig,
         isAuditModalOpen,
         openAuditModal,
-        closeAuditModal
+        closeAuditModal,
+        tabShieldEnabled,
+        setTabShieldEnabled,
+        isTabHidden
       }}
     >
+      {isTabHidden && tabShieldEnabled && user && (
+        <div 
+          className="position-fixed top-0 start-0 w-100 h-100" 
+          style={{
+            zIndex: 99998,
+            backgroundColor: "rgba(15, 23, 42, 0.96)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)"
+          }}
+        />
+      )}
       {children}
     </SecurityContext.Provider>
   );

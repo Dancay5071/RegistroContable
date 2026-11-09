@@ -4,7 +4,7 @@ import { useToast } from "../context/ToastContext";
 import { addDemoGasto } from "../services/demoData";
 import { addGastoUser } from "../services/dbService";
 import { logActivity } from "../services/auditService";
-import { MESES, formatoMoneda } from "../utils/formatters";
+import { MESES, formatoMoneda, sanitizeTextInput } from "../utils/formatters";
 import { CATEGORIAS_GASTO } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
 import Loader from "../components/Loader";
@@ -28,7 +28,7 @@ export default function NuevoGasto() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const montoNum = parseFloat(monto);
-    const descFinal = descripcion.trim() || categoria;
+    const descFinal = sanitizeTextInput(descripcion) || categoria;
 
     if (isNaN(montoNum) || montoNum <= 0) {
       showToast("Por favor ingresa un monto válido mayor a 0.", "warning");

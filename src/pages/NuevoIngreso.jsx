@@ -4,7 +4,7 @@ import { useToast } from "../context/ToastContext";
 import { addDemoIngreso } from "../services/demoData";
 import { addIngresoUser } from "../services/dbService";
 import { logActivity } from "../services/auditService";
-import { MESES, formatoMoneda } from "../utils/formatters";
+import { MESES, formatoMoneda, sanitizeTextInput } from "../utils/formatters";
 import { CATEGORIAS_INGRESO } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
 import Loader from "../components/Loader";
@@ -45,7 +45,7 @@ export default function NuevoIngreso() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const descFinal = descripcion.trim() || categoria;
+    const descFinal = sanitizeTextInput(descripcion) || categoria;
 
     if (isNaN(montoNum) || montoNum <= 0) {
       showToast("Por favor ingresa un monto válido mayor a 0.", "warning");

@@ -33,3 +33,13 @@ export function getFechaHoy(esCorto = false) {
   }
   return `${DIAS_SEMANA[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]} del ${d.getFullYear()}`;
 }
+
+export function sanitizeTextInput(input, maxLength = 150) {
+  if (typeof input !== "string") return "";
+  return input
+    .replace(/[<>]/g, "")
+    .replace(/javascript:/gi, "")
+    .replace(/data:/gi, "")
+    .trim()
+    .slice(0, maxLength);
+}
