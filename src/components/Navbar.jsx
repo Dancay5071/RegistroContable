@@ -1,22 +1,29 @@
 // src/components/Navbar.jsx
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useBalance } from "../context/BalanceContext";
-import { useQuickMovement } from "../context/QuickMovementContext";
 import { useTheme } from "../context/ThemeContext";
 import { useDolar } from "../hooks/useDolar";
-import { formatoMoneda } from "../utils/formatters";
 import FinTrackLogo from "./FinTrackLogo";
 
 export default function Navbar() {
   const { user, isDemo, logout } = useAuth();
-  const { montoActual, totalAhorros } = useBalance();
-  const { openQuickModal } = useQuickMovement();
   const { openCustomizeModal } = useTheme();
   const { blue, oficial, mep, refresh: refreshDolar } = useDolar();
   const [isOpen, setIsOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   if (!user) return null;
 
@@ -32,145 +39,69 @@ export default function Navbar() {
 
   const closeMenu = () => {
     setIsOpen(false);
+    setUserMenuOpen(false);
   };
+
+  const nombreUsuario = user?.displayName || (isDemo ? "Daniela" : (user?.email?.split("@")[0] || "Usuario"));
+  const inicial = nombreUsuario.charAt(0).toUpperCase();
 
   return (
     <nav className="navbar navbar-expand-lg" id="navbar">
       <div className="container-fluid">
-        {/* Brand / Logo */}
-        <Link className="navbar-brand d-flex align-items-center me-3" to="/" onClick={closeMenu}>
-          <FinTrackLogo size={34} showText={true} />
-        </Link>
+        {/* Brand / Logo + Ticker Dólar Ultra Compacto */}
+        <div className="d-flex align-items-center gap-2">
+          <Link className="navbar-brand d-flex align-items-center me-1" to="/" onClick={closeMenu}>
+            <FinTrackLogo size={32} showText={true} />
+          </Link>
 
-        {/* Indicador de Saldos en Navbar (Desktop y Tablet) */}
-        <div className="navbar-balance-pill d-none d-md-flex align-items-center">
-          <div className="balance-item" title="Monto disponible actual">
-            <span className="dot dot-green"></span>
-            <span className="text-muted small">Saldo:</span>
-            <strong className="text-success">{formatoMoneda(montoActual)}</strong>
-          </div>
-          <span className="text-secondary opacity-50">|</span>
-          <div className="balance-item" title="Total ahorrado">
-            <span className="dot dot-amber"></span>
-            <span className="text-muted small">Ahorro:</span>
-            <strong className="balance-savings-amount">{formatoMoneda(totalAhorros)}</strong>
-          </div>
+          {/* Micro-Pastilla de Cotización en Tiempo Real */}
+          {blue?.venta > 0 && (
+            <div 
+              className="navbar-dolar-pill d-flex align-items-center gap-2"
+              title={`Cotizaciones en tiempo real:\n• Dólar Blue: Compra $${blue.compra.toLocaleString('es-AR')} | Venta $${blue.venta.toLocaleString('es-AR')}\n• Dólar Oficial: Compra $${oficial.compra.toLocaleString('es-AR')} | Venta $${oficial.venta.toLocaleString('es-AR')}\n• MEP: $${mep.venta.toLocaleString('es-AR')}\n\nHaz clic para actualizar`}
+              onClick={() => refreshDolar()}
+            >
+              <span className="dot dot-dolar-pulse"></span>
+              <span className="small fw-semibold text-muted">USD</span>
+              <strong className="text-dolar-value">${blue.venta.toLocaleString("es-AR")}</strong>
+            </div>
+          )}
         </div>
-
-        {/* Ticker Cotización Dólar en Tiempo Real (Desktop) */}
-        {blue?.venta > 0 && (
-          <div 
-            className="navbar-dolar-pill d-none d-xl-flex align-items-center gap-2 ms-2"
-            title={`Cotizaciones en tiempo real (DolarApi):\n• Blue: Compra $${blue.compra.toLocaleString('es-AR')} | Venta $${blue.venta.toLocaleString('es-AR')}\n• Oficial: Compra $${oficial.compra.toLocaleString('es-AR')} | Venta $${oficial.venta.toLocaleString('es-AR')}\n• MEP: $${mep.venta.toLocaleString('es-AR')}\n\nHaz clic para refrescar`}
-            onClick={() => refreshDolar()}
-            style={{ cursor: "pointer" }}
-          >
-            <span className="dot dot-dolar-pulse"></span>
-            <span className="text-muted small">Blue:</span>
-            <strong className="text-dolar-value">${blue.venta.toLocaleString("es-AR")}</strong>
-            <span className="text-secondary opacity-50" style={{ fontSize: "0.75rem" }}>|</span>
-            <span className="text-muted small">Oficial:</span>
-            <span className="small fw-semibold text-secondary">${oficial.venta.toLocaleString("es-AR")}</span>
-          </div>
-        )}
-
-        {/* Botón Acción Rápida Desktop */}
-        <button
-          className="btn btn-sm btn-success rounded-pill px-3 fw-bold d-none d-md-flex align-items-center gap-1 shadow-sm ms-2 me-auto"
-          type="button"
-          onClick={() => openQuickModal("gasto")}
-          title="Nuevo movimiento rápido"
-        >
-          <i className="bi bi-plus-lg"></i>
-          <span>Nuevo</span>
-        </button>
-
-        {/* Badge Modo Demo */}
-        {isDemo && (
-          <span className="badge bg-warning text-dark d-none d-lg-inline-flex align-items-center gap-1 mx-2">
-            <i className="bi bi-eye"></i> Modo Demo
-          </span>
-        )}
 
         {/* Botón Hamburguesa Móvil */}
         <button 
-          className="navbar-toggler border-0 text-dark" 
+          className="navbar-toggler border-0 ms-auto" 
           type="button" 
           onClick={() => setIsOpen(!isOpen)}
           aria-controls="navbarSupportedContent" 
           aria-expanded={isOpen} 
           aria-label="Toggle navigation"
         >
-          <i className="bi bi-list fs-2 text-dark"></i>
+          <i className="bi bi-list fs-2"></i>
         </button>
 
         {/* Menú Colapsable */}
         <div className={`collapse navbar-collapse ${isOpen ? "show" : ""}`} id="navbarSupportedContent">
-          {/* Indicador de Saldos en Móvil */}
-          <div className="navbar-balance-pill d-flex d-md-none my-2 justify-content-around w-100">
-            <div className="balance-item">
-              <span className="dot dot-green"></span>
-              <span className="text-muted small">Saldo:</span>
-              <strong className="text-success">{formatoMoneda(montoActual)}</strong>
-            </div>
-            <div className="balance-item">
-              <span className="dot dot-amber"></span>
-              <span className="text-muted small">Ahorro:</span>
-              <strong className="balance-savings-amount">{formatoMoneda(totalAhorros)}</strong>
-            </div>
-          </div>
-
-          {/* Ticker Cotización Dólar en Móvil */}
-          {blue?.venta > 0 && (
-            <div 
-              className="navbar-dolar-pill d-flex d-md-none my-2 justify-content-between align-items-center w-100 px-3 py-2"
-              onClick={() => refreshDolar()}
-              title="Toca para refrescar cotizaciones"
-            >
-              <div className="d-flex align-items-center gap-2">
-                <span className="dot dot-dolar-pulse"></span>
-                <span className="small fw-semibold">Dólar Blue:</span>
-                <strong className="text-dolar-value">${blue.venta.toLocaleString("es-AR")}</strong>
-              </div>
-              <div className="text-muted small">
-                Oficial: <strong>${oficial.venta.toLocaleString("es-AR")}</strong>
-              </div>
-            </div>
-          )}
-
-          {/* Botón Acción Rápida Móvil */}
-          <button
-            className="btn btn-sm btn-success w-100 rounded-pill py-2 fw-bold d-flex d-md-none align-items-center justify-content-center gap-1 shadow-sm mb-2"
-            type="button"
-            onClick={() => { closeMenu(); openQuickModal("gasto"); }}
-          >
-            <i className="bi bi-plus-circle me-1"></i>
-            + Nuevo Movimiento
-          </button>
-
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-            {/* Enlace Directo Gastos */}
+          {/* Navegación Principal con Aire y Espaciado */}
+          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-1">
             <li className="nav-item">
               <NavLink className="nav-link" to="/gastos/consultar" onClick={closeMenu}>
                 <i className="bi bi-arrow-down-circle text-danger me-1"></i> Gastos
               </NavLink>
             </li>
 
-            {/* Enlace Directo Ingresos */}
             <li className="nav-item">
               <NavLink className="nav-link" to="/ingresos/consultar" onClick={closeMenu}>
                 <i className="bi bi-arrow-up-circle text-success me-1"></i> Ingresos
               </NavLink>
             </li>
 
-            {/* Ahorros */}
             <li className="nav-item">
               <NavLink className="nav-link" to="/ahorros" onClick={closeMenu}>
                 <i className="bi bi-piggy-bank me-1 text-warning"></i> Ahorros
               </NavLink>
             </li>
 
-            {/* Resumen */}
             <li className="nav-item">
               <NavLink className="nav-link" to="/resumen" onClick={closeMenu}>
                 <i className="bi bi-bar-chart-line me-1 text-primary"></i> Resumen
@@ -178,32 +109,87 @@ export default function Navbar() {
             </li>
           </ul>
 
-          <div className="d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0">
-            {isDemo && (
-              <span className="badge bg-warning text-dark d-inline-flex d-lg-none align-items-center gap-1">
-                <i className="bi bi-eye"></i> Demo
-              </span>
-            )}
-
-            {/* Botón Personalizar Apariencia */}
+          {/* Menú de Usuario / Perfil en Desktop (Reemplaza los botones sueltos) */}
+          <div className="d-none d-lg-block position-relative ms-lg-3" ref={userMenuRef}>
             <button
-              className="btn btn-outline-secondary btn-sm px-2 px-md-3 d-flex align-items-center gap-1 rounded-pill shadow-sm"
+              className="btn btn-user-profile d-flex align-items-center gap-2 rounded-pill px-2 py-1 shadow-sm"
               type="button"
-              onClick={() => { closeMenu(); openCustomizeModal(); }}
-              title="Personalizar colores y fondo"
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              title="Opciones de cuenta y personalización"
             >
-              <i className="bi bi-palette2"></i>
-              <span className="d-none d-sm-inline">Tema</span>
+              <span className="user-avatar-badge">{inicial}</span>
+              <span className="user-name-text fw-semibold small">{nombreUsuario}</span>
+              <i className="bi bi-chevron-down text-muted" style={{ fontSize: "0.75rem" }}></i>
             </button>
 
-            <button 
-              className="btn btn-outline-danger btn-sm px-3 rounded-pill" 
-              type="button"
-              onClick={handleLogout}
-            >
-              {isDemo ? "Salir del Demo" : "Cerrar sesión"}
-            </button>
+            {userMenuOpen && (
+              <ul 
+                className="dropdown-menu dropdown-menu-end shadow-lg rounded-4 p-2 border show" 
+                style={{ minWidth: "220px", position: "absolute", top: "115%", right: 0, zIndex: 1050 }}
+              >
+                <li className="px-3 py-2 border-bottom mb-1">
+                  <div className="fw-bold small dropdown-user-name">{nombreUsuario}</div>
+                  <div className="text-muted" style={{ fontSize: "0.75rem" }}>
+                    {isDemo ? "Modo Demo Activo" : (user?.email || "Cuenta personal")}
+                  </div>
+                </li>
+
+                <li>
+                  <button 
+                    className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3"
+                    onClick={() => { setUserMenuOpen(false); openCustomizeModal(); }}
+                  >
+                    <i className="bi bi-palette2 text-primary"></i>
+                    <span>Personalizar Tema</span>
+                  </button>
+                </li>
+
+                <li><hr className="dropdown-divider my-1 opacity-50" /></li>
+
+                <li>
+                  <button 
+                    className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 text-danger"
+                    onClick={() => { setUserMenuOpen(false); handleLogout(); }}
+                  >
+                    <i className="bi bi-box-arrow-right"></i>
+                    <span>{isDemo ? "Salir del Demo" : "Cerrar sesión"}</span>
+                  </button>
+                </li>
+              </ul>
+            )}
           </div>
+
+          {/* Opciones en Móvil dentro del Drawer */}
+          <div className="d-lg-none mt-3 pt-3 border-top">
+            <div className="d-flex align-items-center gap-2 mb-3 px-2">
+              <span className="user-avatar-badge">{inicial}</span>
+              <div>
+                <div className="fw-bold small">{nombreUsuario}</div>
+                <div className="text-muted small" style={{ fontSize: "0.75rem" }}>
+                  {isDemo ? "Modo Demo" : user?.email}
+                </div>
+              </div>
+            </div>
+
+            <div className="d-flex flex-column gap-2">
+              <button
+                className="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill py-2"
+                onClick={() => { closeMenu(); openCustomizeModal(); }}
+              >
+                <i className="bi bi-palette2"></i>
+                <span>Personalizar Tema</span>
+              </button>
+
+              <button 
+                className="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill py-2" 
+                onClick={handleLogout}
+              >
+                <i className="bi bi-box-arrow-right"></i>
+                <span>{isDemo ? "Salir del Demo" : "Cerrar sesión"}</span>
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
     </nav>

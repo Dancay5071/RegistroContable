@@ -272,8 +272,66 @@ body {
   border-color: #2b3a55 !important;
 }
 
+[data-theme="dark"] .navbar-dolar-pill:hover {
+  background: #23314c !important;
+  border-color: #3b82f6 !important;
+}
+
 [data-theme="dark"] .text-dolar-value {
   color: #34d399 !important;
+}
+
+[data-theme="dark"] .btn-user-profile {
+  background: #1a253a !important;
+  border-color: #2b3a55 !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .btn-user-profile:hover {
+  background: #23314c !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .user-avatar-badge {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .dropdown-menu {
+  background-color: #162032 !important;
+  border-color: #2b3a55 !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45) !important;
+}
+
+[data-theme="dark"] .dropdown-menu .border-bottom {
+  border-color: #24334f !important;
+}
+
+[data-theme="dark"] .dropdown-menu .dropdown-divider {
+  border-color: #24334f !important;
+}
+
+[data-theme="dark"] .dropdown-item {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+  background-color: #1e2c44 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .dropdown-item.text-danger {
+  color: #fb7185 !important;
+}
+
+[data-theme="dark"] .dropdown-item.text-danger:hover {
+  background-color: rgba(244, 63, 94, 0.15) !important;
+  color: #fda4af !important;
+}
+
+[data-theme="dark"] .dropdown-user-name {
+  color: #f1f5f9 !important;
 }
 
 [data-theme="dark"] .navbar-balance-pill .text-muted {
@@ -787,7 +845,13 @@ body {
   padding: 0.35rem 0.85rem;
   font-size: 0.85rem;
   transition: all 0.2s ease;
-  cursor: default;
+  cursor: pointer;
+  user-select: none;
+}
+
+.navbar-dolar-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .text-dolar-value {
@@ -823,6 +887,82 @@ body {
 [data-theme="lavender"] .navbar-dolar-pill {
   background: #e6ddf5 !important;
   border-color: #d4c5ee !important;
+}
+
+/* ==========================================================================
+   User Profile Pill & Menu Dropdown (Senior UI/UX FinTech Style)
+   ========================================================================== */
+.btn-user-profile {
+  background: #ebe3d3;
+  border: 1px solid #dcd1be;
+  color: #1e293b;
+  padding: 0.25rem 0.75rem 0.25rem 0.35rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-user-profile:hover,
+.btn-user-profile:focus {
+  background: #ded5c2;
+  border-color: #cbbeaa;
+  color: #1e293b;
+  transform: translateY(-1px);
+}
+
+.user-avatar-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e633f, #2e8b57);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: -0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+
+.user-name-text {
+  color: inherit;
+  max-width: 130px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-user-name {
+  color: #1e293b;
+}
+
+[data-theme="mint"] .btn-user-profile {
+  background: #d8ece0 !important;
+  border-color: #c0ded0 !important;
+}
+
+[data-theme="mint"] .btn-user-profile:hover {
+  background: #c7e3d2 !important;
+}
+
+[data-theme="ocean"] .btn-user-profile {
+  background: #dbe8f3 !important;
+  border-color: #c4daf0 !important;
+}
+
+[data-theme="ocean"] .btn-user-profile:hover {
+  background: #c8deef !important;
+}
+
+[data-theme="lavender"] .btn-user-profile {
+  background: #e6ddf5 !important;
+  border-color: #d4c5ee !important;
+}
+
+[data-theme="lavender"] .btn-user-profile:hover {
+  background: #dbccf0 !important;
 }
 
 .balance-item {
