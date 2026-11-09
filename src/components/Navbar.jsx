@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { usePrivacy } from "../context/PrivacyContext";
+import { useSecurity } from "../context/SecurityContext";
 import { useDolar } from "../hooks/useDolar";
 import FinTrackLogo from "./FinTrackLogo";
 
@@ -10,6 +11,7 @@ export default function Navbar() {
   const { user, isDemo, logout } = useAuth();
   const { openCustomizeModal } = useTheme();
   const { isPrivate, togglePrivacy } = usePrivacy();
+  const { lockScreen } = useSecurity();
   const { blue, oficial, mep, refresh: refreshDolar } = useDolar();
   const [isOpen, setIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -165,6 +167,17 @@ export default function Navbar() {
                     </button>
                   </li>
 
+                  <li>
+                    <button 
+                      className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 text-secondary"
+                      onClick={() => { setUserMenuOpen(false); lockScreen(); }}
+                      title="Bloquear pantalla temporalmente"
+                    >
+                      <i className="bi bi-shield-lock text-warning"></i>
+                      <span>Bloquear Pantalla</span>
+                    </button>
+                  </li>
+
                   <li><hr className="dropdown-divider my-1 opacity-50" /></li>
 
                   <li>
@@ -207,6 +220,14 @@ export default function Navbar() {
               >
                 <i className="bi bi-palette2"></i>
                 <span>Personalizar Tema</span>
+              </button>
+
+              <button
+                className="btn btn-outline-warning text-dark btn-sm w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill py-2"
+                onClick={() => { closeMenu(); lockScreen(); }}
+              >
+                <i className="bi bi-shield-lock"></i>
+                <span>Bloquear Pantalla</span>
               </button>
 
               <button 

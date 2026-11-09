@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
 import { usePrivacy } from "../context/PrivacyContext";
+import { useSecurity } from "../context/SecurityContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useToast } from "../context/ToastContext";
 import { 
@@ -26,6 +27,7 @@ export default function Ahorro() {
   const { user, isDemo } = useAuth();
   const { totalAhorros, totalAhorrosUSD, totalAhorrosEUR } = useBalance();
   const { isPrivate, maskAmount } = usePrivacy();
+  const { requestConfirmation } = useSecurity();
   const { openQuickModal, movementCounter, notifyMovementSaved } = useQuickMovement();
   const { showToast } = useToast();
   const { blue } = useDolar();
@@ -123,29 +125,42 @@ export default function Ahorro() {
     }
   };
 
-  const handleDeleteAhorro = async () => {
-    if (!window.confirm("¿Seguro que deseas eliminar este movimiento de ahorro? Se reajustarán tus balances.")) {
-      return;
-    }
+  const handleDeleteAhorro = () => {
+    if (!editingItem) return;
 
-    setEditLoading(true);
-    try {
-      if (isDemo) {
-        deleteDemoAhorro(editingItem.id);
-      } else {
-        await deleteAhorroUser(user.uid, editingItem.id, editingItem);
+    const moneda = editingItem.moneda || "ARS";
+    const esExtraccion = editingItem.tipo === "extraccion";
+    const impactMsg = esExtraccion
+      ? `Se restaurará el monto a tu fondo de reserva de ahorro en ${moneda}.`
+      : `Se descontará ${formatoMoneda(editingItem.monto, moneda)} de tu fondo de ahorro en ${moneda}.`;
+
+    requestConfirmation({
+      title: "¿Eliminar movimiento de ahorro?",
+      message: `Estás a punto de borrar "${editingItem.descripcion || 'Movimiento de ahorro'}". Esta acción reajustará tus fondos automáticamente.`,
+      impact: impactMsg,
+      confirmText: "Sí, eliminar ahorro",
+      danger: true,
+      onConfirm: async () => {
+        setEditLoading(true);
+        try {
+          if (isDemo) {
+            deleteDemoAhorro(editingItem.id);
+          } else {
+            await deleteAhorroUser(user.uid, editingItem.id, editingItem);
+          }
+
+          showToast("Movimiento de ahorro eliminado correctamente.", "info");
+          handleCloseEdit();
+          cargarDatosAhorro();
+          if (notifyMovementSaved) notifyMovementSaved();
+        } catch (err) {
+          console.error("Error al eliminar ahorro:", err);
+          showToast("Error al eliminar: " + err.message, "error");
+        } finally {
+          setEditLoading(false);
+        }
       }
-
-      showToast("Movimiento eliminado correctamente.", "info");
-      handleCloseEdit();
-      cargarDatosAhorro();
-      if (notifyMovementSaved) notifyMovementSaved();
-    } catch (err) {
-      console.error("Error al eliminar ahorro:", err);
-      showToast("Error al eliminar: " + err.message, "error");
-    } finally {
-      setEditLoading(false);
-    }
+    });
   };
 
   const ahorrosPorCategoria = {};

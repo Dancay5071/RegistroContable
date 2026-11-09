@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import FinTrackLogo from "./FinTrackLogo";
 
@@ -13,13 +13,27 @@ export default function LoginModal() {
     loginAsDemo 
   } = useAuth();
 
-  const [mode, setMode] = useState("login"); // "login" | "register" | "forgot"
+  const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockoutSeconds, setLockoutSeconds] = useState(0);
+
+  useEffect(() => {
+    if (lockoutSeconds <= 0) return;
+    const timer = setInterval(() => {
+      setLockoutSeconds((prev) => {
+        if (prev <= 1) clearInterval(timer);
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [lockoutSeconds]);
 
   if (!isLoginModalOpen) return null;
 
@@ -27,6 +41,7 @@ export default function LoginModal() {
     setEmail("");
     setPassword("");
     setConfirmPassword("");
+    setShowPassword(false);
     setError("");
     setSuccessMessage("");
     setMode("login");
@@ -37,8 +52,22 @@ export default function LoginModal() {
     closeLoginModal();
   };
 
+  const getPasswordStrength = (pass) => {
+    if (!pass) return { score: 0, label: "", color: "" };
+    let score = 0;
+    if (pass.length >= 6) score++;
+    if (pass.length >= 8) score++;
+    if (/[0-9]/.test(pass)) score++;
+    if (/[^A-Za-z0-9]/.test(pass) || /[A-Z]/.test(pass)) score++;
+
+    if (score <= 1) return { score: 25, label: "Débil (mín 6 caracteres)", color: "bg-danger" };
+    if (score <= 3) return { score: 65, label: "Moderada (añade números o mayúsculas)", color: "bg-warning" };
+    return { score: 100, label: "Fuerte y Segura", color: "bg-success" };
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (lockoutSeconds > 0) return;
     setError("");
     setSuccessMessage("");
     setLoading(true);
@@ -46,6 +75,7 @@ export default function LoginModal() {
     try {
       if (mode === "login") {
         await login(email, password);
+        setFailedAttempts(0);
         handleClose();
       } else if (mode === "register") {
         if (password !== confirmPassword) {
@@ -69,7 +99,14 @@ export default function LoginModal() {
       console.error("Error de autenticación:", err);
       let mensaje = "Ocurrió un error inesperado.";
       if (err.code === "auth/invalid-credential" || err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
-        mensaje = "Credenciales incorrectas. Verifica tu email y contraseña.";
+        const nextAttempts = failedAttempts + 1;
+        setFailedAttempts(nextAttempts);
+        if (nextAttempts >= 4) {
+          setLockoutSeconds(30);
+          mensaje = "Demasiados intentos fallidos consecutivos. Por seguridad, espera 30 segundos para volver a intentar.";
+        } else {
+          mensaje = `Credenciales incorrectas. Intento ${nextAttempts} de 4 antes del bloqueo temporal.`;
+        }
       } else if (err.code === "auth/email-already-in-use") {
         mensaje = "Este correo electrónico ya está registrado.";
       } else if (err.code === "auth/invalid-email") {
@@ -203,15 +240,44 @@ export default function LoginModal() {
                       </button>
                     )}
                   </div>
-                  <input 
-                    type="password" 
-                    className="form-control" 
-                    placeholder="Contraseña"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    disabled={loading}
-                  />
+                  <div className="input-group">
+                    <input 
+                      type={showPassword ? "text" : "password"} 
+                      className="form-control" 
+                      placeholder="Contraseña"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      disabled={loading || lockoutSeconds > 0}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={() => setShowPassword(!showPassword)}
+                      title={showPassword ? "Ocultar" : "Mostrar"}
+                      tabIndex="-1"
+                    >
+                      <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                    </button>
+                  </div>
+
+                  {mode === "register" && password.length > 0 && (
+                    <div className="mt-2">
+                      <div className="d-flex justify-content-between align-items-center mb-1">
+                        <span className="small text-muted" style={{ fontSize: "0.72rem" }}>Seguridad de contraseña:</span>
+                        <span className="small fw-semibold" style={{ fontSize: "0.72rem" }}>
+                          {getPasswordStrength(password).label}
+                        </span>
+                      </div>
+                      <div className="progress" style={{ height: "4px" }}>
+                        <div 
+                          className={`progress-bar ${getPasswordStrength(password).color}`} 
+                          role="progressbar" 
+                          style={{ width: `${getPasswordStrength(password).score}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -219,13 +285,13 @@ export default function LoginModal() {
                 <div className="mb-3">
                   <label className="form-label small fw-semibold">Confirmar Contraseña</label>
                   <input 
-                    type="password" 
+                    type={showPassword ? "text" : "password"} 
                     className="form-control" 
                     placeholder="Repite tu contraseña"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    disabled={loading}
+                    disabled={loading || lockoutSeconds > 0}
                   />
                 </div>
               )}
@@ -234,13 +300,15 @@ export default function LoginModal() {
                 <button 
                   type="submit" 
                   className={`btn ${mode === 'register' ? 'btn-primary' : 'btn-success'} fw-semibold`}
-                  disabled={loading}
+                  disabled={loading || lockoutSeconds > 0}
                 >
                   {loading ? (
                     <>
                       <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                       Procesando...
                     </>
+                  ) : lockoutSeconds > 0 ? (
+                    `Bloqueo de seguridad (${lockoutSeconds}s)`
                   ) : (
                     mode === "login" ? "Iniciar Sesión" :
                     mode === "register" ? "Crear Cuenta" :

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { usePrivacy } from "../context/PrivacyContext";
+import { useSecurity } from "../context/SecurityContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { 
   getDemoGastos, 
@@ -24,6 +25,7 @@ export default function ConsultarGasto() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
   const { isPrivate, maskAmount } = usePrivacy();
+  const { requestConfirmation } = useSecurity();
   const { movementCounter } = useQuickMovement();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
@@ -119,33 +121,39 @@ export default function ConsultarGasto() {
     }
   };
 
-  const handleEliminarGasto = async (index) => {
-    if (!window.confirm("¿Estás seguro de que deseas eliminar este gasto?")) {
-      return;
-    }
+  const handleEliminarGasto = (index) => {
+    const item = gastos[index];
+    if (!item) return;
 
-    setLoading(true);
-
-    try {
-      if (isDemo) {
-        deleteDemoGasto(mes, anio, index);
-        setGastos(getDemoGastos(mes, anio));
-      } else {
-        const item = gastos[index];
-        await deleteGastoUser(user.uid, item.id, {
-          mes,
-          anio,
-          monto: item.monto
-        });
-        await consultarGasto();
+    requestConfirmation({
+      title: "¿Eliminar este gasto?",
+      message: `Estás a punto de eliminar "${item.descripcion}". Esta acción actualizará tus saldos.`,
+      impact: `Se reintegrará ${formatoMoneda(item.monto)} a tu Saldo Disponible.`,
+      confirmText: "Sí, eliminar gasto",
+      danger: true,
+      onConfirm: async () => {
+        setLoading(true);
+        try {
+          if (isDemo) {
+            deleteDemoGasto(mes, anio, index);
+            setGastos(getDemoGastos(mes, anio));
+          } else {
+            await deleteGastoUser(user.uid, item.id, {
+              mes,
+              anio,
+              monto: item.monto
+            });
+            await consultarGasto();
+          }
+          showToast("Gasto eliminado correctamente.", "info");
+        } catch (error) {
+          console.error("Error al eliminar gasto:", error);
+          showToast("Hubo un error al eliminar el gasto: " + error.message, "error");
+        } finally {
+          setLoading(false);
+        }
       }
-      showToast("Gasto eliminado correctamente.", "info");
-    } catch (error) {
-      console.error("Error al eliminar gasto:", error);
-      showToast("Hubo un error al eliminar el gasto: " + error.message, "error");
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   const gastosFiltrados = (gastos || []).filter((g) => {

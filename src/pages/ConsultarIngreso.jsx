@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { usePrivacy } from "../context/PrivacyContext";
+import { useSecurity } from "../context/SecurityContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { 
   getDemoIngresos, 
@@ -24,6 +25,7 @@ export default function ConsultarIngreso() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
   const { isPrivate, maskAmount } = usePrivacy();
+  const { requestConfirmation } = useSecurity();
   const { movementCounter } = useQuickMovement();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
@@ -120,33 +122,39 @@ export default function ConsultarIngreso() {
     }
   };
 
-  const handleEliminarIngreso = async (index) => {
-    if (!window.confirm("¿Estás seguro de que deseas eliminar este ingreso?")) {
-      return;
-    }
+  const handleEliminarIngreso = (index) => {
+    const item = ingresos[index];
+    if (!item) return;
 
-    setLoading(true);
-
-    try {
-      if (isDemo) {
-        deleteDemoIngreso(mes, anio, index);
-        setIngresos(getDemoIngresos(mes, anio));
-      } else {
-        const item = ingresos[index];
-        await deleteIngresoUser(user.uid, item.id, {
-          mes,
-          anio,
-          monto: item.monto
-        });
-        await consultarIngreso();
+    requestConfirmation({
+      title: "¿Eliminar este ingreso?",
+      message: `Estás a punto de eliminar "${item.descripcion}". Esta acción descontará este ingreso de tus balances.`,
+      impact: `Se deducirá ${formatoMoneda(item.monto)} de tu Saldo Disponible.`,
+      confirmText: "Sí, eliminar ingreso",
+      danger: true,
+      onConfirm: async () => {
+        setLoading(true);
+        try {
+          if (isDemo) {
+            deleteDemoIngreso(mes, anio, index);
+            setIngresos(getDemoIngresos(mes, anio));
+          } else {
+            await deleteIngresoUser(user.uid, item.id, {
+              mes,
+              anio,
+              monto: item.monto
+            });
+            await consultarIngreso();
+          }
+          showToast("Ingreso eliminado correctamente.", "info");
+        } catch (error) {
+          console.error("Error al eliminar ingreso:", error);
+          showToast("Hubo un error al eliminar el ingreso: " + error.message, "error");
+        } finally {
+          setLoading(false);
+        }
       }
-      showToast("Ingreso eliminado correctamente.", "info");
-    } catch (error) {
-      console.error("Error al eliminar ingreso:", error);
-      showToast("Hubo un error al eliminar el ingreso: " + error.message, "error");
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   const ingresosFiltrados = (ingresos || []).filter((i) => {

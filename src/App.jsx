@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { BalanceProvider } from "./context/BalanceContext";
 import { PrivacyProvider } from "./context/PrivacyContext";
+import { SecurityProvider } from "./context/SecurityContext";
 import { ToastProvider } from "./context/ToastContext";
 import { QuickMovementProvider } from "./context/QuickMovementContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -11,6 +12,8 @@ import Footer from "./components/Footer";
 import LoginModal from "./components/LoginModal";
 import QuickMovementModal from "./components/QuickMovementModal";
 import CustomizeModal from "./components/CustomizeModal";
+import SecurityConfirmModal from "./components/SecurityConfirmModal";
+import ScreenLockModal from "./components/ScreenLockModal";
 import FloatingActionButton from "./components/FloatingActionButton";
 import Loader from "./components/Loader";
 
@@ -118,6 +121,8 @@ function MainLayout() {
       <LoginModal />
       <QuickMovementModal />
       <CustomizeModal />
+      <SecurityConfirmModal />
+      <ScreenLockModal />
       <FloatingActionButton />
     </div>
   );
@@ -130,11 +135,13 @@ export default function App() {
         <AuthProvider>
           <BalanceProvider>
             <PrivacyProvider>
-              <ToastProvider>
-                <QuickMovementProvider>
-                  <MainLayout />
-                </QuickMovementProvider>
-              </ToastProvider>
+              <SecurityProvider>
+                <ToastProvider>
+                  <QuickMovementProvider>
+                    <MainLayout />
+                  </QuickMovementProvider>
+                </ToastProvider>
+              </SecurityProvider>
             </PrivacyProvider>
           </BalanceProvider>
         </AuthProvider>
