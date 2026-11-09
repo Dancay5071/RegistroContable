@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { addDemoIngreso } from "../services/demoData";
 import { addIngresoUser } from "../services/dbService";
+import { logActivity } from "../services/auditService";
 import { MESES, formatoMoneda } from "../utils/formatters";
 import { CATEGORIAS_INGRESO } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
@@ -17,7 +18,7 @@ export default function NuevoIngreso() {
   const [categoria, setCategoria] = useState("Sueldo");
   const [descripcion, setDescripcion] = useState("");
   const [monto, setMonto] = useState("");
-  const [modoAhorro, setModoAhorro] = useState("porcentaje"); // "porcentaje" | "monto"
+  const [modoAhorro, setModoAhorro] = useState("porcentaje");
   const [porcentaje, setPorcentaje] = useState(0);
   const [montoAhorroFijo, setMontoAhorroFijo] = useState("");
   const [loading, setLoading] = useState(false);
@@ -79,6 +80,14 @@ export default function NuevoIngreso() {
           categoria
         });
       }
+
+      await logActivity(user?.uid, isDemo, {
+        action: "CREAR_INGRESO",
+        category: "INGRESOS",
+        details: `Ingreso registrado: ${descFinal} (${categoria})`,
+        amount: montoNum,
+        currency: "ARS"
+      });
 
       showToast("Ingreso registrado y saldos actualizados con éxito.", "success");
       setDescripcion("");

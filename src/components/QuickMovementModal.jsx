@@ -16,6 +16,7 @@ import {
   addDemoAhorro, 
   addDemoExtraccion 
 } from "../services/demoData";
+import { logActivity } from "../services/auditService";
 import MonthYearSelect from "./MonthYearSelect";
 
 export default function QuickMovementModal() {
@@ -89,6 +90,13 @@ export default function QuickMovementModal() {
             categoria: categoriaGasto
           });
         }
+        await logActivity(user?.uid, isDemo, {
+          action: "CREAR_GASTO",
+          category: "GASTOS",
+          details: `Gasto rápido: ${descFinal} (${categoriaGasto})`,
+          amount: montoNum,
+          currency: "ARS"
+        });
         showToast(`Gasto de $${montoNum.toLocaleString()} registrado.`, "success");
       } else if (activeTab === "ingreso") {
         const descFinal = descripcion.trim() || categoriaIngreso;
@@ -124,6 +132,13 @@ export default function QuickMovementModal() {
             categoria: categoriaIngreso
           });
         }
+        await logActivity(user?.uid, isDemo, {
+          action: "CREAR_INGRESO",
+          category: "INGRESOS",
+          details: `Ingreso rápido: ${descFinal} (${categoriaIngreso})`,
+          amount: montoNum,
+          currency: "ARS"
+        });
         showToast(`Ingreso registrado correctamente.`, "success");
       } else if (activeTab === "ahorro") {
         const descFinal = descripcion.trim() || `${tipoAhorro === 'agregar' ? 'Aporte a' : 'Extracción de'} ${categoriaAhorro}`;
@@ -141,6 +156,13 @@ export default function QuickMovementModal() {
               descripcion: descFinal
             });
           }
+          await logActivity(user?.uid, isDemo, {
+            action: "CREAR_AHORRO",
+            category: "AHORROS",
+            details: `Aporte rápido: ${descFinal}`,
+            amount: montoNum,
+            currency: monedaAhorro
+          });
           showToast(`Se agregaron ${simboloMoneda}${montoNum.toLocaleString()} a ${categoriaAhorro}.`, "success");
         } else {
           if (isDemo) {
@@ -155,6 +177,13 @@ export default function QuickMovementModal() {
               descripcion: descFinal
             });
           }
+          await logActivity(user?.uid, isDemo, {
+            action: "EXTRAER_AHORRO",
+            category: "AHORROS",
+            details: `Extracción rápida: ${descFinal}`,
+            amount: montoNum,
+            currency: monedaAhorro
+          });
           showToast(`Extracción de ${simboloMoneda}${montoNum.toLocaleString()} registrada.`, "info");
         }
       }

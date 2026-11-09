@@ -14,6 +14,7 @@ import QuickMovementModal from "./components/QuickMovementModal";
 import CustomizeModal from "./components/CustomizeModal";
 import SecurityConfirmModal from "./components/SecurityConfirmModal";
 import ScreenLockModal from "./components/ScreenLockModal";
+import SecurityAuditModal from "./components/SecurityAuditModal";
 import FloatingActionButton from "./components/FloatingActionButton";
 import Loader from "./components/Loader";
 
@@ -123,6 +124,7 @@ function MainLayout() {
       <CustomizeModal />
       <SecurityConfirmModal />
       <ScreenLockModal />
+      <SecurityAuditModal />
       <FloatingActionButton />
     </div>
   );

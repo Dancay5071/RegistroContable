@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { logActivity } from "../services/auditService";
 import FinTrackLogo from "./FinTrackLogo";
 
 export default function LoginModal() {
@@ -74,8 +75,13 @@ export default function LoginModal() {
 
     try {
       if (mode === "login") {
-        await login(email, password);
+        const userCred = await login(email, password);
         setFailedAttempts(0);
+        await logActivity(userCred?.user?.uid, false, {
+          action: "INICIO_SESION",
+          category: "SEGURIDAD",
+          details: `Inicio de sesión exitoso (${email})`
+        });
         handleClose();
       } else if (mode === "register") {
         if (password !== confirmPassword) {
@@ -88,7 +94,12 @@ export default function LoginModal() {
           setLoading(false);
           return;
         }
-        await register(email, password);
+        const userCred = await register(email, password);
+        await logActivity(userCred?.user?.uid, false, {
+          action: "REGISTRO_USUARIO",
+          category: "SEGURIDAD",
+          details: `Cuenta registrada exitosamente (${email})`
+        });
         handleClose();
       } else if (mode === "forgot") {
         await resetPassword(email);
@@ -125,7 +136,12 @@ export default function LoginModal() {
     setError("");
     setLoading(true);
     try {
-      await loginWithGoogle();
+      const userCred = await loginWithGoogle();
+      await logActivity(userCred?.user?.uid, false, {
+        action: "INICIO_SESION_GOOGLE",
+        category: "SEGURIDAD",
+        details: "Inicio de sesión exitoso con cuenta Google"
+      });
       handleClose();
     } catch (err) {
       console.error("Error con Google:", err);
@@ -141,6 +157,11 @@ export default function LoginModal() {
   };
 
   const handleDemoLogin = () => {
+    logActivity(null, true, {
+      action: "LOGIN_DEMO",
+      category: "SEGURIDAD",
+      details: "Exploración de la aplicación en Modo Demo"
+    });
     loginAsDemo();
     handleClose();
   };

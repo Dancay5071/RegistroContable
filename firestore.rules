@@ -80,6 +80,12 @@ service cloud.firestore {
           && (!('totalAhorros' in request.resource.data) || isValidNonNegativeAmount(request.resource.data.totalAhorros));
       }
 
+      match /auditLog/{logId} {
+        allow read, create: if isOwner(userId);
+        allow update: if false;
+        allow delete: if isOwner(userId);
+      }
+
       match /{document=**} {
         allow read, write: if isOwner(userId);
       }

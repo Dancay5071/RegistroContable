@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { addDemoGasto } from "../services/demoData";
 import { addGastoUser } from "../services/dbService";
+import { logActivity } from "../services/auditService";
 import { MESES, formatoMoneda } from "../utils/formatters";
 import { CATEGORIAS_GASTO } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
@@ -48,6 +49,14 @@ export default function NuevoGasto() {
           categoria
         });
       }
+
+      await logActivity(user?.uid, isDemo, {
+        action: "CREAR_GASTO",
+        category: "GASTOS",
+        details: `Gasto registrado: ${descFinal} (${categoria})`,
+        amount: montoNum,
+        currency: "ARS"
+      });
 
       showToast("Gasto registrado y saldo actualizado con éxito.", "success");
       setDescripcion("");

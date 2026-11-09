@@ -15,6 +15,7 @@ import {
   updateIngresoUser, 
   deleteIngresoUser 
 } from "../services/dbService";
+import { logActivity } from "../services/auditService";
 import { MESES, formatoMoneda } from "../utils/formatters";
 import { CATEGORIAS_INGRESO, getCategoriaIngreso } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
@@ -112,6 +113,14 @@ export default function ConsultarIngreso() {
         await consultarIngreso();
       }
 
+      await logActivity(user?.uid, isDemo, {
+        action: "MODIFICAR_INGRESO",
+        category: "INGRESOS",
+        details: `Ingreso modificado: "${editDescripcion.trim()}"`,
+        amount: montoNum,
+        currency: "ARS"
+      });
+
       showToast("Ingreso actualizado con éxito.", "success");
       setEditModalOpen(false);
     } catch (error) {
@@ -146,6 +155,15 @@ export default function ConsultarIngreso() {
             });
             await consultarIngreso();
           }
+
+          await logActivity(user?.uid, isDemo, {
+            action: "ELIMINAR_INGRESO",
+            category: "INGRESOS",
+            details: `Ingreso eliminado: "${item.descripcion}"`,
+            amount: item.monto,
+            currency: "ARS"
+          });
+
           showToast("Ingreso eliminado correctamente.", "info");
         } catch (error) {
           console.error("Error al eliminar ingreso:", error);

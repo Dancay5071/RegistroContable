@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "./AuthContext";
+import { logActivity } from "../services/auditService";
 
 const SecurityContext = createContext(null);
 
@@ -24,17 +25,26 @@ export function SecurityProvider({ children }) {
   });
 
   const [confirmModalConfig, setConfirmModalConfig] = useState(null);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
   const timerRef = useRef(null);
+
+  const openAuditModal = useCallback(() => setIsAuditModalOpen(true), []);
+  const closeAuditModal = useCallback(() => setIsAuditModalOpen(false), []);
 
   const lockScreen = useCallback(() => {
     if (!user) return;
     setIsLocked(true);
     try {
       sessionStorage.setItem("fintrack_screen_locked", "true");
+      logActivity(user?.uid, isDemo, {
+        action: "BLOQUEO_PANTALLA",
+        category: "SEGURIDAD",
+        details: "Pantalla bloqueada por seguridad"
+      });
     } catch (e) {
       console.warn("Error al guardar estado de bloqueo:", e);
     }
-  }, [user]);
+  }, [user, isDemo]);
 
   const unlockScreen = useCallback((inputPinOrPass) => {
     if (!inputPinOrPass) return false;
@@ -42,17 +52,27 @@ export function SecurityProvider({ children }) {
     if (quickPin && inputPinOrPass === quickPin) {
       setIsLocked(false);
       sessionStorage.removeItem("fintrack_screen_locked");
+      logActivity(user?.uid, isDemo, {
+        action: "DESBLOQUEO_PANTALLA",
+        category: "SEGURIDAD",
+        details: "Pantalla desbloqueada con PIN"
+      });
       return true;
     }
 
     if (!quickPin && (inputPinOrPass.length >= 4 || isDemo)) {
       setIsLocked(false);
       sessionStorage.removeItem("fintrack_screen_locked");
+      logActivity(user?.uid, isDemo, {
+        action: "DESBLOQUEO_PANTALLA",
+        category: "SEGURIDAD",
+        details: "Pantalla desbloqueada correctamente"
+      });
       return true;
     }
 
     return false;
-  }, [quickPin, isDemo]);
+  }, [quickPin, isDemo, user]);
 
   const setQuickPin = useCallback((pin) => {
     setQuickPinState(pin);
@@ -116,7 +136,10 @@ export function SecurityProvider({ children }) {
         setQuickPin,
         requestConfirmation,
         closeConfirmation,
-        confirmModalConfig
+        confirmModalConfig,
+        isAuditModalOpen,
+        openAuditModal,
+        closeAuditModal
       }}
     >
       {children}

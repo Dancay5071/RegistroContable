@@ -17,6 +17,7 @@ import {
   updateAhorroUser,
   deleteAhorroUser
 } from "../services/dbService";
+import { logActivity } from "../services/auditService";
 import { MONEDAS, formatoMoneda, formatoNumber } from "../utils/formatters";
 import { CATEGORIAS_AHORRO, getCategoriaAhorro } from "../utils/categories";
 import Loader from "../components/Loader";
@@ -113,6 +114,14 @@ export default function Ahorro() {
         });
       }
 
+      await logActivity(user?.uid, isDemo, {
+        action: "MODIFICAR_AHORRO",
+        category: "AHORROS",
+        details: `Movimiento de ahorro modificado: "${editDescripcion.trim()}"`,
+        amount: montoNum,
+        currency: editMoneda
+      });
+
       showToast("Movimiento de ahorro actualizado con éxito.", "success");
       handleCloseEdit();
       cargarDatosAhorro();
@@ -148,6 +157,14 @@ export default function Ahorro() {
           } else {
             await deleteAhorroUser(user.uid, editingItem.id, editingItem);
           }
+
+          await logActivity(user?.uid, isDemo, {
+            action: "ELIMINAR_AHORRO",
+            category: "AHORROS",
+            details: `Movimiento de ahorro eliminado: "${editingItem.descripcion || 'Ahorro'}"`,
+            amount: editingItem.monto,
+            currency: moneda
+          });
 
           showToast("Movimiento de ahorro eliminado correctamente.", "info");
           handleCloseEdit();

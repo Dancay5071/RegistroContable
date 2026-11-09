@@ -15,6 +15,7 @@ import {
   updateGastoUser, 
   deleteGastoUser 
 } from "../services/dbService";
+import { logActivity } from "../services/auditService";
 import { MESES, formatoMoneda } from "../utils/formatters";
 import { CATEGORIAS_GASTO, getCategoriaGasto } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
@@ -111,6 +112,14 @@ export default function ConsultarGasto() {
         await consultarGasto();
       }
 
+      await logActivity(user?.uid, isDemo, {
+        action: "MODIFICAR_GASTO",
+        category: "GASTOS",
+        details: `Gasto modificado: "${editDescripcion.trim()}"`,
+        amount: montoNum,
+        currency: "ARS"
+      });
+
       showToast("Gasto actualizado con éxito.", "success");
       setEditModalOpen(false);
     } catch (error) {
@@ -145,6 +154,15 @@ export default function ConsultarGasto() {
             });
             await consultarGasto();
           }
+
+          await logActivity(user?.uid, isDemo, {
+            action: "ELIMINAR_GASTO",
+            category: "GASTOS",
+            details: `Gasto eliminado: "${item.descripcion}"`,
+            amount: item.monto,
+            currency: "ARS"
+          });
+
           showToast("Gasto eliminado correctamente.", "info");
         } catch (error) {
           console.error("Error al eliminar gasto:", error);
