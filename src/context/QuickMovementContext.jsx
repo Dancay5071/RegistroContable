@@ -1,4 +1,3 @@
-// src/context/QuickMovementContext.jsx
 import React, { createContext, useContext, useState } from "react";
 
 const QuickMovementContext = createContext();

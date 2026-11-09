@@ -1,4 +1,3 @@
-// src/pages/ConsultarGasto.jsx
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -30,11 +29,9 @@ export default function ConsultarGasto() {
   const [gastos, setGastos] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Filtros en tiempo real
   const [filtroTexto, setFiltroTexto] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("todas");
 
-  // Modal edición
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -163,7 +160,6 @@ export default function ConsultarGasto() {
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
       <div className="container d-flex flex-wrap justify-content-center gap-4">
-        {/* Tarjeta de Selección */}
         <div className="card-consulta p-4 rounded-4 shadow-sm border bg-white">
           <p className="tituloCard text-dark d-flex align-items-center gap-2">
             <i className="bi bi-funnel text-primary"></i> Filtrar Gastos
@@ -180,7 +176,6 @@ export default function ConsultarGasto() {
           </button>
         </div>
 
-        {/* Resultados de Gastos */}
         <div className="consulta p-4 rounded-4 shadow-sm border bg-white">
           {loading && <Loader />}
 
@@ -204,7 +199,6 @@ export default function ConsultarGasto() {
 
           {!loading && gastos !== null && gastos.length > 0 && (
             <div>
-              {/* Encabezado especial para PDF/Impresión */}
               <div className="print-header">
                 <h1>FinTrack — Reporte de Gastos</h1>
                 <p>Período: <strong>{mes} {anio}</strong> | Total Gastos: <strong>{formatoMoneda(sumaGastos)}</strong> | Generado el {new Date().toLocaleDateString()}</p>
@@ -218,7 +212,6 @@ export default function ConsultarGasto() {
                   </span>
                 </div>
 
-                {/* Botones de Exportación Pro */}
                 <div className="d-flex align-items-center gap-2 no-print">
                   <button 
                     type="button" 
@@ -241,7 +234,6 @@ export default function ConsultarGasto() {
                 </div>
               </div>
 
-              {/* Barra de Búsqueda y Filtro en Tiempo Real */}
               <div className="row g-2 mb-3">
                 <div className="col-12 col-md-7">
                   <div className="input-group input-group-sm">
@@ -361,7 +353,6 @@ export default function ConsultarGasto() {
         </div>
       </div>
 
-      {/* Modal Editar Gasto Claro */}
       {editModalOpen && (
         <div 
           className="modal fade show d-block" 

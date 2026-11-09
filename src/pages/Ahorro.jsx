@@ -1,4 +1,3 @@
-// src/pages/Ahorro.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
@@ -16,7 +15,7 @@ import {
   updateAhorroUser,
   deleteAhorroUser
 } from "../services/dbService";
-import { MESES, MONEDAS, formatoMoneda, formatoNumber } from "../utils/formatters";
+import { MONEDAS, formatoMoneda, formatoNumber } from "../utils/formatters";
 import { CATEGORIAS_AHORRO, getCategoriaAhorro } from "../utils/categories";
 import Loader from "../components/Loader";
 import { exportAhorrosToCSV } from "../utils/exportUtils";
@@ -36,7 +35,6 @@ export default function Ahorro() {
   const [historialAhorros, setHistorialAhorros] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Estados para Modal de Edición de Ahorro
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [editDescripcion, setEditDescripcion] = useState("");
@@ -45,7 +43,6 @@ export default function Ahorro() {
   const [editCategoria, setEditCategoria] = useState("Emergencia");
   const [editLoading, setEditLoading] = useState(false);
 
-  // Cargar datos al montar o al cambiar de año o al registrar nuevo movimiento
   useEffect(() => {
     cargarDatosAhorro();
   }, [anio, user, isDemo, movementCounter]);
@@ -149,7 +146,6 @@ export default function Ahorro() {
     }
   };
 
-  // Calcular montos acumulados por categoría
   const ahorrosPorCategoria = {};
   CATEGORIAS_AHORRO.forEach((cat) => {
     ahorrosPorCategoria[cat.id] = { ARS: 0, USD: 0, EUR: 0, count: 0 };
@@ -170,7 +166,6 @@ export default function Ahorro() {
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
       <div className="container d-flex flex-column align-items-center" style={{ maxWidth: "1050px" }}>
         
-        {/* Encabezado y Selector de Año */}
         <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between w-100 mb-3 gap-2">
           <div>
             <h2 className="h4 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
@@ -203,9 +198,7 @@ export default function Ahorro() {
           </div>
         </div>
 
-        {/* Tarjetas de Saldos Multimoneda */}
         <div className="row g-3 w-100 mb-4">
-          {/* Pesos Argentinos */}
           <div className="col-12 col-md-4">
             <div className="hero-balance-card hero-ahorro p-3 rounded-4 shadow-sm h-100">
               <div className="d-flex align-items-center justify-content-between mb-1">
@@ -219,7 +212,6 @@ export default function Ahorro() {
             </div>
           </div>
 
-          {/* Dólares Estadounidenses */}
           <div className="col-12 col-md-4">
             <div className="hero-balance-card hero-usd p-3 rounded-4 shadow-sm h-100" style={{ background: "linear-gradient(135deg, #f0f7f2 0%, #e6f3ec 100%)", borderColor: "#b8ddc1" }}>
               <div className="d-flex align-items-center justify-content-between mb-1">
@@ -251,7 +243,6 @@ export default function Ahorro() {
             </div>
           </div>
 
-          {/* Euros u otras divisas */}
           <div className="col-12 col-md-4">
             <div className="hero-balance-card hero-eur p-3 rounded-4 shadow-sm h-100" style={{ background: "linear-gradient(135deg, #f2f5f9 0%, #e6edf6 100%)", borderColor: "#bed3e8" }}>
               <div className="d-flex align-items-center justify-content-between mb-1">
@@ -266,7 +257,6 @@ export default function Ahorro() {
           </div>
         </div>
 
-        {/* Metas & Categorías de Ahorro */}
         <div className="principal p-4 rounded-4 shadow-sm border w-100 mb-4">
           <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
             <h5 className="h6 text-muted text-uppercase fw-bold mb-0 tracking-wider d-flex align-items-center gap-2">
@@ -330,7 +320,6 @@ export default function Ahorro() {
           </div>
         </div>
 
-        {/* Evolución Mensual de Ahorros del Año */}
         {loading && <Loader />}
 
         {!loading && tablaAhorros && (
@@ -361,7 +350,6 @@ export default function Ahorro() {
           </div>
         )}
 
-        {/* Historial de Movimientos de Ahorro */}
         <div className="principal p-4 rounded-4 shadow-sm border w-100">
           <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
             <h5 className="h6 text-muted text-uppercase fw-bold mb-0 tracking-wider d-flex align-items-center gap-2">
@@ -451,7 +439,6 @@ export default function Ahorro() {
 
       </div>
 
-      {/* Modal de Edición de Ahorro */}
       {editModalOpen && editingItem && (
         <div 
           className="modal fade show d-block" 
@@ -476,7 +463,6 @@ export default function Ahorro() {
 
               <form onSubmit={handleSaveEdit}>
                 <div className="modal-body py-3">
-                  {/* Tipo de Operación y Período */}
                   <div className="d-flex justify-content-between align-items-center mb-3 p-2 rounded-3" style={{ backgroundColor: "var(--bg-card-alt)" }}>
                     <span className="small text-muted">
                       Operación: <strong className={editingItem.tipo === "extraccion" ? "text-danger" : "text-success"}>
@@ -488,7 +474,6 @@ export default function Ahorro() {
                     </span>
                   </div>
 
-                  {/* Moneda */}
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted mb-1 d-block">
                       Moneda
@@ -509,7 +494,6 @@ export default function Ahorro() {
                     </div>
                   </div>
 
-                  {/* Categoría / Meta */}
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted mb-1 d-block">
                       Meta / Destino
@@ -536,7 +520,6 @@ export default function Ahorro() {
                     </div>
                   </div>
 
-                  {/* Descripción */}
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted mb-1">
                       Descripción
@@ -551,7 +534,6 @@ export default function Ahorro() {
                     />
                   </div>
 
-                  {/* Monto */}
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted mb-1">
                       Monto

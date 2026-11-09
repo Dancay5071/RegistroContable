@@ -1,4 +1,3 @@
-// src/components/FloatingActionButton.jsx
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useQuickMovement } from "../context/QuickMovementContext";

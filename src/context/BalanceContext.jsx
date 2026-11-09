@@ -1,4 +1,3 @@
-// src/context/BalanceContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
 import { getDemoBalances } from "../services/demoData";
@@ -21,7 +20,6 @@ export function BalanceProvider({ children }) {
   const [loadingBalances, setLoadingBalances] = useState(true);
 
   useEffect(() => {
-    // 1. Modo Demo
     if (isDemo) {
       const updateFromDemo = () => {
         const bal = getDemoBalances();
@@ -40,7 +38,6 @@ export function BalanceProvider({ children }) {
       };
     }
 
-    // 2. Usuario Autenticado en Firebase (Aislamiento por User ID)
     if (user && user.uid) {
       setLoadingBalances(true);
       const unsubscribe = listenUserBalances(user.uid, (balances) => {
@@ -54,7 +51,6 @@ export function BalanceProvider({ children }) {
       return () => unsubscribe();
     }
 
-    // 3. Sin usuario
     setMontoActual(0);
     setTotalAhorros(0);
     setTotalAhorrosUSD(0);

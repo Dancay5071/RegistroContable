@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -86,7 +85,6 @@ export default function Home() {
 
   return (
     <div className="home-page fade-in d-flex flex-column align-items-center justify-content-center flex-grow-1 p-3">
-      {/* Vista para usuarios no autenticados */}
       {!user ? (
         <div className="principal text-center p-4 p-md-5 rounded-4 shadow-sm border" style={{ maxWidth: "560px", width: "100%" }}>
           <div className="d-flex justify-content-center mb-3">
@@ -118,7 +116,6 @@ export default function Home() {
         </div>
       ) : (
         <div className="w-100" style={{ maxWidth: "1020px" }}>
-          {/* Encabezado del Dashboard: Saludo & Fecha (Sin duplicar logo) */}
           <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
             <div>
               <h1 className="h4 fw-bold text-dark mb-1">
@@ -147,7 +144,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* Tarjetas KPI Hero Pastel (Puro Minimalismo Tipográfico, SIN ÍCONOS) */}
           <div className="row g-3 mb-4">
             <div className="col-12 col-md-6">
               <div className="hero-balance-card hero-saldo p-4 rounded-4 shadow-sm">
@@ -176,9 +172,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Gráficos Financieros Chart.js (Fase 3) */}
           <div className="row g-3 mb-4">
-            {/* Gráfico 1: Gastos por Categoría */}
             <div className="col-12 col-lg-5">
               <div className="principal p-3 p-md-4 rounded-4 shadow-sm border h-100 d-flex flex-column">
                 <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
@@ -203,7 +197,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Gráfico 2: Evolución y Comparativa Anual */}
             <div className="col-12 col-lg-7">
               <div className="principal p-3 p-md-4 rounded-4 shadow-sm border h-100 d-flex flex-column">
                 <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
@@ -234,7 +227,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Historial de Últimos Movimientos */}
           <div className="principal p-3 p-md-4 rounded-4 shadow-sm border mb-4">
             <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
               <h5 className="h6 text-muted text-uppercase fw-bold mb-0 tracking-wider d-flex align-items-center gap-2">
@@ -310,7 +302,6 @@ export default function Home() {
               </div>
             )}
 
-            {/* Accesos directos a consultas */}
             <div className="d-flex flex-wrap justify-content-center gap-3 pt-3 mt-2 border-top">
               <Link to="/gastos/consultar" className="btn btn-sm btn-outline-secondary rounded-pill px-3">
                 <i className="bi bi-receipt me-1"></i> Ver todos los Gastos

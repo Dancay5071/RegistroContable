@@ -1,4 +1,3 @@
-// src/components/charts/MonthlyComparisonChart.jsx
 import React, { useEffect, useRef } from "react";
 import {
   Chart as ChartJS,
@@ -29,7 +28,6 @@ export default function MonthlyComparisonChart({
   const tickColor = isDark ? "#cbd5e1" : "#475569";
   const gridColor = isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(222, 212, 194, 0.5)";
 
-  // Abreviar nombres de meses: Ene, Feb, Mar...
   const labels = MESES.map((m) => m.substring(0, 3));
 
   useEffect(() => {

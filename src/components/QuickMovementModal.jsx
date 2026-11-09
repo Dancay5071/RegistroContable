@@ -1,4 +1,3 @@
-// src/components/QuickMovementModal.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
@@ -28,7 +27,6 @@ export default function QuickMovementModal() {
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
 
-  // Form states
   const [descripcion, setDescripcion] = useState("");
   const [monto, setMonto] = useState("");
   const [categoriaGasto, setCategoriaGasto] = useState("Supermercado");
@@ -195,7 +193,6 @@ export default function QuickMovementModal() {
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content shadow-lg border-0">
           
-          {/* Header con Pestañas */}
           <div className="modal-header border-bottom pb-2 pt-3 flex-column align-items-stretch">
             <div className="d-flex justify-content-between align-items-center w-100 mb-2">
               <h5 className="modal-title fw-bold text-dark d-flex align-items-center gap-2">
@@ -210,7 +207,6 @@ export default function QuickMovementModal() {
               ></button>
             </div>
 
-            {/* Pestañas de Acción */}
             <div className="btn-group w-100 p-1 rounded-3" style={{ backgroundColor: "#ede5d5" }} role="group">
               <button 
                 type="button" 
@@ -241,10 +237,8 @@ export default function QuickMovementModal() {
 
           <form onSubmit={handleSubmit}>
             <div className="modal-body pt-3">
-              {/* Selector de Período */}
               <MonthYearSelect mes={mes} setMes={setMes} anio={anio} setAnio={setAnio} />
 
-              {/* 1. SECCIÓN GASTO */}
               {activeTab === "gasto" && (
                 <>
                   <div className="mb-3">
@@ -323,7 +317,6 @@ export default function QuickMovementModal() {
                 </>
               )}
 
-              {/* SECCIÓN INGRESO */}
               {activeTab === "ingreso" && (
                 <>
                   <div className="mb-3">
@@ -482,7 +475,6 @@ export default function QuickMovementModal() {
                 </>
               )}
 
-              {/* SECCIÓN AHORRO */}
               {activeTab === "ahorro" && (
                 <>
                   <div className="mb-3">
@@ -514,7 +506,6 @@ export default function QuickMovementModal() {
                     </div>
                   </div>
 
-                  {/* Selector de Moneda */}
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted mb-1 d-block">
                       Tipo de Moneda
@@ -535,7 +526,6 @@ export default function QuickMovementModal() {
                     </div>
                   </div>
 
-                  {/* Selector de Categoría / Meta de Ahorro */}
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted mb-1 d-block">
                       Meta / Destino del Ahorro

@@ -1,4 +1,3 @@
-// src/components/CustomizeModal.jsx
 import React, { useRef, useState } from "react";
 import { useTheme, THEMES, BACKGROUNDS } from "../context/ThemeContext";
 import { useToast } from "../context/ToastContext";
@@ -22,7 +21,6 @@ export default function CustomizeModal() {
 
   if (!isCustomizeModalOpen) return null;
 
-  // Procesar y comprimir la imagen subida en un canvas para no superar localStorage
   const handleImageUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -38,7 +36,6 @@ export default function CustomizeModal() {
     reader.onload = (event) => {
       const img = new Image();
       img.onload = () => {
-        // Redimensionar a un tamaño óptimo para pantallas (máx 1600px ancho)
         const maxWidth = 1600;
         const maxHeight = 1000;
         let width = img.width;
@@ -59,7 +56,6 @@ export default function CustomizeModal() {
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Comprimir en JPEG calidad 0.75 (ocupa aprox 120-180 KB)
         const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.75);
         setCustomBg(compressedDataUrl);
         setProcessingImage(false);
@@ -116,7 +112,6 @@ export default function CustomizeModal() {
           </div>
 
           <div className="modal-body p-4">
-            {/* SECCIÓN 1: PALETA DE COLORES */}
             <div className="mb-4">
               <label className="form-label small fw-bold text-uppercase text-muted tracking-wider d-block mb-3">
                 1. Paleta de Colores
@@ -155,7 +150,6 @@ export default function CustomizeModal() {
                           )}
                         </div>
 
-                        {/* Muestrario de Colores (Swatches) */}
                         <div className="d-flex align-items-center gap-1 mt-auto">
                           <span className="rounded-circle" style={{ width: "16px", height: "16px", backgroundColor: t.primario }} title="Primario"></span>
                           <span className="rounded-circle" style={{ width: "16px", height: "16px", backgroundColor: t.acento }} title="Acento"></span>
@@ -170,7 +164,6 @@ export default function CustomizeModal() {
 
             <hr className="my-4 opacity-25" />
 
-            {/* SECCIÓN 2: ESTILO DE FONDO */}
             <div>
               <label className="form-label small fw-bold text-uppercase text-muted tracking-wider d-block mb-3">
                 2. Estilo de Fondo
@@ -198,7 +191,6 @@ export default function CustomizeModal() {
                 })}
               </div>
 
-              {/* Subida de Imagen Personalizada */}
               {bgType === "custom" && (
                 <div className="p-3 rounded-3 border bg-light mt-3 fade-in">
                   <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">

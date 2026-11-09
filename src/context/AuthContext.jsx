@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { 
   onAuthStateChanged, 
@@ -25,7 +24,6 @@ export function AuthProvider({ children }) {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
-    // Comprobar si estaba en modo demo
     const storedDemo = localStorage.getItem("registro_contable_demo_active");
     if (storedDemo === "true") {
       setUser(DEMO_USER);

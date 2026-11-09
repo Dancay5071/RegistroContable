@@ -1,10 +1,8 @@
-// src/components/FinTrackLogo.jsx
 import React from "react";
 
 export default function FinTrackLogo({ size = 32, showText = true, textClass = "fs-5" }) {
   return (
     <div className="d-inline-flex align-items-center gap-2 text-decoration-none">
-      {/* Isotipo SVG Vectorial */}
       <svg 
         width={size} 
         height={size} 
@@ -47,7 +45,6 @@ export default function FinTrackLogo({ size = 32, showText = true, textClass = "
         </g>
       </svg>
 
-      {/* Tipografía FinTrack Adaptable a Temas */}
       {showText && (
         <span className={`fw-bold fintrack-brand-text tracking-tight mb-0 lh-1 ${textClass}`} style={{ letterSpacing: "-0.5px" }}>
           Fin<span className="fintrack-brand-track">Track</span>

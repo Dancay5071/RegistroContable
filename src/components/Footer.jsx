@@ -1,4 +1,3 @@
-// src/components/Footer.jsx
 import React from "react";
 import FinTrackLogo from "./FinTrackLogo";
 
@@ -8,7 +7,6 @@ export default function Footer() {
       <div className="container-fluid px-3 px-md-4">
         <div className="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
           
-          {/* Marca, Versión y Créditos */}
           <div className="d-flex flex-column flex-sm-row align-items-center gap-2 text-center text-md-start">
             <div className="d-flex align-items-center gap-2">
               <FinTrackLogo size={24} showText={true} textClass="fs-6" />
@@ -23,7 +21,6 @@ export default function Footer() {
             </span>
           </div>
 
-          {/* Enlaces Sociales / Contacto en Píldoras */}
           <div className="d-flex align-items-center gap-2 footer-social-links">
             <a 
               href="https://github.com/Dancay5071" 

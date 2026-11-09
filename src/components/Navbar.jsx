@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -48,13 +47,11 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg" id="navbar">
       <div className="container-fluid">
-        {/* Brand / Logo + Ticker Dólar Ultra Compacto */}
         <div className="d-flex align-items-center gap-2">
           <Link className="navbar-brand d-flex align-items-center me-1" to="/" onClick={closeMenu}>
             <FinTrackLogo size={32} showText={true} />
           </Link>
 
-          {/* Micro-Pastilla de Cotización en Tiempo Real */}
           {blue?.venta > 0 && (
             <div 
               className="navbar-dolar-pill d-flex align-items-center gap-2"
@@ -68,7 +65,6 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Botón Hamburguesa Móvil */}
         <button 
           className="navbar-toggler border-0 ms-auto" 
           type="button" 
@@ -80,9 +76,7 @@ export default function Navbar() {
           <i className="bi bi-list fs-2"></i>
         </button>
 
-        {/* Menú Colapsable */}
         <div className={`collapse navbar-collapse ${isOpen ? "show" : ""}`} id="navbarSupportedContent">
-          {/* Navegación Principal con Aire y Espaciado */}
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-1">
             <li className="nav-item">
               <NavLink className="nav-link" to="/gastos/consultar" onClick={closeMenu}>
@@ -109,7 +103,6 @@ export default function Navbar() {
             </li>
           </ul>
 
-          {/* Menú de Usuario / Perfil en Desktop (Reemplaza los botones sueltos) */}
           <div className="d-none d-lg-block position-relative ms-lg-3" ref={userMenuRef}>
             <button
               className="btn btn-user-profile d-flex align-items-center gap-2 rounded-pill px-2 py-1 shadow-sm"
@@ -159,12 +152,11 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Opciones en Móvil dentro del Drawer */}
           <div className="d-lg-none mt-3 pt-3 border-top">
             <div className="d-flex align-items-center gap-2 mb-3 px-2">
               <span className="user-avatar-badge">{inicial}</span>
               <div>
-                <div className="fw-bold small">{nombreUsuario}</div>
+                <div className="fw-bold small dropdown-user-name">{nombreUsuario}</div>
                 <div className="text-muted small" style={{ fontSize: "0.75rem" }}>
                   {isDemo ? "Modo Demo" : user?.email}
                 </div>

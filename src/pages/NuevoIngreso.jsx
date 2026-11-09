@@ -1,4 +1,3 @@
-// src/pages/NuevoIngreso.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
@@ -108,7 +107,6 @@ export default function NuevoIngreso() {
         <form onSubmit={handleSubmit}>
           <MonthYearSelect mes={mes} setMes={setMes} anio={anio} setAnio={setAnio} />
 
-          {/* Selector de Categorías Pastel */}
           <div className="mb-3">
             <label className="form-label text-muted small fw-semibold d-block mb-1">
               Origen del Ingreso
@@ -180,7 +178,6 @@ export default function NuevoIngreso() {
             )}
           </div>
 
-          {/* Apartar para Ahorro: Selector de Modo (Porcentaje vs Cantidad Fija) */}
           <div className="mb-3">
             <div className="d-flex justify-content-between align-items-center mb-2">
               <label className="form-label text-muted small fw-semibold mb-0">
@@ -254,7 +251,6 @@ export default function NuevoIngreso() {
             )}
           </div>
 
-          {/* Resumen dinámico del ingreso */}
           {montoNum > 0 && ahorroFinal > 0 && (
             <div className="p-3 rounded-3 mb-3 border small" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
               <div className="d-flex justify-content-between text-muted mb-1">

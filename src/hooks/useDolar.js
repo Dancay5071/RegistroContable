@@ -1,4 +1,3 @@
-// src/hooks/useDolar.js
 import { useState, useEffect, useCallback } from "react";
 import { getDolarRates } from "../services/dolarService";
 
@@ -24,7 +23,6 @@ export function useDolar() {
   useEffect(() => {
     cargarCotizaciones(false);
 
-    // Actualizar periódicamente cada 5 minutos de forma no intrusiva
     const interval = setInterval(() => {
       cargarCotizaciones(false);
     }, 5 * 60 * 1000);
@@ -59,4 +57,3 @@ export function useDolar() {
     convertirARSaUSD
   };
 }
-

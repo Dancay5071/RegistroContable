@@ -1,11 +1,5 @@
-// src/services/dolarService.js
-/**
- * Servicio de Cotizaciones en Tiempo Real (DolarApi.com)
- * Implementa estrategia Stale-While-Revalidate con caché local en localStorage.
- */
-
 const CACHE_KEY = "fintrack_dolar_cache";
-const TTL_MS = 10 * 60 * 1000; // 10 minutos de validez en caché
+const TTL_MS = 10 * 60 * 1000;
 
 const DEFAULT_RATES = {
   blue: { compra: 1530, venta: 1550, nombre: "Dólar Blue" },
@@ -28,7 +22,6 @@ export async function getDolarRates(forceRefresh = false) {
   const now = Date.now();
   const isFresh = cachedPayload && (now - cachedPayload.timestamp < TTL_MS);
 
-  // Si está fresco y no se forzó actualización, devolver caché inmediatamente
   if (isFresh && !forceRefresh) {
     return {
       rates: cachedPayload.rates,
@@ -38,7 +31,6 @@ export async function getDolarRates(forceRefresh = false) {
     };
   }
 
-  // Consultar API externa con Stale-While-Revalidate
   try {
     const response = await fetch("https://dolarapi.com/v1/dolares", {
       headers: { Accept: "application/json" }
@@ -90,7 +82,6 @@ export async function getDolarRates(forceRefresh = false) {
       };
     }
 
-    // Fallback de emergencia si no hay red ni caché
     return {
       rates: DEFAULT_RATES,
       rawList: [],
@@ -99,4 +90,3 @@ export async function getDolarRates(forceRefresh = false) {
     };
   }
 }
-

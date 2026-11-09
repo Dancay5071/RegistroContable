@@ -1,12 +1,3 @@
-// src/services/dbService.js
-/**
- * Capa de Backend para Firestore con Aislamiento Multiusuario y Operaciones Atómicas.
- * Todos los datos se organizan bajo:
- *   users/{userId}/config/balances
- *   users/{userId}/transacciones/{transaccionId}
- *   users/{userId}/resumenesMensuales/{mes_anio}
- */
-
 import { 
   db 
 } from "./firebase";
@@ -27,7 +18,6 @@ import {
 } from "firebase/firestore";
 import { MESES } from "../utils/formatters";
 
-// 1. Escuchar saldos en tiempo real para el usuario autenticado
 export function listenUserBalances(userId, callback) {
   if (!userId) return () => {};
 
@@ -43,7 +33,6 @@ export function listenUserBalances(userId, callback) {
         totalAhorrosEUR: Number(data.totalAhorrosEUR || 0)
       });
     } else {
-      // Si es un usuario nuevo, inicializar balances en 0
       setDoc(balancesDoc, { 
         montoActual: 0, 
         totalAhorros: 0,
@@ -58,14 +47,12 @@ export function listenUserBalances(userId, callback) {
   });
 }
 
-// 2. Registrar nuevo Gasto
 export async function addGastoUser(userId, { mes, anio, descripcion, monto, categoria = "Otros" }) {
   const clave = `${mes}_${anio}`;
   const transaccionesRef = collection(db, "users", userId, "transacciones");
   const balancesRef = doc(db, "users", userId, "config", "balances");
   const resumenRef = doc(db, "users", userId, "resumenesMensuales", clave);
 
-  // 1. Guardar documento individual de la transacción
   const docRef = await addDoc(transaccionesRef, {
     tipo: "gasto",
     descripcion: descripcion.trim(),
@@ -77,12 +64,10 @@ export async function addGastoUser(userId, { mes, anio, descripcion, monto, cate
     createdAt: serverTimestamp()
   });
 
-  // 2. Actualizar saldo disponible atómicamente con increment()
   await setDoc(balancesRef, {
     montoActual: increment(-monto)
   }, { merge: true });
 
-  // 3. Actualizar resumen mensual agregado
   await setDoc(resumenRef, {
     totalGastos: increment(monto)
   }, { merge: true });
@@ -90,7 +75,6 @@ export async function addGastoUser(userId, { mes, anio, descripcion, monto, cate
   return docRef.id;
 }
 
-// 3. Consultar Gastos del Mes
 export async function getGastosUser(userId, mes, anio) {
   const clave = `${mes}_${anio}`;
   const transaccionesRef = collection(db, "users", userId, "transacciones");
@@ -109,7 +93,6 @@ export async function getGastosUser(userId, mes, anio) {
   return items;
 }
 
-// 4. Editar Gasto
 export async function updateGastoUser(userId, id, { mes, anio, descripcion, monto, montoAnterior, categoria }) {
   const clave = `${mes}_${anio}`;
   const transaccionRef = doc(db, "users", userId, "transacciones", id);
@@ -137,7 +120,6 @@ export async function updateGastoUser(userId, id, { mes, anio, descripcion, mont
   }
 }
 
-// 5. Eliminar Gasto
 export async function deleteGastoUser(userId, id, { mes, anio, monto }) {
   const clave = `${mes}_${anio}`;
   const transaccionRef = doc(db, "users", userId, "transacciones", id);
@@ -155,7 +137,6 @@ export async function deleteGastoUser(userId, id, { mes, anio, monto }) {
   });
 }
 
-// 6. Registrar nuevo Ingreso (soporta Porcentaje o Monto Fijo de Ahorro)
 export async function addIngresoUser(userId, { mes, anio, descripcion, montoBruto, porcentajeAhorro = 0, montoAhorro = 0, categoria = "Sueldo" }) {
   const clave = `${mes}_${anio}`;
   const bruto = Number(montoBruto) || 0;
@@ -203,7 +184,6 @@ export async function addIngresoUser(userId, { mes, anio, descripcion, montoBrut
   return docRef.id;
 }
 
-// 7. Consultar Ingresos del Mes
 export async function getIngresosUser(userId, mes, anio) {
   const clave = `${mes}_${anio}`;
   const transaccionesRef = collection(db, "users", userId, "transacciones");
@@ -222,7 +202,6 @@ export async function getIngresosUser(userId, mes, anio) {
   return items;
 }
 
-// 8. Editar Ingreso
 export async function updateIngresoUser(userId, id, { mes, anio, descripcion, monto, montoAnterior, categoria }) {
   const clave = `${mes}_${anio}`;
   const transaccionRef = doc(db, "users", userId, "transacciones", id);
@@ -250,7 +229,6 @@ export async function updateIngresoUser(userId, id, { mes, anio, descripcion, mo
   }
 }
 
-// 9. Eliminar Ingreso
 export async function deleteIngresoUser(userId, id, { mes, anio, monto }) {
   const clave = `${mes}_${anio}`;
   const transaccionRef = doc(db, "users", userId, "transacciones", id);
@@ -268,7 +246,6 @@ export async function deleteIngresoUser(userId, id, { mes, anio, monto }) {
   });
 }
 
-// 10. Ahorros: Agregar Ahorro Directo (soporta Categoría y Moneda)
 export async function addAhorroDirectoUser(userId, { mes, anio, monto, moneda = "ARS", categoria = "Emergencia", descripcion = "" }) {
   const clave = `${mes}_${anio}`;
   const transaccionesRef = collection(db, "users", userId, "transacciones");
@@ -305,7 +282,6 @@ export async function addAhorroDirectoUser(userId, { mes, anio, monto, moneda = 
   }
 }
 
-// 11. Ahorros: Extraer Ahorro (soporta Categoría y Moneda)
 export async function addExtraccionUser(userId, { mes, anio, monto, moneda = "ARS", categoria = "Emergencia", descripcion = "" }) {
   const clave = `${mes}_${anio}`;
   const transaccionesRef = collection(db, "users", userId, "transacciones");
@@ -342,7 +318,6 @@ export async function addExtraccionUser(userId, { mes, anio, monto, moneda = "AR
   }
 }
 
-// 12. Obtener desglose de ahorros por categoría y movimientos
 export async function getDetalleAhorrosUser(userId) {
   if (!userId) return [];
   try {
@@ -369,7 +344,6 @@ export async function getDetalleAhorrosUser(userId) {
   }
 }
 
-// 12. Ahorros: Actualizar Movimiento de Ahorro
 export async function updateAhorroUser(userId, id, oldItem, { descripcion, monto, moneda = "ARS", categoria }) {
   const transaccionRef = doc(db, "users", userId, "transacciones", id);
   const balancesRef = doc(db, "users", userId, "config", "balances");
@@ -437,7 +411,6 @@ export async function updateAhorroUser(userId, id, oldItem, { descripcion, monto
   }
 }
 
-// 13. Ahorros: Eliminar Movimiento de Ahorro
 export async function deleteAhorroUser(userId, id, item) {
   const transaccionRef = doc(db, "users", userId, "transacciones", id);
   const balancesRef = doc(db, "users", userId, "config", "balances");
@@ -460,7 +433,6 @@ export async function deleteAhorroUser(userId, id, item) {
   }
 }
 
-// 14. Ahorros: Consultar Año
 export async function getAhorrosYearUser(userId, anio) {
   const netosPorMes = [];
 
@@ -487,7 +459,6 @@ export async function getAhorrosYearUser(userId, anio) {
   return netosPorMes;
 }
 
-// 13. Resumen Anual Agregado
 export async function getResumenAnualUser(userId, anio) {
   const ingresosMensuales = [];
   const gastosMensuales = [];
@@ -548,7 +519,6 @@ export async function getResumenAnualUser(userId, anio) {
   };
 }
 
-// 14. Obtener últimas transacciones combinadas (para el Dashboard)
 export async function getUltimasTransaccionesUser(userId, limitCount = 5) {
   if (!userId) return [];
   try {
@@ -571,4 +541,3 @@ export async function getUltimasTransaccionesUser(userId, limitCount = 5) {
     return [];
   }
 }
-

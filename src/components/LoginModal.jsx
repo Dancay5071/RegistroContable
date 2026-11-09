@@ -1,4 +1,3 @@
-// src/components/LoginModal.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import FinTrackLogo from "./FinTrackLogo";
@@ -97,7 +96,6 @@ export default function LoginModal() {
       if (errStr.includes("operation-not-allowed")) {
         setError("El inicio de sesión con Google aún no está habilitado en tu Firebase Console. Debes ir a Firebase Console > Authentication > Sign-in method y habilitar 'Google'. Mientras tanto, puedes crear una cuenta con correo y contraseña o explorar en Modo Demo.");
       } else if (err?.code === "auth/popup-closed-by-user") {
-        // El usuario cerró la ventana emergente de Google
       } else {
         setError("Error al iniciar sesión con Google: " + (err?.message || err));
       }
@@ -141,7 +139,6 @@ export default function LoginModal() {
 
           <form onSubmit={handleSubmit}>
             <div className="modal-body pt-3">
-              {/* Botón de Google */}
               {mode !== "forgot" && (
                 <>
                   <button 
@@ -252,7 +249,6 @@ export default function LoginModal() {
                 </button>
               </div>
 
-              {/* Conmutador entre Iniciar Sesión y Registrarse */}
               <div className="text-center mt-3">
                 {mode === "login" ? (
                   <p className="small mb-0 text-muted">

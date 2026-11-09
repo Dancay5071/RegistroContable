@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
@@ -14,7 +13,6 @@ import CustomizeModal from "./components/CustomizeModal";
 import FloatingActionButton from "./components/FloatingActionButton";
 import Loader from "./components/Loader";
 
-// Code Splitting (Carga diferida para máxima velocidad)
 const Home = lazy(() => import("./pages/Home"));
 const NuevoGasto = lazy(() => import("./pages/NuevoGasto"));
 const ConsultarGasto = lazy(() => import("./pages/ConsultarGasto"));

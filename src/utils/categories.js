@@ -1,8 +1,3 @@
-// src/utils/categories.js
-/**
- * Catálogo centralizado de categorías con iconos de Bootstrap Icons y colores pastel.
- */
-
 export const CATEGORIAS_GASTO = [
   { id: "Supermercado", nombre: "Supermercado", icon: "bi-cart3", color: "#166534", bg: "#e2f2e5", border: "#b3dfbb" },
   { id: "Vivienda", nombre: "Vivienda & Alquiler", icon: "bi-house-door", color: "#1e40af", bg: "#ddeaf6", border: "#b8d3ee" },
@@ -79,4 +74,3 @@ export function getCategoriaIngreso(nombreOId) {
     border: "#b3dfbb"
   };
 }
-

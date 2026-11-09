@@ -1,4 +1,3 @@
-// src/components/MonthYearSelect.jsx
 import React from "react";
 import { MESES } from "../utils/formatters";
 

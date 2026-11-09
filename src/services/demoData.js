@@ -1,4 +1,3 @@
-// src/services/demoData.js
 import { MESES } from "../utils/formatters";
 
 const STORAGE_KEY = "registro_contable_demo_data_v1";
@@ -88,21 +87,11 @@ export function resetDemoData() {
   return fresh;
 }
 
-// Helpers para saldos
 export function getDemoBalances() {
   const store = getDemoStore();
   return store.balances || { montoActual: 0, totalAhorros: 0 };
 }
 
-export function updateDemoBalances(deltaMonto = 0, deltaAhorro = 0) {
-  const store = getDemoStore();
-  store.balances.montoActual = Math.max(0, (store.balances.montoActual || 0) + deltaMonto);
-  store.balances.totalAhorros = Math.max(0, (store.balances.totalAhorros || 0) + deltaAhorro);
-  saveDemoStore(store);
-  return store.balances;
-}
-
-// Helpers para Gastos
 export function getDemoGastos(mes, anio) {
   const store = getDemoStore();
   const clave = `${mes}_${anio}`;
@@ -149,7 +138,6 @@ export function deleteDemoGasto(mes, anio, index) {
   }
 }
 
-// Helpers para Ingresos
 export function getDemoIngresos(mes, anio) {
   const store = getDemoStore();
   const clave = `${mes}_${anio}`;
@@ -191,7 +179,6 @@ export function addDemoIngreso(mes, anio, ingreso) {
   };
   store.ingresosPorMes[clave].push(ingresoConMeta);
 
-  // Actualizar monto actual e incremento de ahorro
   store.balances.montoActual = (store.balances.montoActual || 0) + ingresoNeto;
   if (ahorro > 0) {
     store.balances.totalAhorros = (store.balances.totalAhorros || 0) + ahorro;
@@ -229,7 +216,6 @@ export function deleteDemoIngreso(mes, anio, index) {
   }
 }
 
-// Helpers para Ahorros
 export function getDemoAhorrosPorMes(anio) {
   const store = getDemoStore();
   return MESES.map((mes) => {
@@ -334,15 +320,12 @@ export function updateDemoAhorro(id, { descripcion, monto, moneda, categoria }) 
 
   const getBalKey = (m) => m === "USD" ? "totalAhorrosUSD" : m === "EUR" ? "totalAhorrosEUR" : "totalAhorros";
 
-  // Revertir efecto de viejo monto
   const revertDiff = esExtraccion ? oldMonto : -oldMonto;
   store.balances[getBalKey(oldMoneda)] = Math.max(0, (store.balances[getBalKey(oldMoneda)] || 0) + revertDiff);
 
-  // Aplicar efecto de nuevo monto
   const applyDiff = esExtraccion ? -newMonto : newMonto;
   store.balances[getBalKey(newMoneda)] = Math.max(0, (store.balances[getBalKey(newMoneda)] || 0) + applyDiff);
 
-  // Actualizar item
   store.ahorrosDetallados[idx] = {
     ...item,
     descripcion: descripcion.trim(),
@@ -376,7 +359,6 @@ export function deleteDemoAhorro(id) {
   saveDemoStore(store);
 }
 
-// Helper para Resumen
 export function getDemoResumenAnual(anio) {
   const store = getDemoStore();
   const ingresosMensuales = [];
@@ -431,7 +413,6 @@ export function getDemoResumenAnual(anio) {
   };
 }
 
-// Obtener últimas transacciones combinadas (Demo)
 export function getDemoUltimasTransacciones(limitCount = 5) {
   const store = getDemoStore();
   const currentYear = new Date().getFullYear();

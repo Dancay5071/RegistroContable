@@ -1,4 +1,3 @@
-// src/context/ToastContext.jsx
 import React, { createContext, useContext, useState, useCallback } from "react";
 
 const ToastContext = createContext(null);
@@ -22,7 +21,6 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={{ showToast, removeToast }}>
       {children}
-      {/* Contenedor flotante de toasts en esquina superior derecha */}
       <div className="toast-container-custom">
         {toasts.map((t) => (
           <div 

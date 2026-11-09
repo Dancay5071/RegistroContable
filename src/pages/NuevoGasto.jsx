@@ -1,4 +1,3 @@
-// src/pages/NuevoGasto.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
@@ -75,7 +74,6 @@ export default function NuevoGasto() {
         <form onSubmit={handleSubmit}>
           <MonthYearSelect mes={mes} setMes={setMes} anio={anio} setAnio={setAnio} />
 
-          {/* Selector de Categorías Pastel */}
           <div className="mb-3">
             <label className="form-label text-muted small fw-semibold d-block mb-1">
               Categoría

@@ -1,19 +1,11 @@
-// src/utils/exportUtils.js
-import { MESES, formatoMoneda, formatoNumber } from "./formatters";
+import { MESES } from "./formatters";
 
-/**
- * Escapa un valor para formato CSV estándar (RFC 4180).
- */
 function escapeCSV(val) {
   if (val === null || val === undefined) return '""';
   const str = String(val).replace(/"/g, '""');
   return `"${str}"`;
 }
 
-/**
- * Descarga una cadena CSV como archivo con codificación UTF-8 BOM.
- * El prefijo \uFEFF garantiza que Excel reconozca tildes y caracteres en español.
- */
 export function downloadCSV(filename, csvContent) {
   const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -26,9 +18,6 @@ export function downloadCSV(filename, csvContent) {
   URL.revokeObjectURL(url);
 }
 
-/**
- * Exporta el listado de Gastos de un mes/año a formato CSV.
- */
 export function exportGastosToCSV(gastos, mes, anio) {
   const headers = ["Período", "Categoría", "Descripción", "Monto ($)"];
   let total = 0;
@@ -44,7 +33,6 @@ export function exportGastosToCSV(gastos, mes, anio) {
     ].join(",");
   });
 
-  // Fila de total
   rows.push(["", "", escapeCSV("TOTAL:"), escapeCSV(total.toFixed(2))].join(","));
 
   const csvContent = [headers.map(escapeCSV).join(","), ...rows].join("\r\n");
@@ -52,9 +40,6 @@ export function exportGastosToCSV(gastos, mes, anio) {
   downloadCSV(filename, csvContent);
 }
 
-/**
- * Exporta el listado de Ingresos de un mes/año a formato CSV.
- */
 export function exportIngresosToCSV(ingresos, mes, anio) {
   const headers = ["Período", "Categoría", "Descripción", "Monto ($)"];
   let total = 0;
@@ -77,9 +62,6 @@ export function exportIngresosToCSV(ingresos, mes, anio) {
   downloadCSV(filename, csvContent);
 }
 
-/**
- * Exporta el historial de movimientos de Ahorros a formato CSV.
- */
 export function exportAhorrosToCSV(ahorros) {
   const headers = ["Fecha", "Moneda", "Tipo", "Categoría", "Descripción", "Monto"];
 
@@ -102,9 +84,6 @@ export function exportAhorrosToCSV(ahorros) {
   downloadCSV(filename, csvContent);
 }
 
-/**
- * Exporta la matriz anual de 12 meses a formato CSV para Excel.
- */
 export function exportResumenAnualToCSV(resumenData, anio) {
   if (!resumenData) return;
 
@@ -129,10 +108,6 @@ export function exportResumenAnualToCSV(resumenData, anio) {
   downloadCSV(filename, csvContent);
 }
 
-/**
- * Dispara la vista de impresión del navegador formateada para PDF.
- */
 export function printFinancialReport() {
   window.print();
 }
-

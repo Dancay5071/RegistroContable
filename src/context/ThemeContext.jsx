@@ -1,4 +1,3 @@
-// src/context/ThemeContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 const ThemeContext = createContext(null);
@@ -73,7 +72,6 @@ export function ThemeProvider({ children }) {
 
   const [isCustomizeModalOpen, setIsCustomizeModalOpen] = useState(false);
 
-  // Sincronizar atributos en el elemento <html> y variables CSS en tiempo real
   useEffect(() => {
     const root = document.documentElement;
     root.setAttribute("data-theme", theme);

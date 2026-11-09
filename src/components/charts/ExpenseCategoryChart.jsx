@@ -1,4 +1,3 @@
-// src/components/charts/ExpenseCategoryChart.jsx
 import React, { useEffect, useRef } from "react";
 import {
   Chart as ChartJS,
@@ -21,7 +20,6 @@ export default function ExpenseCategoryChart({ gastos = [], mes = "", anio = "" 
   const isDark = theme === "dark";
   const legendColor = isDark ? "#f1f5f9" : "#1e293b";
 
-  // Agrupar gastos por categoría
   const categoriasMap = {};
   (gastos || []).forEach((g) => {
     const catId = g.categoria || "Otros";
@@ -32,7 +30,6 @@ export default function ExpenseCategoryChart({ gastos = [], mes = "", anio = "" 
   const dataValues = Object.values(categoriasMap);
   const total = dataValues.reduce((a, b) => a + b, 0);
 
-  // Asignar colores pastel correspondientes a cada categoría
   const backgroundColors = labels.map((catId) => {
     const cat = getCategoriaGasto(catId);
     return cat.bg || "#e2e8f0";

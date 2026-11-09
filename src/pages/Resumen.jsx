@@ -1,4 +1,3 @@
-// src/pages/Resumen.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
@@ -39,7 +38,6 @@ export default function Resumen() {
 
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
-      {/* Selector de Año y Botón */}
       <div className="principal d-flex align-items-center justify-content-center gap-3 p-3 rounded-4 shadow-sm border mb-4">
         <div className="d-flex align-items-center gap-2">
           <i className="bi bi-calendar4 text-primary"></i>
@@ -78,7 +76,6 @@ export default function Resumen() {
 
       {!loading && resumenData && (
         <div className="principal w-100 p-4 rounded-4 shadow-sm border mt-2" style={{ maxWidth: "1280px" }}>
-          {/* Encabezado especial para PDF/Impresión */}
           <div className="print-header">
             <h1>FinTrack — Resumen Anual {anio}</h1>
             <p>Auditoría de 12 Meses | Total Ingresos: ${formatoNumber(resumenData.totalAnualIngresos)} | Total Gastos: ${formatoNumber(resumenData.totalAnualGastos)} | Total Ahorros: ${formatoNumber(resumenData.totalAnualAhorros)}</p>
@@ -115,7 +112,6 @@ export default function Resumen() {
             </div>
           </div>
 
-          {/* Gráfico Comparativo Anual */}
           <div className="mb-4 p-3 resumen-chart-container rounded-3" style={{ height: "300px" }}>
             <MonthlyComparisonChart 
               ingresosMensuales={resumenData.ingresosMensuales || []}
@@ -137,7 +133,6 @@ export default function Resumen() {
               </tr>
             </thead>
             <tbody>
-              {/* Resto Mes Anterior */}
               <tr className="row-resto-anterior">
                 <th scope="row" className="text-start text-muted small">Resto Mes Anterior</th>
                 {resumenData.restosMesAnterior.map((val, idx) => (
@@ -146,7 +141,6 @@ export default function Resumen() {
                 <td className="fw-bold text-muted">-</td>
               </tr>
 
-              {/* Ingresos */}
               <tr className="row-resumen-ingreso">
                 <th scope="row" className="text-start text-success fw-bold">
                   <i className="bi bi-arrow-up-short"></i> Ingresos
@@ -157,7 +151,6 @@ export default function Resumen() {
                 <td className="fw-bold text-success fs-6">${formatoNumber(resumenData.totalAnualIngresos)}</td>
               </tr>
 
-              {/* Gastos */}
               <tr className="row-resumen-gasto">
                 <th scope="row" className="text-start text-danger fw-bold">
                   <i className="bi bi-arrow-down-short"></i> Gastos
@@ -168,7 +161,6 @@ export default function Resumen() {
                 <td className="fw-bold text-danger fs-6">${formatoNumber(resumenData.totalAnualGastos)}</td>
               </tr>
 
-              {/* Ahorros */}
               <tr className="row-resumen-ahorro">
                 <th scope="row" className="text-start text-warning fw-bold">
                   <i className="bi bi-piggy-bank"></i> Ahorros
@@ -179,7 +171,6 @@ export default function Resumen() {
                 <td className="fw-bold text-warning fs-6">${formatoNumber(resumenData.totalAnualAhorros)}</td>
               </tr>
 
-              {/* Resto Total */}
               <tr className="row-resumen-resto table-light">
                 <th scope="row" className="text-start text-dark fw-bold">
                   <i className="bi bi-wallet2 text-success me-1"></i> Resto Neto
