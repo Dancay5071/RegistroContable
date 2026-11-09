@@ -162,23 +162,47 @@ export function addDemoIngreso(mes, anio, ingreso) {
   if (!store.ingresosPorMes[clave]) {
     store.ingresosPorMes[clave] = [];
   }
+
+  const montoBruto = Number(ingreso.montoBruto || ingreso.monto || 0);
+  let ahorro = 0;
+  let porcentajeFinal = 0;
+
+  if (ingreso.montoAhorro !== undefined && ingreso.montoAhorro !== null && Number(ingreso.montoAhorro) > 0) {
+    ahorro = Math.min(montoBruto, Number(ingreso.montoAhorro));
+    porcentajeFinal = montoBruto > 0 ? (ahorro / montoBruto) * 100 : 0;
+  } else if (ingreso.ahorro !== undefined && ingreso.ahorro !== null && Number(ingreso.ahorro) > 0) {
+    ahorro = Math.min(montoBruto, Number(ingreso.ahorro));
+    porcentajeFinal = Number(ingreso.porcentajeAhorro || (montoBruto > 0 ? (ahorro / montoBruto) * 100 : 0));
+  } else {
+    porcentajeFinal = Number(ingreso.porcentajeAhorro || 0);
+    ahorro = Math.min(montoBruto, (montoBruto * porcentajeFinal) / 100);
+  }
+
+  const ingresoNeto = Math.max(0, montoBruto - ahorro);
+
   const ingresoConMeta = {
     ...ingreso,
+    monto: ingresoNeto,
+    montoBruto,
+    ahorro,
+    porcentajeAhorro: Number(porcentajeFinal.toFixed(1)),
     categoria: ingreso.categoria || "Sueldo",
     fecha: ingreso.fecha || new Date().toISOString()
   };
   store.ingresosPorMes[clave].push(ingresoConMeta);
 
-  // Actualizar monto actual e increment de ahorro
-  store.balances.montoActual = (store.balances.montoActual || 0) + ingreso.monto;
-  if (ingreso.ahorro > 0) {
-    store.balances.totalAhorros = (store.balances.totalAhorros || 0) + ingreso.ahorro;
+  // Actualizar monto actual e incremento de ahorro
+  store.balances.montoActual = (store.balances.montoActual || 0) + ingresoNeto;
+  if (ahorro > 0) {
+    store.balances.totalAhorros = (store.balances.totalAhorros || 0) + ahorro;
     if (!store.ahorrosPorMes[clave]) {
       store.ahorrosPorMes[clave] = { totalAhorros: 0 };
     }
-    store.ahorrosPorMes[clave].totalAhorros += ingreso.ahorro;
+    store.ahorrosPorMes[clave].totalAhorros += ahorro;
   }
+
   saveDemoStore(store);
+  return ingresoConMeta;
 }
 
 export function updateDemoIngreso(mes, anio, index, nuevoIngreso) {
@@ -292,6 +316,64 @@ export function addDemoExtraccion(mes, anio, monto, moneda = "ARS", categoria = 
 export function getDemoDetalleAhorros() {
   const store = getDemoStore();
   return store.ahorrosDetallados || [];
+}
+
+export function updateDemoAhorro(id, { descripcion, monto, moneda, categoria }) {
+  const store = getDemoStore();
+  if (!store.ahorrosDetallados) return null;
+
+  const idx = store.ahorrosDetallados.findIndex((a) => a.id === id);
+  if (idx === -1) return null;
+
+  const item = store.ahorrosDetallados[idx];
+  const oldMonto = Number(item.monto);
+  const newMonto = Number(monto);
+  const oldMoneda = item.moneda || "ARS";
+  const newMoneda = moneda || "ARS";
+  const esExtraccion = item.tipo === "extraccion";
+
+  const getBalKey = (m) => m === "USD" ? "totalAhorrosUSD" : m === "EUR" ? "totalAhorrosEUR" : "totalAhorros";
+
+  // Revertir efecto de viejo monto
+  const revertDiff = esExtraccion ? oldMonto : -oldMonto;
+  store.balances[getBalKey(oldMoneda)] = Math.max(0, (store.balances[getBalKey(oldMoneda)] || 0) + revertDiff);
+
+  // Aplicar efecto de nuevo monto
+  const applyDiff = esExtraccion ? -newMonto : newMonto;
+  store.balances[getBalKey(newMoneda)] = Math.max(0, (store.balances[getBalKey(newMoneda)] || 0) + applyDiff);
+
+  // Actualizar item
+  store.ahorrosDetallados[idx] = {
+    ...item,
+    descripcion: descripcion.trim(),
+    monto: newMonto,
+    moneda: newMoneda,
+    categoria,
+    updatedAt: new Date().toISOString()
+  };
+
+  saveDemoStore(store);
+  return store.ahorrosDetallados[idx];
+}
+
+export function deleteDemoAhorro(id) {
+  const store = getDemoStore();
+  if (!store.ahorrosDetallados) return;
+
+  const idx = store.ahorrosDetallados.findIndex((a) => a.id === id);
+  if (idx === -1) return;
+
+  const item = store.ahorrosDetallados[idx];
+  const monto = Number(item.monto);
+  const moneda = item.moneda || "ARS";
+  const esExtraccion = item.tipo === "extraccion";
+  const getBalKey = (m) => m === "USD" ? "totalAhorrosUSD" : m === "EUR" ? "totalAhorrosEUR" : "totalAhorros";
+
+  const revertDiff = esExtraccion ? monto : -monto;
+  store.balances[getBalKey(moneda)] = Math.max(0, (store.balances[getBalKey(moneda)] || 0) + revertDiff);
+
+  store.ahorrosDetallados.splice(idx, 1);
+  saveDemoStore(store);
 }
 
 // Helper para Resumen

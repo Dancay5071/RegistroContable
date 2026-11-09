@@ -155,11 +155,22 @@ export async function deleteGastoUser(userId, id, { mes, anio, monto }) {
   });
 }
 
-// 6. Registrar nuevo Ingreso
-export async function addIngresoUser(userId, { mes, anio, descripcion, montoBruto, porcentajeAhorro, categoria = "Sueldo" }) {
+// 6. Registrar nuevo Ingreso (soporta Porcentaje o Monto Fijo de Ahorro)
+export async function addIngresoUser(userId, { mes, anio, descripcion, montoBruto, porcentajeAhorro = 0, montoAhorro = 0, categoria = "Sueldo" }) {
   const clave = `${mes}_${anio}`;
-  const ahorro = (Number(montoBruto) * Number(porcentajeAhorro)) / 100;
-  const ingresoNeto = Number(montoBruto) - ahorro;
+  const bruto = Number(montoBruto) || 0;
+  let ahorro = 0;
+  let porcentajeFinal = 0;
+
+  if (montoAhorro !== undefined && montoAhorro !== null && Number(montoAhorro) > 0) {
+    ahorro = Math.min(bruto, Number(montoAhorro));
+    porcentajeFinal = bruto > 0 ? (ahorro / bruto) * 100 : 0;
+  } else {
+    porcentajeFinal = Number(porcentajeAhorro || 0);
+    ahorro = Math.min(bruto, (bruto * porcentajeFinal) / 100);
+  }
+
+  const ingresoNeto = Math.max(0, bruto - ahorro);
 
   const transaccionesRef = collection(db, "users", userId, "transacciones");
   const balancesRef = doc(db, "users", userId, "config", "balances");
@@ -170,9 +181,9 @@ export async function addIngresoUser(userId, { mes, anio, descripcion, montoBrut
     descripcion: descripcion.trim(),
     categoria: categoria || "Sueldo",
     monto: ingresoNeto,
-    montoBruto: Number(montoBruto),
+    montoBruto: bruto,
     ahorro,
-    porcentajeAhorro: Number(porcentajeAhorro),
+    porcentajeAhorro: Number(porcentajeFinal.toFixed(1)),
     mes,
     anio: Number(anio),
     claveMesAnio: clave,
@@ -358,7 +369,98 @@ export async function getDetalleAhorrosUser(userId) {
   }
 }
 
-// 12. Ahorros: Consultar Año
+// 12. Ahorros: Actualizar Movimiento de Ahorro
+export async function updateAhorroUser(userId, id, oldItem, { descripcion, monto, moneda = "ARS", categoria }) {
+  const transaccionRef = doc(db, "users", userId, "transacciones", id);
+  const balancesRef = doc(db, "users", userId, "config", "balances");
+  const clave = `${oldItem.mes}_${oldItem.anio}`;
+  const resumenRef = doc(db, "users", userId, "resumenesMensuales", clave);
+
+  const oldMonto = Number(oldItem.monto);
+  const newMonto = Number(monto);
+  const oldMoneda = oldItem.moneda || "ARS";
+  const newMoneda = moneda || "ARS";
+  const esExtraccion = oldItem.tipo === "extraccion";
+
+  await updateDoc(transaccionRef, {
+    descripcion: descripcion.trim(),
+    monto: newMonto,
+    moneda: newMoneda,
+    categoria,
+    updatedAt: serverTimestamp()
+  });
+
+  const getBalField = (m) => m === "USD" ? "totalAhorrosUSD" : m === "EUR" ? "totalAhorrosEUR" : "totalAhorros";
+  const balanceUpdate = {};
+
+  if (oldMoneda === newMoneda) {
+    const diff = esExtraccion ? -(newMonto - oldMonto) : (newMonto - oldMonto);
+    if (diff !== 0) {
+      balanceUpdate[getBalField(newMoneda)] = increment(diff);
+    }
+  } else {
+    const oldDiff = esExtraccion ? oldMonto : -oldMonto;
+    const newDiff = esExtraccion ? -newMonto : newMonto;
+    balanceUpdate[getBalField(oldMoneda)] = increment(oldDiff);
+    balanceUpdate[getBalField(newMoneda)] = increment(newDiff);
+  }
+
+  if (Object.keys(balanceUpdate).length > 0) {
+    await setDoc(balancesRef, balanceUpdate, { merge: true });
+  }
+
+  if (oldMoneda === "ARS" || newMoneda === "ARS") {
+    const resumenUpdate = {};
+    if (oldMoneda === "ARS" && newMoneda === "ARS") {
+      const diff = newMonto - oldMonto;
+      if (esExtraccion) {
+        resumenUpdate.totalExtracciones = increment(diff);
+      } else {
+        resumenUpdate.totalAhorros = increment(diff);
+      }
+    } else if (oldMoneda === "ARS") {
+      if (esExtraccion) {
+        resumenUpdate.totalExtracciones = increment(-oldMonto);
+      } else {
+        resumenUpdate.totalAhorros = increment(-oldMonto);
+      }
+    } else if (newMoneda === "ARS") {
+      if (esExtraccion) {
+        resumenUpdate.totalExtracciones = increment(newMonto);
+      } else {
+        resumenUpdate.totalAhorros = increment(newMonto);
+      }
+    }
+    if (Object.keys(resumenUpdate).length > 0) {
+      await setDoc(resumenRef, resumenUpdate, { merge: true });
+    }
+  }
+}
+
+// 13. Ahorros: Eliminar Movimiento de Ahorro
+export async function deleteAhorroUser(userId, id, item) {
+  const transaccionRef = doc(db, "users", userId, "transacciones", id);
+  const balancesRef = doc(db, "users", userId, "config", "balances");
+  const clave = `${item.mes}_${item.anio}`;
+  const resumenRef = doc(db, "users", userId, "resumenesMensuales", clave);
+
+  await deleteDoc(transaccionRef);
+
+  const monto = Number(item.monto);
+  const moneda = item.moneda || "ARS";
+  const esExtraccion = item.tipo === "extraccion";
+  const getBalField = (m) => m === "USD" ? "totalAhorrosUSD" : m === "EUR" ? "totalAhorrosEUR" : "totalAhorros";
+
+  const diff = esExtraccion ? monto : -monto;
+  await setDoc(balancesRef, { [getBalField(moneda)]: increment(diff) }, { merge: true });
+
+  if (moneda === "ARS") {
+    const field = esExtraccion ? "totalExtracciones" : "totalAhorros";
+    await setDoc(resumenRef, { [field]: increment(-monto) }, { merge: true });
+  }
+}
+
+// 14. Ahorros: Consultar Año
 export async function getAhorrosYearUser(userId, anio) {
   const netosPorMes = [];
 

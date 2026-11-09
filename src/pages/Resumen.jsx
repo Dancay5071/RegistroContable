@@ -13,7 +13,7 @@ export default function Resumen() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
   const currentYear = new Date().getFullYear();
-  const yearOptions = [currentYear - 1, currentYear, currentYear + 1];
+  const yearOptions = [currentYear - 3, currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
   const [anio, setAnio] = useState(currentYear);
   const [resumenData, setResumenData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -39,13 +39,13 @@ export default function Resumen() {
 
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
-      {/* Selector de Año y Botón Claro */}
-      <div className="d-flex align-items-center justify-content-center gap-3 p-3 bg-white rounded-4 shadow-sm border mb-4">
+      {/* Selector de Año y Botón */}
+      <div className="principal d-flex align-items-center justify-content-center gap-3 p-3 rounded-4 shadow-sm border mb-4">
         <div className="d-flex align-items-center gap-2">
           <i className="bi bi-calendar4 text-primary"></i>
           <span className="fw-semibold text-dark">Año:</span>
           <select 
-            className="form-select form-select-sm w-auto" 
+            className="form-select form-select-sm select-year" 
             id="anioSelect"
             value={anio}
             onChange={(e) => setAnio(Number(e.target.value))}
@@ -69,7 +69,7 @@ export default function Resumen() {
       {loading && <Loader message="Procesando resumen anual..." />}
 
       {!loading && !resumenData && (
-        <div className="text-center text-muted p-5 bg-white rounded-4 border shadow-sm" style={{ maxWidth: "600px" }}>
+        <div className="principal text-center text-muted p-5 rounded-4 border shadow-sm" style={{ maxWidth: "600px" }}>
           <i className="bi bi-table fs-1 text-secondary opacity-50 mb-3 d-block"></i>
           <h5 className="text-dark fw-bold">Matriz Financiera Anual</h5>
           <p className="small mb-0">Selecciona el año que deseas auditar y haz clic en <strong>Consultar Resumen</strong> para ver la tabla comparativa de 12 meses.</p>
@@ -77,7 +77,7 @@ export default function Resumen() {
       )}
 
       {!loading && resumenData && (
-        <div className="w-100 p-4 bg-white rounded-4 shadow-sm border mt-2" style={{ maxWidth: "1280px" }}>
+        <div className="principal w-100 p-4 rounded-4 shadow-sm border mt-2" style={{ maxWidth: "1280px" }}>
           {/* Encabezado especial para PDF/Impresión */}
           <div className="print-header">
             <h1>FinTrack — Resumen Anual {anio}</h1>
@@ -105,7 +105,7 @@ export default function Resumen() {
               </button>
               <button 
                 type="button" 
-                className="btn btn-outline-dark btn-sm d-flex align-items-center gap-1 no-print shadow-sm"
+                className="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 no-print shadow-sm"
                 onClick={printFinancialReport}
                 title="Imprimir reporte anual o guardar en PDF"
               >
@@ -116,7 +116,7 @@ export default function Resumen() {
           </div>
 
           {/* Gráfico Comparativo Anual */}
-          <div className="mb-4 p-3 bg-light rounded-3" style={{ height: "300px" }}>
+          <div className="mb-4 p-3 resumen-chart-container rounded-3" style={{ height: "300px" }}>
             <MonthlyComparisonChart 
               ingresosMensuales={resumenData.ingresosMensuales || []}
               gastosMensuales={resumenData.gastosMensuales || []}
@@ -133,12 +133,12 @@ export default function Resumen() {
                 {MESES.map((m) => (
                   <th key={m} scope="col" className="small">{m.substring(0, 3)}</th>
                 ))}
-                <th scope="col" className="bg-primary bg-opacity-10 text-primary fw-bold">Total Anual</th>
+                <th scope="col" className="resumen-th-total fw-bold">Total Anual</th>
               </tr>
             </thead>
             <tbody>
               {/* Resto Mes Anterior */}
-              <tr>
+              <tr className="row-resto-anterior">
                 <th scope="row" className="text-start text-muted small">Resto Mes Anterior</th>
                 {resumenData.restosMesAnterior.map((val, idx) => (
                   <td key={idx} className="small text-muted">${formatoNumber(val)}</td>
@@ -147,7 +147,7 @@ export default function Resumen() {
               </tr>
 
               {/* Ingresos */}
-              <tr style={{ backgroundColor: "rgba(30, 99, 63, 0.07)" }}>
+              <tr className="row-resumen-ingreso">
                 <th scope="row" className="text-start text-success fw-bold">
                   <i className="bi bi-arrow-up-short"></i> Ingresos
                 </th>
@@ -158,7 +158,7 @@ export default function Resumen() {
               </tr>
 
               {/* Gastos */}
-              <tr style={{ backgroundColor: "rgba(168, 46, 46, 0.07)" }}>
+              <tr className="row-resumen-gasto">
                 <th scope="row" className="text-start text-danger fw-bold">
                   <i className="bi bi-arrow-down-short"></i> Gastos
                 </th>
@@ -169,7 +169,7 @@ export default function Resumen() {
               </tr>
 
               {/* Ahorros */}
-              <tr style={{ backgroundColor: "rgba(148, 82, 3, 0.07)" }}>
+              <tr className="row-resumen-ahorro">
                 <th scope="row" className="text-start text-warning fw-bold">
                   <i className="bi bi-piggy-bank"></i> Ahorros
                 </th>
@@ -180,7 +180,7 @@ export default function Resumen() {
               </tr>
 
               {/* Resto Total */}
-              <tr className="table-light">
+              <tr className="row-resumen-resto table-light">
                 <th scope="row" className="text-start text-dark fw-bold">
                   <i className="bi bi-wallet2 text-success me-1"></i> Resto Neto
                 </th>

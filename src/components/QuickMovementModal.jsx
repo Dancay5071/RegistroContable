@@ -35,7 +35,9 @@ export default function QuickMovementModal() {
   const [categoriaIngreso, setCategoriaIngreso] = useState("Sueldo");
   const [categoriaAhorro, setCategoriaAhorro] = useState("Emergencia");
   const [monedaAhorro, setMonedaAhorro] = useState("ARS");
+  const [modoAhorroIngreso, setModoAhorroIngreso] = useState("porcentaje"); // "porcentaje" | "monto"
   const [porcentajeAhorro, setPorcentajeAhorro] = useState(0);
+  const [montoAhorroFijoIngreso, setMontoAhorroFijoIngreso] = useState("");
   const [tipoAhorro, setTipoAhorro] = useState("agregar"); // "agregar" | "extraer"
   const [loading, setLoading] = useState(false);
 
@@ -44,7 +46,9 @@ export default function QuickMovementModal() {
   const resetFields = () => {
     setDescripcion("");
     setMonto("");
+    setModoAhorroIngreso("porcentaje");
     setPorcentajeAhorro(0);
+    setMontoAhorroFijoIngreso("");
     setTipoAhorro("agregar");
   };
 
@@ -90,14 +94,25 @@ export default function QuickMovementModal() {
         showToast(`Gasto de $${montoNum.toLocaleString()} registrado.`, "success");
       } else if (activeTab === "ingreso") {
         const descFinal = descripcion.trim() || categoriaIngreso;
+        let ahorroFinal = 0;
+        let porcentajeFinal = 0;
+
+        if (modoAhorroIngreso === "monto") {
+          const fijo = parseFloat(montoAhorroFijoIngreso) || 0;
+          ahorroFinal = Math.min(montoNum, fijo);
+          porcentajeFinal = montoNum > 0 ? (ahorroFinal / montoNum) * 100 : 0;
+        } else {
+          porcentajeFinal = Number(porcentajeAhorro || 0);
+          ahorroFinal = (montoNum * porcentajeFinal) / 100;
+        }
+
         if (isDemo) {
-          const ahorro = (montoNum * porcentajeAhorro) / 100;
           addDemoIngreso(mes, anio, {
             descripcion: descFinal,
-            monto: montoNum - ahorro,
             montoBruto: montoNum,
-            ahorro,
-            porcentajeAhorro,
+            ahorro: ahorroFinal,
+            montoAhorro: ahorroFinal,
+            porcentajeAhorro: porcentajeFinal,
             categoria: categoriaIngreso
           });
         } else {
@@ -106,7 +121,8 @@ export default function QuickMovementModal() {
             anio,
             descripcion: descFinal,
             montoBruto: montoNum,
-            porcentajeAhorro,
+            montoAhorro: ahorroFinal,
+            porcentajeAhorro: porcentajeFinal,
             categoria: categoriaIngreso
           });
         }
@@ -156,8 +172,18 @@ export default function QuickMovementModal() {
   };
 
   const montoNum = parseFloat(monto) || 0;
-  const ahorroCalculado = (montoNum * porcentajeAhorro) / 100;
-  const netoCalculado = montoNum - ahorroCalculado;
+  let ahorroCalculado = 0;
+  let porcentajeCalculado = 0;
+
+  if (modoAhorroIngreso === "monto") {
+    ahorroCalculado = Math.min(montoNum, parseFloat(montoAhorroFijoIngreso) || 0);
+    porcentajeCalculado = montoNum > 0 ? (ahorroCalculado / montoNum) * 100 : 0;
+  } else {
+    porcentajeCalculado = Number(porcentajeAhorro || 0);
+    ahorroCalculado = (montoNum * porcentajeCalculado) / 100;
+  }
+
+  const netoCalculado = Math.max(0, montoNum - ahorroCalculado);
 
   return (
     <div 
@@ -184,11 +210,11 @@ export default function QuickMovementModal() {
               ></button>
             </div>
 
-            {/* Pestañas de Acción Segmentadas */}
-            <div className="btn-group w-100 p-1 rounded-3 quick-tabs-container" role="group">
+            {/* Pestañas de Acción */}
+            <div className="btn-group w-100 p-1 rounded-3" style={{ backgroundColor: "#ede5d5" }} role="group">
               <button 
                 type="button" 
-                className={`btn btn-sm fw-semibold rounded-2 quick-tab-btn ${activeTab === 'gasto' ? 'active-gasto' : ''}`}
+                className={`btn btn-sm fw-semibold rounded-2 ${activeTab === 'gasto' ? 'btn-danger shadow-sm' : 'btn-link text-dark text-decoration-none'}`}
                 onClick={() => setActiveTab('gasto')}
                 disabled={loading}
               >
@@ -196,7 +222,7 @@ export default function QuickMovementModal() {
               </button>
               <button 
                 type="button" 
-                className={`btn btn-sm fw-semibold rounded-2 quick-tab-btn ${activeTab === 'ingreso' ? 'active-ingreso' : ''}`}
+                className={`btn btn-sm fw-semibold rounded-2 ${activeTab === 'ingreso' ? 'btn-success shadow-sm' : 'btn-link text-dark text-decoration-none'}`}
                 onClick={() => setActiveTab('ingreso')}
                 disabled={loading}
               >
@@ -204,7 +230,7 @@ export default function QuickMovementModal() {
               </button>
               <button 
                 type="button" 
-                className={`btn btn-sm fw-semibold rounded-2 quick-tab-btn ${activeTab === 'ahorro' ? 'active-ahorro' : ''}`}
+                className={`btn btn-sm fw-semibold rounded-2 ${activeTab === 'ahorro' ? 'btn-warning shadow-sm text-white' : 'btn-link text-dark text-decoration-none'}`}
                 onClick={() => setActiveTab('ahorro')}
                 disabled={loading}
               >
@@ -230,11 +256,11 @@ export default function QuickMovementModal() {
                         <button
                           key={cat.id}
                           type="button"
-                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small category-chip-btn ${categoriaGasto === cat.id ? 'active fw-bold border-2 shadow-sm' : 'opacity-85'}`}
+                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small ${categoriaGasto === cat.id ? 'fw-bold border-2' : 'opacity-75'}`}
                           style={{
-                            backgroundColor: categoriaGasto === cat.id ? cat.bg : undefined,
-                            color: categoriaGasto === cat.id ? cat.color : undefined,
-                            borderColor: categoriaGasto === cat.id ? cat.border : undefined,
+                            backgroundColor: categoriaGasto === cat.id ? cat.bg : "#f1ede4",
+                            color: cat.color,
+                            borderColor: cat.border,
                             fontSize: "0.8rem"
                           }}
                           onClick={() => setCategoriaGasto(cat.id)}
@@ -297,7 +323,7 @@ export default function QuickMovementModal() {
                 </>
               )}
 
-              {/* 2. SECCIÓN INGRESO */}
+              {/* SECCIÓN INGRESO */}
               {activeTab === "ingreso" && (
                 <>
                   <div className="mb-3">
@@ -309,11 +335,11 @@ export default function QuickMovementModal() {
                         <button
                           key={cat.id}
                           type="button"
-                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small category-chip-btn ${categoriaIngreso === cat.id ? 'active fw-bold border-2 shadow-sm' : 'opacity-85'}`}
+                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small ${categoriaIngreso === cat.id ? 'fw-bold border-2' : 'opacity-75'}`}
                           style={{
-                            backgroundColor: categoriaIngreso === cat.id ? cat.bg : undefined,
-                            color: categoriaIngreso === cat.id ? cat.color : undefined,
-                            borderColor: categoriaIngreso === cat.id ? cat.border : undefined,
+                            backgroundColor: categoriaIngreso === cat.id ? cat.bg : "#f1ede4",
+                            color: cat.color,
+                            borderColor: cat.border,
                             fontSize: "0.8rem"
                           }}
                           onClick={() => setCategoriaIngreso(cat.id)}
@@ -374,35 +400,89 @@ export default function QuickMovementModal() {
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label small fw-bold text-muted mb-1">
-                      Apartar porcentaje para Ahorro
-                    </label>
-                    <select 
-                      className="form-select form-select-sm"
-                      value={porcentajeAhorro}
-                      onChange={(e) => setPorcentajeAhorro(Number(e.target.value))}
-                      disabled={loading}
-                    >
-                      <option value="0">0% - Sin ahorro</option>
-                      <option value="5">5% para Ahorro</option>
-                      <option value="10">10% para Ahorro</option>
-                      <option value="15">15% para Ahorro</option>
-                      <option value="20">20% para Ahorro</option>
-                    </select>
+                    <div className="d-flex justify-content-between align-items-center mb-1">
+                      <label className="form-label small fw-bold text-muted mb-0">
+                        Apartar para Ahorro
+                      </label>
+                      <div className="btn-group btn-group-sm" role="group">
+                        <button
+                          type="button"
+                          className={`btn btn-sm ${modoAhorroIngreso === "porcentaje" ? "btn-success" : "btn-outline-secondary"}`}
+                          onClick={() => setModoAhorroIngreso("porcentaje")}
+                          style={{ fontSize: "0.72rem", padding: "0.15rem 0.5rem" }}
+                        >
+                          % Porcentaje
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn btn-sm ${modoAhorroIngreso === "monto" ? "btn-success" : "btn-outline-secondary"}`}
+                          onClick={() => setModoAhorroIngreso("monto")}
+                          style={{ fontSize: "0.72rem", padding: "0.15rem 0.5rem" }}
+                        >
+                          $ Dinero Fijo
+                        </button>
+                      </div>
+                    </div>
+
+                    {modoAhorroIngreso === "porcentaje" ? (
+                      <div>
+                        <select 
+                          className="form-select form-select-sm"
+                          value={porcentajeAhorro}
+                          onChange={(e) => setPorcentajeAhorro(Number(e.target.value))}
+                          disabled={loading}
+                        >
+                          <option value="0">0% - Sin ahorro</option>
+                          <option value="5">5% para Ahorro</option>
+                          <option value="10">10% para Ahorro</option>
+                          <option value="15">15% para Ahorro</option>
+                          <option value="20">20% para Ahorro</option>
+                          <option value="25">25% para Ahorro</option>
+                          <option value="30">30% para Ahorro</option>
+                        </select>
+                        {montoNum > 0 && porcentajeAhorro > 0 && (
+                          <div className="small text-muted mt-1">
+                            Equivale a: <strong className="text-warning">${ahorroCalculado.toFixed(2)}</strong>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="input-group input-group-sm">
+                          <span className="input-group-text">$</span>
+                          <input 
+                            type="number" 
+                            step="0.01" 
+                            min="0"
+                            max={montoNum > 0 ? montoNum : undefined}
+                            className="form-control text-warning fw-bold" 
+                            placeholder="Monto exacto a apartar (ej. 50000)"
+                            value={montoAhorroFijoIngreso}
+                            onChange={(e) => setMontoAhorroFijoIngreso(e.target.value)}
+                            disabled={loading}
+                          />
+                        </div>
+                        {montoNum > 0 && parseFloat(montoAhorroFijoIngreso) > 0 && (
+                          <div className="small text-muted mt-1 d-flex justify-content-between">
+                            <span>Representa el: <strong className="text-warning">{porcentajeCalculado.toFixed(1)}%</strong> del ingreso</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
-                  {montoNum > 0 && porcentajeAhorro > 0 && (
+                  {montoNum > 0 && ahorroCalculado > 0 && (
                     <div className="p-2 rounded-3 border small mb-2" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
                       <div className="d-flex justify-content-between text-muted">
                         <span>Disponible: <strong className="text-success">${netoCalculado.toFixed(2)}</strong></span>
-                        <span>Ahorro: <strong className="text-warning">${ahorroCalculado.toFixed(2)}</strong></span>
+                        <span>Ahorro ({porcentajeCalculado.toFixed(1)}%): <strong className="text-warning">${ahorroCalculado.toFixed(2)}</strong></span>
                       </div>
                     </div>
                   )}
                 </>
               )}
 
-              {/* 3. SECCIÓN AHORRO */}
+              {/* SECCIÓN AHORRO */}
               {activeTab === "ahorro" && (
                 <>
                   <div className="mb-3">
@@ -465,11 +545,11 @@ export default function QuickMovementModal() {
                         <button
                           key={cat.id}
                           type="button"
-                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small category-chip-btn ${categoriaAhorro === cat.id ? 'active fw-bold border-2 shadow-sm' : 'opacity-85'}`}
+                          className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small ${categoriaAhorro === cat.id ? 'fw-bold border-2 shadow-sm' : 'opacity-80'}`}
                           style={{
-                            backgroundColor: categoriaAhorro === cat.id ? cat.bg : undefined,
-                            color: categoriaAhorro === cat.id ? cat.color : undefined,
-                            borderColor: categoriaAhorro === cat.id ? cat.border : undefined,
+                            backgroundColor: categoriaAhorro === cat.id ? cat.bg : "#f1ede4",
+                            color: cat.color,
+                            borderColor: cat.border,
                             fontSize: "0.82rem"
                           }}
                           onClick={() => setCategoriaAhorro(cat.id)}

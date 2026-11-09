@@ -18,7 +18,9 @@ export default function NuevoIngreso() {
   const [categoria, setCategoria] = useState("Sueldo");
   const [descripcion, setDescripcion] = useState("");
   const [monto, setMonto] = useState("");
+  const [modoAhorro, setModoAhorro] = useState("porcentaje"); // "porcentaje" | "monto"
   const [porcentaje, setPorcentaje] = useState(0);
+  const [montoAhorroFijo, setMontoAhorroFijo] = useState("");
   const [loading, setLoading] = useState(false);
 
   const addQuickAmount = (val) => {
@@ -26,14 +28,32 @@ export default function NuevoIngreso() {
     setMonto((current + val).toString());
   };
 
+  const montoNum = parseFloat(monto) || 0;
+  let ahorroFinal = 0;
+  let porcentajeFinal = 0;
+
+  if (modoAhorro === "monto") {
+    const fijoNum = parseFloat(montoAhorroFijo) || 0;
+    ahorroFinal = Math.min(montoNum, fijoNum);
+    porcentajeFinal = montoNum > 0 ? (ahorroFinal / montoNum) * 100 : 0;
+  } else {
+    porcentajeFinal = parseFloat(porcentaje) || 0;
+    ahorroFinal = (montoNum * porcentajeFinal) / 100;
+  }
+
+  const netoCalculado = Math.max(0, montoNum - ahorroFinal);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const montoNum = parseFloat(monto);
-    const porcentajeNum = parseFloat(porcentaje);
     const descFinal = descripcion.trim() || categoria;
 
-    if (isNaN(montoNum) || montoNum <= 0 || isNaN(porcentajeNum)) {
+    if (isNaN(montoNum) || montoNum <= 0) {
       showToast("Por favor ingresa un monto válido mayor a 0.", "warning");
+      return;
+    }
+
+    if (modoAhorro === "monto" && parseFloat(montoAhorroFijo) > montoNum) {
+      showToast("La cantidad a ahorrar no puede superar el monto bruto del ingreso.", "warning");
       return;
     }
 
@@ -41,14 +61,12 @@ export default function NuevoIngreso() {
 
     try {
       if (isDemo) {
-        const ahorro = (montoNum * porcentajeNum) / 100;
-        const ingresoNeto = montoNum - ahorro;
         addDemoIngreso(mes, anio, {
           descripcion: descFinal,
-          monto: ingresoNeto,
           montoBruto: montoNum,
-          ahorro,
-          porcentajeAhorro: porcentajeNum,
+          ahorro: ahorroFinal,
+          montoAhorro: ahorroFinal,
+          porcentajeAhorro: porcentajeFinal,
           categoria
         });
       } else {
@@ -57,7 +75,8 @@ export default function NuevoIngreso() {
           anio,
           descripcion: descFinal,
           montoBruto: montoNum,
-          porcentajeAhorro: porcentajeNum,
+          montoAhorro: ahorroFinal,
+          porcentajeAhorro: porcentajeFinal,
           categoria
         });
       }
@@ -66,6 +85,7 @@ export default function NuevoIngreso() {
       setDescripcion("");
       setMonto("");
       setPorcentaje(0);
+      setMontoAhorroFijo("");
     } catch (error) {
       console.error("Error al agregar ingreso:", error);
       showToast("Error al registrar el ingreso: " + error.message, "error");
@@ -73,10 +93,6 @@ export default function NuevoIngreso() {
       setLoading(false);
     }
   };
-
-  const montoNum = parseFloat(monto) || 0;
-  const ahorroCalculado = (montoNum * porcentaje) / 100;
-  const netoCalculado = montoNum - ahorroCalculado;
 
   return (
     <div className="fade-in d-flex flex-column align-items-center justify-content-center flex-grow-1 p-3">
@@ -164,36 +180,90 @@ export default function NuevoIngreso() {
             )}
           </div>
 
+          {/* Apartar para Ahorro: Selector de Modo (Porcentaje vs Cantidad Fija) */}
           <div className="mb-3">
-            <label className="form-label text-muted small fw-semibold d-flex justify-content-between align-items-center">
-              <span>Porcentaje para Ahorro:</span>
-              <strong className="text-info">{porcentaje}%</strong>
-            </label>
-            <select 
-              className="form-select" 
-              id="porcentaje"
-              value={porcentaje}
-              onChange={(e) => setPorcentaje(Number(e.target.value))}
-              disabled={loading}
-            >
-              <option value="0">0% - Sin ahorro</option>
-              <option value="5">5% para Ahorro</option>
-              <option value="10">10% para Ahorro</option>
-              <option value="15">15% para Ahorro</option>
-              <option value="20">20% para Ahorro</option>
-            </select>
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <label className="form-label text-muted small fw-semibold mb-0">
+                Apartar para Ahorro
+              </label>
+              <div className="btn-group btn-group-sm" role="group">
+                <button
+                  type="button"
+                  className={`btn btn-sm ${modoAhorro === "porcentaje" ? "btn-success" : "btn-outline-secondary"}`}
+                  onClick={() => setModoAhorro("porcentaje")}
+                  style={{ fontSize: "0.75rem", padding: "0.2rem 0.6rem" }}
+                >
+                  % Porcentaje
+                </button>
+                <button
+                  type="button"
+                  className={`btn btn-sm ${modoAhorro === "monto" ? "btn-success" : "btn-outline-secondary"}`}
+                  onClick={() => setModoAhorro("monto")}
+                  style={{ fontSize: "0.75rem", padding: "0.2rem 0.6rem" }}
+                >
+                  $ Cantidad Fija
+                </button>
+              </div>
+            </div>
+
+            {modoAhorro === "porcentaje" ? (
+              <div>
+                <select 
+                  className="form-select" 
+                  id="porcentaje"
+                  value={porcentaje}
+                  onChange={(e) => setPorcentaje(Number(e.target.value))}
+                  disabled={loading}
+                >
+                  <option value="0">0% - Sin ahorro</option>
+                  <option value="5">5% para Ahorro</option>
+                  <option value="10">10% para Ahorro</option>
+                  <option value="15">15% para Ahorro</option>
+                  <option value="20">20% para Ahorro</option>
+                  <option value="25">25% para Ahorro</option>
+                  <option value="30">30% para Ahorro</option>
+                </select>
+                {montoNum > 0 && porcentaje > 0 && (
+                  <div className="small text-muted mt-1">
+                    Equivale a: <strong className="text-primary">${ahorroFinal.toFixed(2)}</strong>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>
+                <div className="input-group">
+                  <span className="input-group-text">$</span>
+                  <input 
+                    type="number" 
+                    step="0.01" 
+                    min="0"
+                    max={montoNum > 0 ? montoNum : undefined}
+                    className="form-control text-primary fw-bold" 
+                    placeholder="Monto exacto a apartar (ej. 50000)"
+                    value={montoAhorroFijo}
+                    onChange={(e) => setMontoAhorroFijo(e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+                {montoNum > 0 && parseFloat(montoAhorroFijo) > 0 && (
+                  <div className="small text-muted mt-1 d-flex justify-content-between">
+                    <span>Representa el: <strong className="text-primary">{porcentajeFinal.toFixed(1)}%</strong> del ingreso</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Resumen dinámico del ingreso */}
-          {montoNum > 0 && porcentaje > 0 && (
+          {montoNum > 0 && ahorroFinal > 0 && (
             <div className="p-3 rounded-3 mb-3 border small" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
               <div className="d-flex justify-content-between text-muted mb-1">
-                <span>Disponible (Neto):</span>
+                <span>Disponible (Neto en cuenta):</span>
                 <strong className="text-success fs-6">${netoCalculado.toFixed(2)}</strong>
               </div>
               <div className="d-flex justify-content-between text-muted">
-                <span>Directo a Ahorro ({porcentaje}%):</span>
-                <strong className="text-primary fs-6">${ahorroCalculado.toFixed(2)}</strong>
+                <span>Directo a Ahorro ({porcentajeFinal.toFixed(1)}%):</span>
+                <strong className="text-primary fs-6">${ahorroFinal.toFixed(2)}</strong>
               </div>
             </div>
           )}
