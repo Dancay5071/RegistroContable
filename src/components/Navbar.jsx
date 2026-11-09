@@ -2,12 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { usePrivacy } from "../context/PrivacyContext";
 import { useDolar } from "../hooks/useDolar";
 import FinTrackLogo from "./FinTrackLogo";
 
 export default function Navbar() {
   const { user, isDemo, logout } = useAuth();
   const { openCustomizeModal } = useTheme();
+  const { isPrivate, togglePrivacy } = usePrivacy();
   const { blue, oficial, mep, refresh: refreshDolar } = useDolar();
   const [isOpen, setIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -103,53 +105,80 @@ export default function Navbar() {
             </li>
           </ul>
 
-          <div className="d-none d-lg-block position-relative ms-lg-3" ref={userMenuRef}>
+          <div className="d-none d-lg-flex align-items-center gap-2 ms-lg-3">
             <button
-              className="btn btn-user-profile d-flex align-items-center gap-2 rounded-pill px-2 py-1 shadow-sm"
+              className={`btn btn-privacy-toggle d-flex align-items-center justify-content-center rounded-circle shadow-sm ${isPrivate ? 'active' : ''}`}
               type="button"
-              onClick={() => setUserMenuOpen(!userMenuOpen)}
-              title="Opciones de cuenta y personalización"
+              onClick={togglePrivacy}
+              title={isPrivate ? "Mostrar saldos (Alt + P)" : "Ocultar saldos (Modo Privacidad - Alt + P)"}
+              aria-label="Alternar privacidad de saldos"
             >
-              <span className="user-avatar-badge">{inicial}</span>
-              <span className="user-name-text fw-semibold small">{nombreUsuario}</span>
-              <i className="bi bi-chevron-down text-muted" style={{ fontSize: "0.75rem" }}></i>
+              <i className={`bi ${isPrivate ? "bi-eye-slash-fill text-warning" : "bi-eye"}`}></i>
             </button>
 
-            {userMenuOpen && (
-              <ul 
-                className="dropdown-menu dropdown-menu-end shadow-lg rounded-4 p-2 border show" 
-                style={{ minWidth: "220px", position: "absolute", top: "115%", right: 0, zIndex: 1050 }}
+            <div className="position-relative" ref={userMenuRef}>
+              <button
+                className="btn btn-user-profile d-flex align-items-center gap-2 rounded-pill px-2 py-1 shadow-sm"
+                type="button"
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                title="Opciones de cuenta y personalización"
               >
-                <li className="px-3 py-2 border-bottom mb-1">
-                  <div className="fw-bold small dropdown-user-name">{nombreUsuario}</div>
-                  <div className="text-muted" style={{ fontSize: "0.75rem" }}>
-                    {isDemo ? "Modo Demo Activo" : (user?.email || "Cuenta personal")}
-                  </div>
-                </li>
+                <span className="user-avatar-badge">{inicial}</span>
+                <span className="user-name-text fw-semibold small">{nombreUsuario}</span>
+                <i className="bi bi-chevron-down text-muted" style={{ fontSize: "0.75rem" }}></i>
+              </button>
 
-                <li>
-                  <button 
-                    className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3"
-                    onClick={() => { setUserMenuOpen(false); openCustomizeModal(); }}
-                  >
-                    <i className="bi bi-palette2 text-primary"></i>
-                    <span>Personalizar Tema</span>
-                  </button>
-                </li>
+              {userMenuOpen && (
+                <ul 
+                  className="dropdown-menu dropdown-menu-end shadow-lg rounded-4 p-2 border show" 
+                  style={{ minWidth: "220px", position: "absolute", top: "115%", right: 0, zIndex: 1050 }}
+                >
+                  <li className="px-3 py-2 border-bottom mb-1">
+                    <div className="fw-bold small dropdown-user-name">{nombreUsuario}</div>
+                    <div className="text-muted" style={{ fontSize: "0.75rem" }}>
+                      {isDemo ? "Modo Demo Activo" : (user?.email || "Cuenta personal")}
+                    </div>
+                  </li>
 
-                <li><hr className="dropdown-divider my-1 opacity-50" /></li>
+                  <li>
+                    <button 
+                      className="dropdown-item d-flex align-items-center justify-content-between py-2 rounded-3"
+                      onClick={() => { togglePrivacy(); setUserMenuOpen(false); }}
+                    >
+                      <div className="d-flex align-items-center gap-2">
+                        <i className={`bi ${isPrivate ? "bi-eye-slash-fill text-warning" : "bi-eye text-primary"}`}></i>
+                        <span>Modo Privacidad</span>
+                      </div>
+                      <span className={`badge rounded-pill ${isPrivate ? 'bg-warning text-dark' : 'bg-secondary bg-opacity-25 text-secondary'}`} style={{ fontSize: "0.68rem" }}>
+                        {isPrivate ? "Activo" : "Off"}
+                      </span>
+                    </button>
+                  </li>
 
-                <li>
-                  <button 
-                    className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 text-danger"
-                    onClick={() => { setUserMenuOpen(false); handleLogout(); }}
-                  >
-                    <i className="bi bi-box-arrow-right"></i>
-                    <span>{isDemo ? "Salir del Demo" : "Cerrar sesión"}</span>
-                  </button>
-                </li>
-              </ul>
-            )}
+                  <li>
+                    <button 
+                      className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3"
+                      onClick={() => { setUserMenuOpen(false); openCustomizeModal(); }}
+                    >
+                      <i className="bi bi-palette2 text-primary"></i>
+                      <span>Personalizar Tema</span>
+                    </button>
+                  </li>
+
+                  <li><hr className="dropdown-divider my-1 opacity-50" /></li>
+
+                  <li>
+                    <button 
+                      className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 text-danger"
+                      onClick={() => { setUserMenuOpen(false); handleLogout(); }}
+                    >
+                      <i className="bi bi-box-arrow-right"></i>
+                      <span>{isDemo ? "Salir del Demo" : "Cerrar sesión"}</span>
+                    </button>
+                  </li>
+                </ul>
+              )}
+            </div>
           </div>
 
           <div className="d-lg-none mt-3 pt-3 border-top">
@@ -164,6 +193,14 @@ export default function Navbar() {
             </div>
 
             <div className="d-flex flex-column gap-2">
+              <button
+                className={`btn ${isPrivate ? 'btn-warning text-dark' : 'btn-outline-secondary'} btn-sm w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill py-2`}
+                onClick={() => { togglePrivacy(); closeMenu(); }}
+              >
+                <i className={`bi ${isPrivate ? "bi-eye-slash-fill" : "bi-eye"}`}></i>
+                <span>{isPrivate ? "Saldos Ocultos (Toca para ver)" : "Modo Privacidad (Ocultar saldos)"}</span>
+              </button>
+
               <button
                 className="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill py-2"
                 onClick={() => { closeMenu(); openCustomizeModal(); }}

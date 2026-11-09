@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { usePrivacy } from "../context/PrivacyContext";
 import { getDemoResumenAnual } from "../services/demoData";
 import { getResumenAnualUser } from "../services/dbService";
 import { MESES, formatoNumber } from "../utils/formatters";
@@ -11,6 +12,7 @@ import { exportResumenAnualToCSV, printFinancialReport } from "../utils/exportUt
 export default function Resumen() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
+  const { isPrivate, maskAmount } = usePrivacy();
   const currentYear = new Date().getFullYear();
   const yearOptions = [currentYear - 3, currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
   const [anio, setAnio] = useState(currentYear);
@@ -112,7 +114,7 @@ export default function Resumen() {
             </div>
           </div>
 
-          <div className="mb-4 p-3 resumen-chart-container rounded-3" style={{ height: "300px" }}>
+          <div className={`mb-4 p-3 resumen-chart-container rounded-3 ${isPrivate ? "privacy-blur" : ""}`} style={{ height: "300px" }}>
             <MonthlyComparisonChart 
               ingresosMensuales={resumenData.ingresosMensuales || []}
               gastosMensuales={resumenData.gastosMensuales || []}
@@ -136,7 +138,9 @@ export default function Resumen() {
               <tr className="row-resto-anterior">
                 <th scope="row" className="text-start text-muted small">Resto Mes Anterior</th>
                 {resumenData.restosMesAnterior.map((val, idx) => (
-                  <td key={idx} className="small text-muted">${formatoNumber(val)}</td>
+                  <td key={idx} className={`small text-muted ${isPrivate ? "privacy-masked" : ""}`}>
+                    {maskAmount(`$${formatoNumber(val)}`)}
+                  </td>
                 ))}
                 <td className="fw-bold text-muted">-</td>
               </tr>
@@ -146,9 +150,13 @@ export default function Resumen() {
                   <i className="bi bi-arrow-up-short"></i> Ingresos
                 </th>
                 {resumenData.ingresosMensuales.map((val, idx) => (
-                  <td key={idx} className="text-success fw-bold">${formatoNumber(val)}</td>
+                  <td key={idx} className={`text-success fw-bold ${isPrivate ? "privacy-masked" : ""}`}>
+                    {maskAmount(`$${formatoNumber(val)}`)}
+                  </td>
                 ))}
-                <td className="fw-bold text-success fs-6">${formatoNumber(resumenData.totalAnualIngresos)}</td>
+                <td className={`fw-bold text-success fs-6 ${isPrivate ? "privacy-masked" : ""}`}>
+                  {maskAmount(`$${formatoNumber(resumenData.totalAnualIngresos)}`)}
+                </td>
               </tr>
 
               <tr className="row-resumen-gasto">
@@ -156,9 +164,13 @@ export default function Resumen() {
                   <i className="bi bi-arrow-down-short"></i> Gastos
                 </th>
                 {resumenData.gastosMensuales.map((val, idx) => (
-                  <td key={idx} className="text-danger fw-bold">${formatoNumber(val)}</td>
+                  <td key={idx} className={`text-danger fw-bold ${isPrivate ? "privacy-masked" : ""}`}>
+                    {maskAmount(`$${formatoNumber(val)}`)}
+                  </td>
                 ))}
-                <td className="fw-bold text-danger fs-6">${formatoNumber(resumenData.totalAnualGastos)}</td>
+                <td className={`fw-bold text-danger fs-6 ${isPrivate ? "privacy-masked" : ""}`}>
+                  {maskAmount(`$${formatoNumber(resumenData.totalAnualGastos)}`)}
+                </td>
               </tr>
 
               <tr className="row-resumen-ahorro">
@@ -166,9 +178,13 @@ export default function Resumen() {
                   <i className="bi bi-piggy-bank"></i> Ahorros
                 </th>
                 {resumenData.ahorrosMensuales.map((val, idx) => (
-                  <td key={idx} className="text-warning fw-bold">${formatoNumber(val)}</td>
+                  <td key={idx} className={`text-warning fw-bold ${isPrivate ? "privacy-masked" : ""}`}>
+                    {maskAmount(`$${formatoNumber(val)}`)}
+                  </td>
                 ))}
-                <td className="fw-bold text-warning fs-6">${formatoNumber(resumenData.totalAnualAhorros)}</td>
+                <td className={`fw-bold text-warning fs-6 ${isPrivate ? "privacy-masked" : ""}`}>
+                  {maskAmount(`$${formatoNumber(resumenData.totalAnualAhorros)}`)}
+                </td>
               </tr>
 
               <tr className="row-resumen-resto table-light">
@@ -176,8 +192,8 @@ export default function Resumen() {
                   <i className="bi bi-wallet2 text-success me-1"></i> Resto Neto
                 </th>
                 {resumenData.restosTotales.map((val, idx) => (
-                  <td key={idx} className={`fw-bold ${val >= 0 ? "text-dark" : "text-danger"}`}>
-                    ${formatoNumber(val)}
+                  <td key={idx} className={`fw-bold ${val >= 0 ? "text-dark" : "text-danger"} ${isPrivate ? "privacy-masked" : ""}`}>
+                    {maskAmount(`$${formatoNumber(val)}`)}
                   </td>
                 ))}
                 <td className="text-muted">-</td>

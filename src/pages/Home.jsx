@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
+import { usePrivacy } from "../context/PrivacyContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { getFechaHoy, formatoMoneda, MESES } from "../utils/formatters";
 import { resetDemoData, getDemoUltimasTransacciones, getDemoGastos, getDemoResumenAnual } from "../services/demoData";
@@ -15,6 +16,7 @@ import FinTrackLogo from "../components/FinTrackLogo";
 export default function Home() {
   const { user, isDemo, openLoginModal, loginAsDemo } = useAuth();
   const { montoActual, totalAhorros } = useBalance();
+  const { isPrivate, togglePrivacy, maskAmount } = usePrivacy();
   const { openQuickModal, movementCounter } = useQuickMovement();
   const { showToast } = useToast();
   const [fecha, setFecha] = useState(getFechaHoy(window.innerWidth < 768));
@@ -147,10 +149,20 @@ export default function Home() {
           <div className="row g-3 mb-4">
             <div className="col-12 col-md-6">
               <div className="hero-balance-card hero-saldo p-4 rounded-4 shadow-sm">
-                <div className="kpi-title text-success mb-2">
-                  Saldo Disponible
+                <div className="d-flex align-items-center justify-content-between mb-2">
+                  <div className="kpi-title text-success mb-0">Saldo Disponible</div>
+                  <button 
+                    type="button" 
+                    className="btn btn-sm btn-link text-muted p-0 text-decoration-none"
+                    onClick={togglePrivacy}
+                    title={isPrivate ? "Mostrar saldos" : "Ocultar saldos"}
+                  >
+                    <i className={`bi ${isPrivate ? "bi-eye-slash-fill text-warning" : "bi-eye"}`}></i>
+                  </button>
                 </div>
-                <div className="kpi-amount mb-2">{formatoMoneda(montoActual)}</div>
+                <div className={`kpi-amount mb-2 ${isPrivate ? "privacy-masked" : ""}`}>
+                  {maskAmount(formatoMoneda(montoActual))}
+                </div>
                 <div className="d-flex align-items-center gap-2">
                   <span className="dot dot-green"></span>
                   <span className="text-muted small">Actualizado en tiempo real</span>
@@ -160,10 +172,20 @@ export default function Home() {
 
             <div className="col-12 col-md-6">
               <div className="hero-balance-card hero-ahorro p-4 rounded-4 shadow-sm">
-                <div className="kpi-title text-warning mb-2">
-                  Total Ahorrado
+                <div className="d-flex align-items-center justify-content-between mb-2">
+                  <div className="kpi-title text-warning mb-0">Total Ahorrado</div>
+                  <button 
+                    type="button" 
+                    className="btn btn-sm btn-link text-muted p-0 text-decoration-none"
+                    onClick={togglePrivacy}
+                    title={isPrivate ? "Mostrar saldos" : "Ocultar saldos"}
+                  >
+                    <i className={`bi ${isPrivate ? "bi-eye-slash-fill text-warning" : "bi-eye"}`}></i>
+                  </button>
                 </div>
-                <div className="kpi-amount mb-2">{formatoMoneda(totalAhorros)}</div>
+                <div className={`kpi-amount mb-2 ${isPrivate ? "privacy-masked" : ""}`}>
+                  {maskAmount(formatoMoneda(totalAhorros))}
+                </div>
                 <div className="d-flex align-items-center gap-2">
                   <span className="dot dot-amber"></span>
                   <span className="text-muted small">Fondo acumulado en ARS</span>
@@ -184,7 +206,7 @@ export default function Home() {
                   </Link>
                 </div>
 
-                <div className="flex-grow-1 d-flex align-items-center justify-content-center" style={{ minHeight: "260px" }}>
+                <div className={`flex-grow-1 d-flex align-items-center justify-content-center ${isPrivate ? "privacy-blur" : ""}`} style={{ minHeight: "260px" }}>
                   {loadingAnalytics ? (
                     <div className="text-center text-muted small py-4">
                       <span className="spinner-border spinner-border-sm me-2" role="status"></span>
@@ -208,7 +230,7 @@ export default function Home() {
                   </Link>
                 </div>
 
-                <div className="flex-grow-1" style={{ minHeight: "260px" }}>
+                <div className={`flex-grow-1 ${isPrivate ? "privacy-blur" : ""}`} style={{ minHeight: "260px" }}>
                   {loadingAnalytics ? (
                     <div className="text-center text-muted small py-4">
                       <span className="spinner-border spinner-border-sm me-2" role="status"></span>
@@ -293,8 +315,8 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                      <div className={`fw-bold ${esIngreso ? "text-success" : "text-danger"}`}>
-                        {esIngreso ? "+" : "-"}{formatoMoneda(tx.monto)}
+                      <div className={`fw-bold ${esIngreso ? "text-success" : "text-danger"} ${isPrivate ? "privacy-masked" : ""}`}>
+                        {maskAmount(`${esIngreso ? "+" : "-"}${formatoMoneda(tx.monto)}`)}
                       </div>
                     </div>
                   );

@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { BalanceProvider } from "./context/BalanceContext";
+import { PrivacyProvider } from "./context/PrivacyContext";
 import { ToastProvider } from "./context/ToastContext";
 import { QuickMovementProvider } from "./context/QuickMovementContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -128,11 +129,13 @@ export default function App() {
       <ThemeProvider>
         <AuthProvider>
           <BalanceProvider>
-            <ToastProvider>
-              <QuickMovementProvider>
-                <MainLayout />
-              </QuickMovementProvider>
-            </ToastProvider>
+            <PrivacyProvider>
+              <ToastProvider>
+                <QuickMovementProvider>
+                  <MainLayout />
+                </QuickMovementProvider>
+              </ToastProvider>
+            </PrivacyProvider>
           </BalanceProvider>
         </AuthProvider>
       </ThemeProvider>

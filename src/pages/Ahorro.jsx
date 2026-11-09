@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
+import { usePrivacy } from "../context/PrivacyContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useToast } from "../context/ToastContext";
 import { 
@@ -24,6 +25,7 @@ import { useDolar } from "../hooks/useDolar";
 export default function Ahorro() {
   const { user, isDemo } = useAuth();
   const { totalAhorros, totalAhorrosUSD, totalAhorrosEUR } = useBalance();
+  const { isPrivate, maskAmount } = usePrivacy();
   const { openQuickModal, movementCounter, notifyMovementSaved } = useQuickMovement();
   const { showToast } = useToast();
   const { blue } = useDolar();
@@ -207,7 +209,9 @@ export default function Ahorro() {
                 </span>
                 <i className="bi bi-cash-stack text-warning fs-4"></i>
               </div>
-              <div className="h3 fw-bold mb-0 text-dark">{formatoMoneda(totalAhorros, "ARS")}</div>
+              <div className={`h3 fw-bold mb-0 text-dark ${isPrivate ? "privacy-masked" : ""}`}>
+                {maskAmount(formatoMoneda(totalAhorros, "ARS"))}
+              </div>
               <span className="text-muted small">Total acumulado en pesos</span>
             </div>
           </div>
@@ -231,10 +235,12 @@ export default function Ahorro() {
                   <i className="bi bi-currency-dollar text-success fs-4"></i>
                 </div>
               </div>
-              <div className="h3 fw-bold mb-0 text-success">{formatoMoneda(totalAhorrosUSD, "USD")}</div>
+              <div className={`h3 fw-bold mb-0 text-success ${isPrivate ? "privacy-masked" : ""}`}>
+                {maskAmount(formatoMoneda(totalAhorrosUSD, "USD"))}
+              </div>
               {blue?.venta > 0 && totalAhorrosUSD > 0 ? (
                 <div className="small mt-1 d-flex align-items-center gap-1 text-muted" title={`Valuación estimada en pesos: ${totalAhorrosUSD} USD × $${blue.venta.toLocaleString('es-AR')}`}>
-                  <span>≈ <strong className="text-dark">{formatoMoneda(totalAhorrosUSD * blue.venta, "ARS")}</strong></span>
+                  <span>≈ <strong className={`text-dark ${isPrivate ? "privacy-masked" : ""}`}>{maskAmount(formatoMoneda(totalAhorrosUSD * blue.venta, "ARS"))}</strong></span>
                   <span className="badge bg-light text-secondary border px-1" style={{ fontSize: "0.68rem" }}>al Blue</span>
                 </div>
               ) : (
@@ -251,7 +257,9 @@ export default function Ahorro() {
                 </span>
                 <i className="bi bi-currency-euro text-primary fs-4"></i>
               </div>
-              <div className="h3 fw-bold mb-0 text-primary">{formatoMoneda(totalAhorrosEUR, "EUR")}</div>
+              <div className={`h3 fw-bold mb-0 text-primary ${isPrivate ? "privacy-masked" : ""}`}>
+                {maskAmount(formatoMoneda(totalAhorrosEUR, "EUR"))}
+              </div>
               <span className="text-muted small">Fondo en moneda europea</span>
             </div>
           </div>
@@ -292,20 +300,20 @@ export default function Ahorro() {
 
                     <div>
                       {tieneMonto ? (
-                        <div className="small">
+                        <div className={`small ${isPrivate ? "privacy-masked" : ""}`}>
                           {datos.ARS !== 0 && (
                             <div className="fw-bold" style={{ color: cat.color }}>
-                              {formatoMoneda(datos.ARS, "ARS")}
+                              {maskAmount(formatoMoneda(datos.ARS, "ARS"))}
                             </div>
                           )}
                           {datos.USD !== 0 && (
                             <div className="fw-bold text-success">
-                              {formatoMoneda(datos.USD, "USD")}
+                              {maskAmount(formatoMoneda(datos.USD, "USD"))}
                             </div>
                           )}
                           {datos.EUR !== 0 && (
                             <div className="fw-bold text-primary">
-                              {formatoMoneda(datos.EUR, "EUR")}
+                              {maskAmount(formatoMoneda(datos.EUR, "EUR"))}
                             </div>
                           )}
                         </div>
@@ -340,8 +348,8 @@ export default function Ahorro() {
                 <tr>
                   <th scope="row" className="text-start fw-semibold" style={{ color: "var(--accent-warning)" }}>Ahorro Neto</th>
                   {tablaAhorros.map((item) => (
-                    <td key={item.mes} className={item.monto > 0 ? "fw-bold" : "text-muted"} style={{ color: item.monto > 0 ? "var(--accent-warning)" : undefined }}>
-                      ${formatoNumber(item.monto)}
+                    <td key={item.mes} className={`${item.monto > 0 ? "fw-bold" : "text-muted"} ${isPrivate ? "privacy-masked" : ""}`} style={{ color: item.monto > 0 ? "var(--accent-warning)" : undefined }}>
+                      {maskAmount(`$${formatoNumber(item.monto)}`)}
                     </td>
                   ))}
                 </tr>
@@ -416,8 +424,8 @@ export default function Ahorro() {
                     </div>
 
                     <div className="d-flex align-items-center gap-3">
-                      <div className={`fw-bold ${esExtraccion ? "text-danger" : "text-warning"}`}>
-                        {esExtraccion ? "-" : "+"}{formatoMoneda(h.monto, moneda)}
+                      <div className={`fw-bold ${esExtraccion ? "text-danger" : "text-warning"} ${isPrivate ? "privacy-masked" : ""}`}>
+                        {maskAmount(`${esExtraccion ? "-" : "+"}${formatoMoneda(h.monto, moneda)}`)}
                       </div>
                       <button
                         type="button"

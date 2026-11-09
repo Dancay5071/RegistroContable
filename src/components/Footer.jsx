@@ -45,7 +45,7 @@ export default function Footer() {
               <span className="d-none d-sm-inline">LinkedIn</span>
             </a>
             <a 
-              href="mailto:daniinad175.may30@gmail.com" 
+              href="mailto:daniela.cabrera5071@gmail.com" 
               className="footer-link-pill"
               title="Enviar correo a Daniela Cabrera"
               aria-label="Gmail"

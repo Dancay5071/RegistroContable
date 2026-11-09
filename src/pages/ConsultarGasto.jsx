@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { usePrivacy } from "../context/PrivacyContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { 
   getDemoGastos, 
@@ -22,6 +23,7 @@ import { exportGastosToCSV, printFinancialReport } from "../utils/exportUtils";
 export default function ConsultarGasto() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
+  const { isPrivate, maskAmount } = usePrivacy();
   const { movementCounter } = useQuickMovement();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
@@ -208,7 +210,7 @@ export default function ConsultarGasto() {
                 <div>
                   <h4 className="h5 fw-bold text-dark mb-0">Gastos de {mes} {anio}</h4>
                   <span className="badge bg-danger bg-opacity-10 text-danger px-3 py-1 fs-6 mt-1">
-                    Total: {formatoMoneda(sumaGastos)}
+                    Total: {maskAmount(formatoMoneda(sumaGastos))}
                   </span>
                 </div>
 
@@ -315,7 +317,7 @@ export default function ConsultarGasto() {
                                 {cat.nombre}
                               </span>
                             </td>
-                            <td className="text-danger fw-bold">{formatoMoneda(gasto.monto)}</td>
+                            <td className={`text-danger fw-bold ${isPrivate ? "privacy-masked" : ""}`}>{maskAmount(formatoMoneda(gasto.monto))}</td>
                             <td className="text-end">
                               <button 
                                 type="button" 
@@ -342,7 +344,7 @@ export default function ConsultarGasto() {
                   <tfoot className="table-light">
                     <tr>
                       <td colSpan="2" className="fw-bold">Total Consultado ({gastosFiltrados.length} registros)</td>
-                      <td className="fw-bold text-danger fs-6">{formatoMoneda(sumaGastos)}</td>
+                      <td className={`fw-bold text-danger fs-6 ${isPrivate ? "privacy-masked" : ""}`}>{maskAmount(formatoMoneda(sumaGastos))}</td>
                       <td></td>
                     </tr>
                   </tfoot>

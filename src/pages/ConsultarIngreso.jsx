@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { usePrivacy } from "../context/PrivacyContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { 
   getDemoIngresos, 
@@ -22,6 +23,7 @@ import { exportIngresosToCSV, printFinancialReport } from "../utils/exportUtils"
 export default function ConsultarIngreso() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
+  const { isPrivate, maskAmount } = usePrivacy();
   const { movementCounter } = useQuickMovement();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
@@ -209,7 +211,7 @@ export default function ConsultarIngreso() {
                 <div>
                   <h4 className="h5 fw-bold text-dark mb-0">Ingresos de {mes} {anio}</h4>
                   <span className="badge bg-success bg-opacity-10 text-success px-3 py-1 fs-6 mt-1">
-                    Total: {formatoMoneda(sumaIngresos)}
+                    Total: {maskAmount(formatoMoneda(sumaIngresos))}
                   </span>
                 </div>
 
@@ -316,7 +318,7 @@ export default function ConsultarIngreso() {
                                 {cat.nombre}
                               </span>
                             </td>
-                            <td className="text-success fw-bold">{formatoMoneda(ingreso.monto)}</td>
+                            <td className={`text-success fw-bold ${isPrivate ? "privacy-masked" : ""}`}>{maskAmount(formatoMoneda(ingreso.monto))}</td>
                             <td className="text-end">
                               <button 
                                 type="button" 
@@ -343,7 +345,7 @@ export default function ConsultarIngreso() {
                   <tfoot className="table-light">
                     <tr>
                       <td colSpan="2" className="fw-bold">Total Consultado ({ingresosFiltrados.length} registros)</td>
-                      <td className="fw-bold text-success fs-6">{formatoMoneda(sumaIngresos)}</td>
+                      <td className={`fw-bold text-success fs-6 ${isPrivate ? "privacy-masked" : ""}`}>{maskAmount(formatoMoneda(sumaIngresos))}</td>
                       <td></td>
                     </tr>
                   </tfoot>

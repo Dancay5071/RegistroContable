@@ -292,6 +292,23 @@ body {
   color: #ffffff !important;
 }
 
+[data-theme="dark"] .btn-privacy-toggle {
+  background: #1a253a !important;
+  border-color: #2b3a55 !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .btn-privacy-toggle:hover {
+  background: #23314c !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-privacy-toggle.active {
+  background: #283347 !important;
+  border-color: #f59e0b !important;
+}
+
 [data-theme="dark"] .user-avatar-badge {
   background: linear-gradient(135deg, #10b981, #059669) !important;
   color: #ffffff !important;
@@ -923,6 +940,55 @@ body {
 
 [data-theme="lavender"] .btn-user-profile:hover {
   background: #dbccf0 !important;
+}
+
+.btn-privacy-toggle {
+  width: 34px;
+  height: 34px;
+  background: #ebe3d3;
+  border: 1px solid #dcd1be;
+  color: #1e293b;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-privacy-toggle:hover {
+  background: #ded5c2;
+  border-color: #cbbeaa;
+  color: #1e293b;
+  transform: translateY(-1px);
+}
+
+.btn-privacy-toggle.active {
+  background: #fef3c7;
+  border-color: #f59e0b;
+}
+
+[data-theme="mint"] .btn-privacy-toggle {
+  background: #d8ece0 !important;
+  border-color: #c0ded0 !important;
+}
+
+[data-theme="ocean"] .btn-privacy-toggle {
+  background: #dbe8f3 !important;
+  border-color: #c4daf0 !important;
+}
+
+[data-theme="lavender"] .btn-privacy-toggle {
+  background: #e6ddf5 !important;
+  border-color: #d4c5ee !important;
+}
+
+[data-privacy="true"] .privacy-blur {
+  filter: blur(7px) !important;
+  user-select: none !important;
+  transition: filter 0.2s ease;
+}
+
+[data-privacy="true"] .privacy-masked {
+  font-family: monospace;
+  letter-spacing: 2px;
 }
 
 .dot {
