@@ -236,7 +236,7 @@ export default function Ahorro() {
           <div className="col-12 col-md-4">
             <div className="hero-balance-card hero-ahorro p-3 rounded-4 shadow-sm h-100">
               <div className="d-flex align-items-center justify-content-between mb-1">
-                <span className="badge px-2 py-1 rounded-pill small fw-semibold" style={{ backgroundColor: "#fef0cd", color: "#854d0e" }}>
+                <span className="badge px-2 py-1 rounded-pill small fw-semibold badge-warning-pastel" style={{ backgroundColor: "#fef0cd", color: "#854d0e" }}>
                   🇦🇷 Pesos (ARS)
                 </span>
                 <i className="bi bi-cash-stack text-warning fs-4"></i>
@@ -249,9 +249,9 @@ export default function Ahorro() {
           </div>
 
           <div className="col-12 col-md-4">
-            <div className="hero-balance-card hero-usd p-3 rounded-4 shadow-sm h-100" style={{ background: "linear-gradient(135deg, #f0f7f2 0%, #e6f3ec 100%)", borderColor: "#b8ddc1" }}>
+            <div className="hero-balance-card hero-usd p-3 rounded-4 shadow-sm h-100">
               <div className="d-flex align-items-center justify-content-between mb-1">
-                <span className="badge px-2 py-1 rounded-pill small fw-semibold" style={{ backgroundColor: "#e2f2e5", color: "#166534" }}>
+                <span className="badge px-2 py-1 rounded-pill small fw-semibold badge-success-pastel" style={{ backgroundColor: "#e2f2e5", color: "#166534" }}>
                   🇺🇸 Dólares (USD)
                 </span>
                 <div className="d-flex align-items-center gap-1">
@@ -282,9 +282,9 @@ export default function Ahorro() {
           </div>
 
           <div className="col-12 col-md-4">
-            <div className="hero-balance-card hero-eur p-3 rounded-4 shadow-sm h-100" style={{ background: "linear-gradient(135deg, #f2f5f9 0%, #e6edf6 100%)", borderColor: "#bed3e8" }}>
+            <div className="hero-balance-card hero-eur p-3 rounded-4 shadow-sm h-100">
               <div className="d-flex align-items-center justify-content-between mb-1">
-                <span className="badge px-2 py-1 rounded-pill small fw-semibold" style={{ backgroundColor: "#ddeaf6", color: "#1e40af" }}>
+                <span className="badge px-2 py-1 rounded-pill small fw-semibold badge-primary-pastel" style={{ backgroundColor: "#ddeaf6", color: "#1e40af" }}>
                   🇪🇺 Euros (EUR)
                 </span>
                 <i className="bi bi-currency-euro text-primary fs-4"></i>
@@ -317,12 +317,12 @@ export default function Ahorro() {
               return (
                 <div key={cat.id} className="col-12 col-sm-6 col-md-4">
                   <div 
-                    className="p-3 rounded-3 border d-flex flex-column justify-content-between h-100"
+                    className="p-3 rounded-3 border d-flex flex-column justify-content-between h-100 ahorro-categoria-card"
                     style={{ backgroundColor: cat.bg, borderColor: cat.border }}
                   >
                     <div className="d-flex align-items-center gap-2 mb-2">
                       <div 
-                        className="rounded-circle d-flex align-items-center justify-content-center"
+                        className="rounded-circle d-flex align-items-center justify-content-center ahorro-icon-circle"
                         style={{ width: "32px", height: "32px", backgroundColor: "#ffffff", color: cat.color }}
                       >
                         <i className={`bi ${cat.icon}`}></i>
@@ -396,7 +396,7 @@ export default function Ahorro() {
               <i className="bi bi-clock-history text-secondary"></i> Historial Reciente de Ahorro
             </h5>
             <div className="d-flex align-items-center gap-2">
-              <span className="badge px-3 py-1 rounded-pill small" style={{ backgroundColor: "#fef0cd", color: "#854d0e" }}>
+              <span className="badge px-3 py-1 rounded-pill small badge-warning-pastel" style={{ backgroundColor: "#fef0cd", color: "#854d0e" }}>
                 {historialAhorros.length} registros
               </span>
               {historialAhorros.length > 0 && (
@@ -445,7 +445,7 @@ export default function Ahorro() {
                           >
                             {cat.nombre}
                           </span>
-                          <span className="badge bg-light text-dark border small" style={{ fontSize: "0.68rem" }}>
+                          <span className="badge border small" style={{ backgroundColor: "var(--bg-card-alt)", color: "var(--text-main)", fontSize: "0.68rem" }}>
                             {moneda}
                           </span>
                           <span className="text-muted small" style={{ fontSize: "0.75rem" }}>

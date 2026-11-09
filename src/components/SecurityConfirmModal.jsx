@@ -24,7 +24,7 @@ export default function SecurityConfirmModal() {
       style={{ backgroundColor: "rgba(0, 0, 0, 0.7)", zIndex: 1090 }}
     >
       <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: "440px" }}>
-        <div className="modal-content border-0 rounded-4 shadow-lg p-2 text-dark">
+        <div className="modal-content border-0 rounded-4 shadow-lg p-2">
           <div className="modal-header border-bottom-0 pb-1">
             <h5 className="modal-title fw-bold fs-6 d-flex align-items-center gap-2">
               <i className={`bi ${danger ? "bi-shield-exclamation text-danger" : "bi-shield-check text-success"} fs-5`}></i>
@@ -45,7 +45,7 @@ export default function SecurityConfirmModal() {
               <div className="p-3 rounded-3 mb-2 border" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
                 <div className="d-flex align-items-center gap-2 mb-1">
                   <i className="bi bi-info-circle-fill text-primary small"></i>
-                  <strong className="small text-dark">Impacto en tus Balances:</strong>
+                  <strong className="small">Impacto en tus Balances:</strong>
                 </div>
                 <div className="small text-muted ps-3 border-start border-2 border-primary">
                   {impact}

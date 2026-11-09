@@ -176,7 +176,7 @@ export default function LoginModal() {
       style={{ backgroundColor: "rgba(0, 0, 0, 0.65)" }}
     >
       <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content text-dark shadow-lg border-0">
+        <div className="modal-content shadow-lg border-0 rounded-4">
           <div className="modal-header border-bottom-0 pb-0">
             <h5 className="modal-title fw-bold d-flex align-items-center gap-2" id="loginModalLabel">
               <FinTrackLogo size={26} showText={false} />
@@ -201,7 +201,7 @@ export default function LoginModal() {
                 <>
                   <button 
                     type="button" 
-                    className="btn btn-outline-dark w-100 mb-3 d-flex align-items-center justify-content-center gap-2 py-2 shadow-sm bg-white"
+                    className="btn btn-outline-dark w-100 mb-3 d-flex align-items-center justify-content-center gap-2 py-2 shadow-sm rounded-3"
                     onClick={handleGoogleLogin}
                     disabled={loading}
                   >

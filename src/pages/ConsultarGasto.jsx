@@ -188,7 +188,7 @@ export default function ConsultarGasto() {
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
       <div className="container d-flex flex-wrap justify-content-center gap-4">
-        <div className="card-consulta p-4 rounded-4 shadow-sm border bg-white">
+        <div className="card-consulta p-4 rounded-4 shadow-sm border">
           <p className="tituloCard text-dark d-flex align-items-center gap-2">
             <i className="bi bi-funnel text-primary"></i> Filtrar Gastos
           </p>
@@ -204,7 +204,7 @@ export default function ConsultarGasto() {
           </button>
         </div>
 
-        <div className="consulta p-4 rounded-4 shadow-sm border bg-white">
+        <div className="consulta p-4 rounded-4 shadow-sm border">
           {loading && <Loader />}
 
           {!loading && gastos === null && (
@@ -389,7 +389,7 @@ export default function ConsultarGasto() {
           style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content bg-white text-dark border-0 shadow-lg">
+            <div className="modal-content rounded-4 border-0 shadow-lg">
               <div className="modal-header border-bottom">
                 <h5 className="modal-title fw-bold">Editar Gasto</h5>
                 <button 

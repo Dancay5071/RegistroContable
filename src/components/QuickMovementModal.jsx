@@ -236,10 +236,10 @@ export default function QuickMovementModal() {
               ></button>
             </div>
 
-            <div className="btn-group w-100 p-1 rounded-3" style={{ backgroundColor: "#ede5d5" }} role="group">
+            <div className="btn-group w-100 p-1 rounded-3 quick-tabs-container border" role="group">
               <button 
                 type="button" 
-                className={`btn btn-sm fw-semibold rounded-2 ${activeTab === 'gasto' ? 'btn-danger shadow-sm' : 'btn-link text-dark text-decoration-none'}`}
+                className={`btn btn-sm fw-semibold rounded-2 quick-tab-btn ${activeTab === 'gasto' ? 'active-gasto shadow-sm' : 'text-decoration-none'}`}
                 onClick={() => setActiveTab('gasto')}
                 disabled={loading}
               >
@@ -247,7 +247,7 @@ export default function QuickMovementModal() {
               </button>
               <button 
                 type="button" 
-                className={`btn btn-sm fw-semibold rounded-2 ${activeTab === 'ingreso' ? 'btn-success shadow-sm' : 'btn-link text-dark text-decoration-none'}`}
+                className={`btn btn-sm fw-semibold rounded-2 quick-tab-btn ${activeTab === 'ingreso' ? 'active-ingreso shadow-sm' : 'text-decoration-none'}`}
                 onClick={() => setActiveTab('ingreso')}
                 disabled={loading}
               >
@@ -255,7 +255,7 @@ export default function QuickMovementModal() {
               </button>
               <button 
                 type="button" 
-                className={`btn btn-sm fw-semibold rounded-2 ${activeTab === 'ahorro' ? 'btn-warning shadow-sm text-white' : 'btn-link text-dark text-decoration-none'}`}
+                className={`btn btn-sm fw-semibold rounded-2 quick-tab-btn ${activeTab === 'ahorro' ? 'active-ahorro shadow-sm' : 'text-decoration-none'}`}
                 onClick={() => setActiveTab('ahorro')}
                 disabled={loading}
               >

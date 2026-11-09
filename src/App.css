@@ -424,10 +424,79 @@ body {
 
 [data-theme="dark"] .principal,
 [data-theme="dark"] .card,
-[data-theme="dark"] .modal-content {
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .card-consulta,
+[data-theme="dark"] .consulta {
   background-color: var(--bg-card) !important;
   border-color: var(--border-subtle) !important;
   color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .bg-white {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .bg-light {
+  background-color: var(--bg-card-alt) !important;
+  border-color: var(--border-subtle) !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .tarjeta-gasto {
+  background: linear-gradient(180deg, #171d2b 0%, #151a24 100%) !important;
+  border-color: #3f2834 !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .tarjeta-ingreso {
+  background: linear-gradient(180deg, #142125 0%, #111d1e 100%) !important;
+  border-color: #1a3c2c !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .tarjeta-ahorro {
+  background: linear-gradient(180deg, #1c1f2b 0%, #141824 100%) !important;
+  border-color: #3b3524 !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .ahorro-categoria-card {
+  background-color: var(--bg-card-alt) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+[data-theme="dark"] .ahorro-icon-circle {
+  background-color: var(--bg-card) !important;
+}
+
+[data-theme="dark"] .badge-warning-pastel {
+  background-color: rgba(251, 191, 36, 0.18) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(251, 191, 36, 0.3) !important;
+}
+
+[data-theme="dark"] .badge-success-pastel {
+  background-color: rgba(16, 185, 129, 0.18) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+[data-theme="dark"] .badge-primary-pastel {
+  background-color: rgba(56, 189, 248, 0.18) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+}
+
+[data-theme="dark"] .btn-outline-dark {
+  border-color: var(--border-subtle) !important;
+  color: #f8fafc !important;
+  background-color: var(--bg-card-alt) !important;
+}
+
+[data-theme="dark"] .btn-outline-dark:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
 }
 
 [data-theme="dark"] .modal-header,
@@ -491,6 +560,11 @@ body {
   background-repeat: no-repeat !important;
   background-position: right 0.75rem center !important;
   background-size: 16px 12px !important;
+}
+
+[data-theme="dark"] select option {
+  background-color: #131c2e !important;
+  color: #f8fafc !important;
 }
 
 [data-theme="dark"] .form-control::placeholder {
@@ -1255,6 +1329,16 @@ body {
 
 .hero-balance-card.hero-ahorro .kpi-amount {
   color: #854d0e !important;
+}
+
+.hero-balance-card.hero-usd {
+  background: linear-gradient(135deg, #f0f7f2 0%, #e6f3ec 100%) !important;
+  border-color: #b8ddc1 !important;
+}
+
+.hero-balance-card.hero-eur {
+  background: linear-gradient(135deg, #f2f5f9 0%, #e6edf6 100%) !important;
+  border-color: #bed3e8 !important;
 }
 
 .kpi-title {

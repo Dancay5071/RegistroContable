@@ -94,9 +94,9 @@ export default function NuevoGasto() {
                   type="button"
                   className={`btn btn-sm px-2 py-1 rounded-pill d-flex align-items-center gap-1 small ${categoria === cat.id ? 'fw-bold border-2 shadow-sm' : 'opacity-80'}`}
                   style={{
-                    backgroundColor: categoria === cat.id ? cat.bg : "#f1ede4",
-                    color: cat.color,
-                    borderColor: cat.border,
+                    backgroundColor: categoria === cat.id ? cat.bg : "var(--bg-card-alt)",
+                    color: categoria === cat.id ? cat.color : "var(--text-main)",
+                    borderColor: categoria === cat.id ? cat.border : "var(--border-subtle)",
                     fontSize: "0.82rem"
                   }}
                   onClick={() => setCategoria(cat.id)}

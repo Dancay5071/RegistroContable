@@ -53,7 +53,7 @@ export default function ScreenLockModal() {
           >
             {inicial}
           </div>
-          <h4 className="fw-bold mb-0 text-dark fs-5">{nombreUsuario}</h4>
+          <h4 className="fw-bold mb-0 fs-5">{nombreUsuario}</h4>
           <span className="text-muted small">Sesión protegida por inactividad</span>
         </div>
 

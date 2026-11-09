@@ -276,7 +276,7 @@ export default function SecurityAuditModal() {
       style={{ backgroundColor: "rgba(15, 23, 42, 0.75)", zIndex: 1080 }}
     >
       <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-        <div className="modal-content border-0 rounded-4 shadow-lg text-dark">
+        <div className="modal-content border-0 rounded-4 shadow-lg">
           
           <div className="modal-header border-bottom py-3 px-4">
             <div className="d-flex align-items-center gap-2">
@@ -299,12 +299,13 @@ export default function SecurityAuditModal() {
             ></button>
           </div>
 
-          <div className="px-4 pt-3 border-bottom bg-light">
+          <div className="px-4 pt-3 border-bottom" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
             <ul className="nav nav-tabs border-bottom-0 gap-2 flex-wrap">
               <li className="nav-item">
                 <button
                   type="button"
-                  className={`nav-link py-2 px-3 fw-semibold border-0 rounded-top-3 ${activeTab === "backup" ? "active text-success bg-white shadow-sm" : "text-secondary"}`}
+                  className={`nav-link py-2 px-3 fw-semibold border-0 rounded-top-3 ${activeTab === "backup" ? "active text-success shadow-sm" : "text-secondary"}`}
+                  style={activeTab === "backup" ? { backgroundColor: "var(--bg-card)" } : {}}
                   onClick={() => setActiveTab("backup")}
                 >
                   <i className="bi bi-database-down me-2"></i>
@@ -314,7 +315,8 @@ export default function SecurityAuditModal() {
               <li className="nav-item">
                 <button
                   type="button"
-                  className={`nav-link py-2 px-3 fw-semibold border-0 rounded-top-3 ${activeTab === "health" ? "active text-success bg-white shadow-sm" : "text-secondary"}`}
+                  className={`nav-link py-2 px-3 fw-semibold border-0 rounded-top-3 ${activeTab === "health" ? "active text-success shadow-sm" : "text-secondary"}`}
+                  style={activeTab === "health" ? { backgroundColor: "var(--bg-card)" } : {}}
                   onClick={() => setActiveTab("health")}
                 >
                   <i className="bi bi-shield-check me-2"></i>
@@ -324,7 +326,8 @@ export default function SecurityAuditModal() {
               <li className="nav-item">
                 <button
                   type="button"
-                  className={`nav-link py-2 px-3 fw-semibold border-0 rounded-top-3 ${activeTab === "audit" ? "active text-success bg-white shadow-sm" : "text-secondary"}`}
+                  className={`nav-link py-2 px-3 fw-semibold border-0 rounded-top-3 ${activeTab === "audit" ? "active text-success shadow-sm" : "text-secondary"}`}
+                  style={activeTab === "audit" ? { backgroundColor: "var(--bg-card)" } : {}}
                   onClick={() => setActiveTab("audit")}
                 >
                   <i className="bi bi-journal-text me-2"></i>
@@ -372,7 +375,7 @@ export default function SecurityAuditModal() {
                     </button>
                   </div>
 
-                  <div className="p-3 rounded-3 border bg-white mb-3">
+                  <div className="p-3 rounded-3 border mb-3" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
                     <div className="form-check form-switch d-flex align-items-center justify-content-between ps-0 mb-0">
                       <label className="form-check-label small fw-semibold cursor-pointer d-flex align-items-center gap-2" htmlFor="encryptionSwitch">
                         <i className="bi bi-key-fill text-warning fs-5"></i>
@@ -418,13 +421,13 @@ export default function SecurityAuditModal() {
                   </div>
 
                   <div className="d-flex flex-wrap gap-2 pt-2 border-top">
-                    <span className="badge bg-light text-secondary border">
+                    <span className="badge border" style={{ backgroundColor: "var(--bg-card-alt)", color: "var(--text-main)" }}>
                       <i className="bi bi-check2-circle text-success me-1"></i> Formato universal JSON
                     </span>
-                    <span className="badge bg-light text-secondary border">
+                    <span className="badge border" style={{ backgroundColor: "var(--bg-card-alt)", color: "var(--text-main)" }}>
                       <i className="bi bi-shield-lock text-primary me-1"></i> Checksum de Integridad
                     </span>
-                    <span className="badge bg-light text-secondary border">
+                    <span className="badge border" style={{ backgroundColor: "var(--bg-card-alt)", color: "var(--text-main)" }}>
                       <i className="bi bi-lock-fill text-warning me-1"></i> Cifrado Grado Bancario AES-256
                     </span>
                   </div>
@@ -567,7 +570,7 @@ export default function SecurityAuditModal() {
             {activeTab === "health" && (
               <div className="d-flex flex-column gap-4">
                 
-                <div className="p-4 rounded-4 border bg-white shadow-sm">
+                <div className="p-4 rounded-4 border shadow-sm" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
                   <div className="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
                     <div className="d-flex align-items-center gap-3">
                       <div className={`p-3 rounded-circle bg-${scoreTheme.color}-subtle text-${scoreTheme.color}`}>
@@ -642,7 +645,7 @@ export default function SecurityAuditModal() {
                   </div>
 
                   {showPinSetup && (
-                    <div className="p-3 rounded-3 border bg-white shadow-sm">
+                    <div className="p-3 rounded-3 border shadow-sm" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
                       <label className="form-label small fw-semibold text-muted mb-1">
                         Ingresa un nuevo PIN numérico de 4 dígitos:
                       </label>
@@ -726,7 +729,7 @@ export default function SecurityAuditModal() {
                         </span>
                       </div>
                     </div>
-                    <span className="badge bg-light text-secondary border">
+                    <span className="badge border" style={{ backgroundColor: "var(--bg-card-alt)", color: "var(--text-main)" }}>
                       {isCloudAccount ? "Nube Firebase" : "Modo Demo"}
                     </span>
                   </div>

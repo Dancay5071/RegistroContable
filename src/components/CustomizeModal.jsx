@@ -192,7 +192,7 @@ export default function CustomizeModal() {
               </div>
 
               {bgType === "custom" && (
-                <div className="p-3 rounded-3 border bg-light mt-3 fade-in">
+                <div className="p-3 rounded-3 border mt-3 fade-in" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
                   <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
                     <div>
                       <h6 className="fw-bold mb-1 small text-dark">Subir imagen desde tu dispositivo</h6>

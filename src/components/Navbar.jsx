@@ -191,7 +191,7 @@ export default function Navbar() {
                       title="Copias de seguridad y bitácora de auditoría"
                     >
                       <i className="bi bi-shield-shaded text-success"></i>
-                      <span>Auditoría & Respaldos</span>
+                      <span>Auditoría y Respaldos</span>
                     </button>
                   </li>
 
