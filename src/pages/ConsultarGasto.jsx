@@ -5,6 +5,7 @@ import { useToast } from "../context/ToastContext";
 import { usePrivacy } from "../context/PrivacyContext";
 import { useSecurity } from "../context/SecurityContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
+import { useVencimientos } from "../context/VencimientosContext";
 import { 
   getDemoGastos, 
   updateDemoGasto, 
@@ -16,7 +17,7 @@ import {
   deleteGastoUser 
 } from "../services/dbService";
 import { logActivity } from "../services/auditService";
-import { MESES, formatoMoneda } from "../utils/formatters";
+import { MESES, formatoMoneda, formatoFechaVencimiento, getDiasRestantes } from "../utils/formatters";
 import { CATEGORIAS_GASTO, getCategoriaGasto } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
 import Loader from "../components/Loader";
@@ -28,6 +29,7 @@ export default function ConsultarGasto() {
   const { isPrivate, maskAmount } = usePrivacy();
   const { requestConfirmation } = useSecurity();
   const { movementCounter } = useQuickMovement();
+  const { marcarComoPagado } = useVencimientos();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -36,6 +38,7 @@ export default function ConsultarGasto() {
 
   const [filtroTexto, setFiltroTexto] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("todas");
+  const [filtroEstado, setFiltroEstado] = useState("todos");
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -43,6 +46,8 @@ export default function ConsultarGasto() {
   const [editDescripcion, setEditDescripcion] = useState("");
   const [editCategoria, setEditCategoria] = useState("Supermercado");
   const [editMonto, setEditMonto] = useState("");
+  const [editFechaVencimiento, setEditFechaVencimiento] = useState("");
+  const [editEstadoPago, setEditEstadoPago] = useState("pagado");
   const [editLoading, setEditLoading] = useState(false);
 
   useEffect(() => {
@@ -78,6 +83,8 @@ export default function ConsultarGasto() {
     setEditDescripcion(item.descripcion);
     setEditCategoria(item.categoria || "Otros");
     setEditMonto(item.monto.toString());
+    setEditFechaVencimiento(item.fechaVencimiento || "");
+    setEditEstadoPago(item.estadoPago || "pagado");
     setEditModalOpen(true);
   };
 
@@ -97,7 +104,9 @@ export default function ConsultarGasto() {
         updateDemoGasto(mes, anio, editingIndex, {
           descripcion: editDescripcion.trim(),
           monto: montoNum,
-          categoria: editCategoria
+          categoria: editCategoria,
+          fechaVencimiento: editFechaVencimiento || null,
+          estadoPago: editEstadoPago
         });
         setGastos(getDemoGastos(mes, anio));
       } else {
@@ -107,7 +116,10 @@ export default function ConsultarGasto() {
           descripcion: editDescripcion.trim(),
           monto: montoNum,
           montoAnterior: editingItem.monto,
-          categoria: editCategoria
+          categoria: editCategoria,
+          fechaVencimiento: editFechaVencimiento || null,
+          estadoPago: editEstadoPago,
+          estadoPagoAnterior: editingItem.estadoPago || "pagado"
         });
         await consultarGasto();
       }
@@ -130,14 +142,38 @@ export default function ConsultarGasto() {
     }
   };
 
+  const handlePagarItem = (gasto) => {
+    requestConfirmation({
+      title: "¿Confirmar pago de servicio?",
+      message: `Estás por registrar el pago de "${gasto.descripcion}" por ${formatoMoneda(gasto.monto)}.`,
+      impact: `Se descontará ${formatoMoneda(gasto.monto)} de tu Saldo Disponible.`,
+      confirmText: "Sí, registrar pago",
+      danger: false,
+      onConfirm: async () => {
+        setLoading(true);
+        try {
+          await marcarComoPagado(gasto);
+          await consultarGasto();
+        } finally {
+          setLoading(false);
+        }
+      }
+    });
+  };
+
   const handleEliminarGasto = (index) => {
     const item = gastos[index];
     if (!item) return;
 
+    const esPendiente = item.estadoPago === "pendiente";
+    const impactoTexto = esPendiente
+      ? "Se cancelará este vencimiento pendiente sin alterar tu Saldo Disponible."
+      : `Se reintegrará ${formatoMoneda(item.monto)} a tu Saldo Disponible.`;
+
     requestConfirmation({
       title: "¿Eliminar este gasto?",
-      message: `Estás a punto de eliminar "${item.descripcion}". Esta acción actualizará tus saldos.`,
-      impact: `Se reintegrará ${formatoMoneda(item.monto)} a tu Saldo Disponible.`,
+      message: `Estás a punto de eliminar "${item.descripcion}".`,
+      impact: impactoTexto,
       confirmText: "Sí, eliminar gasto",
       danger: true,
       onConfirm: async () => {
@@ -150,7 +186,8 @@ export default function ConsultarGasto() {
             await deleteGastoUser(user.uid, item.id, {
               mes,
               anio,
-              monto: item.monto
+              monto: item.monto,
+              estadoPago: item.estadoPago || "pagado"
             });
             await consultarGasto();
           }
@@ -180,7 +217,10 @@ export default function ConsultarGasto() {
       (g.categoria && g.categoria.toLowerCase().includes(filtroTexto.toLowerCase()));
     const coincideCat = filtroCategoria === "todas" || 
       (g.categoria || "Otros").toLowerCase() === filtroCategoria.toLowerCase();
-    return coincideTexto && coincideCat;
+    const esPendiente = g.estadoPago === "pendiente";
+    const coincideEstado = filtroEstado === "todos" || 
+      (filtroEstado === "pendientes" ? esPendiente : !esPendiente);
+    return coincideTexto && coincideCat && coincideEstado;
   });
 
   const sumaGastos = gastosFiltrados.reduce((acc, g) => acc + (Number(g.monto) || 0), 0);
@@ -298,6 +338,36 @@ export default function ConsultarGasto() {
                 </div>
               </div>
 
+              <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                <div className="btn-group p-1 rounded-pill" style={{ backgroundColor: "var(--bg-card-alt)", border: "1px solid var(--border-subtle)" }}>
+                  <button
+                    type="button"
+                    className={`btn btn-sm rounded-pill px-3 fw-semibold border-0 ${filtroEstado === 'todos' ? 'btn-dark shadow-sm' : 'text-muted'}`}
+                    onClick={() => setFiltroEstado('todos')}
+                  >
+                    Todos ({gastos.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn btn-sm rounded-pill px-3 fw-semibold border-0 ${filtroEstado === 'pagados' ? 'btn-success text-white shadow-sm' : 'text-muted'}`}
+                    onClick={() => setFiltroEstado('pagados')}
+                  >
+                    Pagados ({gastos.filter(g => g.estadoPago !== 'pendiente').length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn btn-sm rounded-pill px-3 fw-semibold border-0 ${filtroEstado === 'pendientes' ? 'btn-warning text-dark shadow-sm' : 'text-muted'}`}
+                    onClick={() => setFiltroEstado('pendientes')}
+                  >
+                    Pendientes ({gastos.filter(g => g.estadoPago === 'pendiente').length})
+                  </button>
+                </div>
+
+                <span className="small text-muted">
+                  Mostrando <strong>{gastosFiltrados.length}</strong> de {gastos.length} gastos
+                </span>
+              </div>
+
               <div className="table-responsive">
                 <table className="table table-hover align-middle">
                   <thead>
@@ -318,8 +388,10 @@ export default function ConsultarGasto() {
                     ) : (
                       gastosFiltrados.map((gasto, index) => {
                         const cat = getCategoriaGasto(gasto.categoria);
+                        const esPendiente = gasto.estadoPago === "pendiente";
+                        const dias = getDiasRestantes(gasto.fechaVencimiento);
                         return (
-                          <tr key={gasto.id || index}>
+                          <tr key={gasto.id || index} className={esPendiente ? (dias !== null && dias < 0 ? 'table-danger' : 'table-warning') : ''}>
                             <td>
                               <div 
                                 className="rounded-circle d-flex align-items-center justify-content-center"
@@ -331,20 +403,46 @@ export default function ConsultarGasto() {
                             </td>
                             <td>
                               <div className="fw-semibold text-dark">{gasto.descripcion}</div>
-                              <span 
-                                className="badge px-2 py-0 rounded-pill" 
-                                style={{ 
-                                  backgroundColor: cat.bg, 
-                                  color: cat.color, 
-                                  border: `1px solid ${cat.border}`,
-                                  fontSize: "0.72rem"
-                                }}
-                              >
-                                {cat.nombre}
-                              </span>
+                              <div className="d-flex flex-wrap align-items-center gap-1 mt-1">
+                                <span 
+                                  className="badge px-2 py-0 rounded-pill" 
+                                  style={{ 
+                                    backgroundColor: cat.bg, 
+                                    color: cat.color, 
+                                    border: `1px solid ${cat.border}`,
+                                    fontSize: "0.72rem"
+                                  }}
+                                >
+                                  {cat.nombre}
+                                </span>
+                                {esPendiente ? (
+                                  <span 
+                                    className={`badge px-2 py-0 rounded-pill small ${dias !== null && dias < 0 ? 'bg-danger text-white' : (dias === 0 ? 'bg-warning text-dark' : 'bg-warning bg-opacity-25 text-warning-emphasis border border-warning')}`} 
+                                    style={{ fontSize: "0.7rem" }}
+                                  >
+                                    {dias !== null && dias < 0 ? `¡Vencido (${Math.abs(dias)}d)!` : (dias === 0 ? '¡Vence hoy!' : `Vence: ${formatoFechaVencimiento(gasto.fechaVencimiento)}`)}
+                                  </span>
+                                ) : (
+                                  gasto.fechaVencimiento && (
+                                    <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-0 rounded-pill" style={{ fontSize: "0.68rem" }}>
+                                      <i className="bi bi-check2 me-1"></i> Pagado
+                                    </span>
+                                  )
+                                )}
+                              </div>
                             </td>
                             <td className={`text-danger fw-bold ${isPrivate ? "privacy-masked" : ""}`}>{maskAmount(formatoMoneda(gasto.monto))}</td>
                             <td className="text-end">
+                              {esPendiente && (
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-success rounded-pill px-2 py-0 me-2 shadow-sm"
+                                  title="Marcar este gasto como pagado"
+                                  onClick={() => handlePagarItem(gasto)}
+                                >
+                                  <i className="bi bi-check2-circle me-1"></i> Pagar
+                                </button>
+                              )}
                               <button 
                                 type="button" 
                                 className="btn btn-outline-secondary btn-sm me-2" 
@@ -443,6 +541,39 @@ export default function ConsultarGasto() {
                         Vista previa: {formatoMoneda(Number(editMonto))}
                       </div>
                     )}
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label text-muted small fw-semibold">Fecha de Vencimiento (opcional)</label>
+                    <input 
+                      type="date" 
+                      className="form-control form-control-sm"
+                      value={editFechaVencimiento}
+                      onChange={(e) => setEditFechaVencimiento(e.target.value)}
+                      disabled={editLoading}
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label text-muted small fw-semibold d-block">Estado del Pago</label>
+                    <div className="btn-group w-100" role="group">
+                      <button
+                        type="button"
+                        className={`btn btn-sm ${editEstadoPago === 'pagado' ? 'btn-success text-white fw-bold shadow-sm' : 'btn-outline-secondary'}`}
+                        onClick={() => setEditEstadoPago('pagado')}
+                        disabled={editLoading}
+                      >
+                        <i className="bi bi-check2-circle me-1"></i> Pagado
+                      </button>
+                      <button
+                        type="button"
+                        className={`btn btn-sm ${editEstadoPago === 'pendiente' ? 'btn-warning text-dark fw-bold shadow-sm' : 'btn-outline-secondary'}`}
+                        onClick={() => setEditEstadoPago('pendiente')}
+                        disabled={editLoading}
+                      >
+                        <i className="bi bi-clock-history me-1"></i> Pendiente
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div className="modal-footer border-top">

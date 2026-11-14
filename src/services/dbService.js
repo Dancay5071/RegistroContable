@@ -47,13 +47,13 @@ export function listenUserBalances(userId, callback) {
   });
 }
 
-export async function addGastoUser(userId, { mes, anio, descripcion, monto, categoria = "Otros" }) {
+export async function addGastoUser(userId, { mes, anio, descripcion, monto, categoria = "Otros", fechaVencimiento, estadoPago = "pagado" }) {
   const clave = `${mes}_${anio}`;
   const transaccionesRef = collection(db, "users", userId, "transacciones");
   const balancesRef = doc(db, "users", userId, "config", "balances");
   const resumenRef = doc(db, "users", userId, "resumenesMensuales", clave);
 
-  const docRef = await addDoc(transaccionesRef, {
+  const payload = {
     tipo: "gasto",
     descripcion: descripcion.trim(),
     categoria: categoria || "Otros",
@@ -61,18 +61,87 @@ export async function addGastoUser(userId, { mes, anio, descripcion, monto, cate
     mes,
     anio: Number(anio),
     claveMesAnio: clave,
+    estadoPago: estadoPago || (fechaVencimiento ? "pendiente" : "pagado"),
     createdAt: serverTimestamp()
+  };
+  if (fechaVencimiento) {
+    payload.fechaVencimiento = fechaVencimiento;
+  }
+
+  const docRef = await addDoc(transaccionesRef, payload);
+
+  if (payload.estadoPago === "pagado") {
+    await setDoc(balancesRef, {
+      montoActual: increment(-monto)
+    }, { merge: true });
+
+    await setDoc(resumenRef, {
+      totalGastos: increment(monto)
+    }, { merge: true });
+  }
+
+  return docRef.id;
+}
+
+export async function pagarGastoPendienteUser(userId, id, gasto) {
+  const transaccionRef = doc(db, "users", userId, "transacciones", id);
+  const balancesRef = doc(db, "users", userId, "config", "balances");
+  const clave = gasto.claveMesAnio || `${gasto.mes}_${gasto.anio}`;
+  const resumenRef = doc(db, "users", userId, "resumenesMensuales", clave);
+
+  await updateDoc(transaccionRef, {
+    estadoPago: "pagado",
+    fechaPago: serverTimestamp()
   });
 
   await setDoc(balancesRef, {
-    montoActual: increment(-monto)
+    montoActual: increment(-Number(gasto.monto))
   }, { merge: true });
 
   await setDoc(resumenRef, {
-    totalGastos: increment(monto)
+    totalGastos: increment(Number(gasto.monto))
   }, { merge: true });
+}
 
-  return docRef.id;
+export function listenGastosPendientesUser(userId, callback) {
+  if (!userId) return () => {};
+  const transaccionesRef = collection(db, "users", userId, "transacciones");
+  const q = query(
+    transaccionesRef,
+    where("estadoPago", "==", "pendiente")
+  );
+
+  return onSnapshot(q, (snap) => {
+    const items = [];
+    snap.forEach((d) => {
+      const data = d.data();
+      if (data.tipo === "gasto") {
+        items.push({ id: d.id, ...data });
+      }
+    });
+    callback(items);
+  }, (err) => {
+    console.error("Error al escuchar gastos pendientes:", err);
+    callback([]);
+  });
+}
+
+export async function getGastosPendientesUser(userId) {
+  if (!userId) return [];
+  const transaccionesRef = collection(db, "users", userId, "transacciones");
+  const q = query(
+    transaccionesRef,
+    where("estadoPago", "==", "pendiente")
+  );
+  const snap = await getDocs(q);
+  const items = [];
+  snap.forEach((d) => {
+    const data = d.data();
+    if (data.tipo === "gasto") {
+      items.push({ id: d.id, ...data });
+    }
+  });
+  return items;
 }
 
 export async function getGastosUser(userId, mes, anio) {
@@ -93,13 +162,14 @@ export async function getGastosUser(userId, mes, anio) {
   return items;
 }
 
-export async function updateGastoUser(userId, id, { mes, anio, descripcion, monto, montoAnterior, categoria }) {
+export async function updateGastoUser(userId, id, { mes, anio, descripcion, monto, montoAnterior, categoria, fechaVencimiento, estadoPago, estadoPagoAnterior }) {
   const clave = `${mes}_${anio}`;
   const transaccionRef = doc(db, "users", userId, "transacciones", id);
   const balancesRef = doc(db, "users", userId, "config", "balances");
   const resumenRef = doc(db, "users", userId, "resumenesMensuales", clave);
 
-  const diferencia = Number(monto) - Number(montoAnterior);
+  const prevPaid = (estadoPagoAnterior || "pagado") === "pagado";
+  const nextPaid = (estadoPago || (prevPaid ? "pagado" : "pendiente")) === "pagado";
 
   const updatePayload = {
     descripcion: descripcion.trim(),
@@ -107,20 +177,27 @@ export async function updateGastoUser(userId, id, { mes, anio, descripcion, mont
     updatedAt: serverTimestamp()
   };
   if (categoria) updatePayload.categoria = categoria;
+  if (fechaVencimiento !== undefined) updatePayload.fechaVencimiento = fechaVencimiento;
+  if (estadoPago) updatePayload.estadoPago = estadoPago;
 
   await updateDoc(transaccionRef, updatePayload);
 
-  if (diferencia !== 0) {
-    await updateDoc(balancesRef, {
-      montoActual: increment(-diferencia)
-    });
-    await updateDoc(resumenRef, {
-      totalGastos: increment(diferencia)
-    });
+  if (prevPaid && nextPaid) {
+    const diferencia = Number(monto) - Number(montoAnterior);
+    if (diferencia !== 0) {
+      await updateDoc(balancesRef, { montoActual: increment(-diferencia) });
+      await updateDoc(resumenRef, { totalGastos: increment(diferencia) });
+    }
+  } else if (!prevPaid && nextPaid) {
+    await updateDoc(balancesRef, { montoActual: increment(-Number(monto)) });
+    await updateDoc(resumenRef, { totalGastos: increment(Number(monto)) });
+  } else if (prevPaid && !nextPaid) {
+    await updateDoc(balancesRef, { montoActual: increment(Number(montoAnterior)) });
+    await updateDoc(resumenRef, { totalGastos: increment(-Number(montoAnterior)) });
   }
 }
 
-export async function deleteGastoUser(userId, id, { mes, anio, monto }) {
+export async function deleteGastoUser(userId, id, { mes, anio, monto, estadoPago = "pagado" }) {
   const clave = `${mes}_${anio}`;
   const transaccionRef = doc(db, "users", userId, "transacciones", id);
   const balancesRef = doc(db, "users", userId, "config", "balances");
@@ -128,13 +205,15 @@ export async function deleteGastoUser(userId, id, { mes, anio, monto }) {
 
   await deleteDoc(transaccionRef);
 
-  await updateDoc(balancesRef, {
-    montoActual: increment(Number(monto))
-  });
+  if (estadoPago === "pagado") {
+    await updateDoc(balancesRef, {
+      montoActual: increment(Number(monto))
+    });
 
-  await updateDoc(resumenRef, {
-    totalGastos: increment(-Number(monto))
-  });
+    await updateDoc(resumenRef, {
+      totalGastos: increment(-Number(monto))
+    });
+  }
 }
 
 export async function addIngresoUser(userId, { mes, anio, descripcion, montoBruto, porcentajeAhorro = 0, montoAhorro = 0, categoria = "Sueldo" }) {

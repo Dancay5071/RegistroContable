@@ -4,7 +4,7 @@ import { useToast } from "../context/ToastContext";
 import { addDemoGasto } from "../services/demoData";
 import { addGastoUser } from "../services/dbService";
 import { logActivity } from "../services/auditService";
-import { MESES, formatoMoneda, sanitizeTextInput } from "../utils/formatters";
+import { MESES, formatoMoneda, sanitizeTextInput, getFechaHoyISO, formatoFechaVencimiento } from "../utils/formatters";
 import { CATEGORIAS_GASTO } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
 import Loader from "../components/Loader";
@@ -18,6 +18,9 @@ export default function NuevoGasto() {
   const [categoria, setCategoria] = useState("Supermercado");
   const [descripcion, setDescripcion] = useState("");
   const [monto, setMonto] = useState("");
+  const [tieneVencimiento, setTieneVencimiento] = useState(false);
+  const [fechaVencimiento, setFechaVencimiento] = useState(getFechaHoyISO());
+  const [estadoPago, setEstadoPago] = useState("pendiente");
   const [loading, setLoading] = useState(false);
 
   const addQuickAmount = (val) => {
@@ -38,29 +41,49 @@ export default function NuevoGasto() {
     setLoading(true);
 
     try {
+      const payloadGasto = {
+        descripcion: descFinal,
+        monto: montoNum,
+        categoria
+      };
+
+      if (tieneVencimiento) {
+        payloadGasto.fechaVencimiento = fechaVencimiento;
+        payloadGasto.estadoPago = estadoPago;
+      } else {
+        payloadGasto.estadoPago = "pagado";
+      }
+
       if (isDemo) {
-        addDemoGasto(mes, anio, { descripcion: descFinal, monto: montoNum, categoria });
+        addDemoGasto(mes, anio, payloadGasto);
       } else {
         await addGastoUser(user.uid, {
           mes,
           anio,
-          descripcion: descFinal,
-          monto: montoNum,
-          categoria
+          ...payloadGasto
         });
       }
 
       await logActivity(user?.uid, isDemo, {
-        action: "CREAR_GASTO",
+        action: tieneVencimiento && estadoPago === "pendiente" ? "PROGRAMAR_VENCIMIENTO" : "CREAR_GASTO",
         category: "GASTOS",
-        details: `Gasto registrado: ${descFinal} (${categoria})`,
+        details: tieneVencimiento && estadoPago === "pendiente" 
+          ? `Vencimiento programado: ${descFinal} (${categoria}) para ${formatoFechaVencimiento(fechaVencimiento)}`
+          : `Gasto registrado: ${descFinal} (${categoria})`,
         amount: montoNum,
         currency: "ARS"
       });
 
-      showToast("Gasto registrado y saldo actualizado con éxito.", "success");
+      if (tieneVencimiento && estadoPago === "pendiente") {
+        showToast(`Vencimiento programado con éxito para el ${formatoFechaVencimiento(fechaVencimiento)}.`, "info");
+      } else {
+        showToast("Gasto registrado y saldo actualizado con éxito.", "success");
+      }
+
       setDescripcion("");
       setMonto("");
+      setTieneVencimiento(false);
+      setEstadoPago("pendiente");
     } catch (error) {
       console.error("Error al agregar gasto:", error);
       showToast("Error al registrar el gasto: " + error.message, "error");
@@ -151,6 +174,70 @@ export default function NuevoGasto() {
               <div className="amount-preview-badge">
                 <i className="bi bi-tag text-danger"></i>
                 Vista previa: {formatoMoneda(Number(monto))}
+              </div>
+            )}
+          </div>
+
+          <div className="p-3 rounded-3 border mb-4" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
+            <div className="form-check form-switch d-flex align-items-center justify-content-between p-0 mb-0">
+              <label className="form-check-label fw-semibold text-dark small cursor-pointer" htmlFor="switchVencimientoGasto">
+                <i className="bi bi-calendar-event text-warning me-1"></i> ¿Programar fecha de vencimiento?
+              </label>
+              <input 
+                className="form-check-input ms-2" 
+                type="checkbox" 
+                role="switch" 
+                id="switchVencimientoGasto" 
+                checked={tieneVencimiento}
+                onChange={(e) => setTieneVencimiento(e.target.checked)}
+                disabled={loading}
+              />
+            </div>
+
+            {tieneVencimiento && (
+              <div className="mt-3 pt-3 border-top">
+                <div className="mb-2">
+                  <label className="form-label text-muted small fw-semibold mb-1">
+                    Fecha Límite / Vencimiento
+                  </label>
+                  <input 
+                    type="date" 
+                    className="form-control form-control-sm"
+                    value={fechaVencimiento}
+                    onChange={(e) => setFechaVencimiento(e.target.value)}
+                    required={tieneVencimiento}
+                    disabled={loading}
+                  />
+                </div>
+
+                <div>
+                  <label className="form-label text-muted small fw-semibold mb-1 d-block">
+                    Estado Inicial del Gasto
+                  </label>
+                  <div className="btn-group w-100" role="group">
+                    <button
+                      type="button"
+                      className={`btn btn-sm ${estadoPago === 'pendiente' ? 'btn-warning text-dark fw-bold shadow-sm' : 'btn-outline-secondary'}`}
+                      onClick={() => setEstadoPago('pendiente')}
+                      disabled={loading}
+                    >
+                      <i className="bi bi-clock-history me-1"></i> Pendiente de Pago
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn btn-sm ${estadoPago === 'pagado' ? 'btn-success text-white fw-bold shadow-sm' : 'btn-outline-secondary'}`}
+                      onClick={() => setEstadoPago('pagado')}
+                      disabled={loading}
+                    >
+                      <i className="bi bi-check2-circle me-1"></i> Ya Pagado
+                    </button>
+                  </div>
+                  <span className="text-muted d-block mt-1" style={{ fontSize: "0.72rem" }}>
+                    {estadoPago === "pendiente" 
+                      ? "Se añadirá a tus alertas y solo se descontará cuando lo marques como pagado." 
+                      : "Se descontará inmediatamente de tu saldo disponible."}
+                  </span>
+                </div>
               </div>
             )}
           </div>

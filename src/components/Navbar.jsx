@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { usePrivacy } from "../context/PrivacyContext";
 import { useSecurity } from "../context/SecurityContext";
+import { useVencimientos } from "../context/VencimientosContext";
 import { useDolar } from "../hooks/useDolar";
 import { logActivity } from "../services/auditService";
 import FinTrackLogo from "./FinTrackLogo";
@@ -14,6 +15,7 @@ export default function Navbar() {
   const { isPrivate, togglePrivacy } = usePrivacy();
   const { lockScreen, openAuditModal } = useSecurity();
   const { blue, oficial, mep, refresh: refreshDolar } = useDolar();
+  const { vencidos, porVencer, openVencimientosModal } = useVencimientos();
   const [isOpen, setIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -55,6 +57,8 @@ export default function Navbar() {
   const nombreUsuario = user?.displayName || (isDemo ? "Daniela" : (user?.email?.split("@")[0] || "Usuario"));
   const inicial = nombreUsuario.charAt(0).toUpperCase();
   const userPhoto = !isDemo ? user?.photoURL : null;
+  const alertasCount = (vencidos?.length || 0) + (porVencer?.length || 0);
+  const hasVencidos = (vencidos?.length || 0) > 0;
 
   return (
     <nav className="navbar navbar-expand-lg" id="navbar">
@@ -77,16 +81,33 @@ export default function Navbar() {
           )}
         </div>
 
-        <button 
-          className="navbar-toggler border-0 ms-auto" 
-          type="button" 
-          onClick={() => setIsOpen(!isOpen)}
-          aria-controls="navbarSupportedContent" 
-          aria-expanded={isOpen} 
-          aria-label="Toggle navigation"
-        >
-          <i className="bi bi-list fs-2"></i>
-        </button>
+        <div className="d-flex align-items-center gap-2 ms-auto d-lg-none">
+          <button
+            className="btn btn-notification-bell d-flex align-items-center justify-content-center rounded-circle shadow-sm position-relative"
+            type="button"
+            onClick={openVencimientosModal}
+            aria-label="Vencimientos pendientes"
+            title={alertasCount > 0 ? `${alertasCount} vencimientos pendientes` : "Sin vencimientos"}
+          >
+            <i className={`bi ${alertasCount > 0 ? "bi-bell-fill" : "bi-bell"} ${hasVencidos ? "text-danger" : (alertasCount > 0 ? "text-warning" : "text-muted")}`}></i>
+            {alertasCount > 0 && (
+              <span className={`bell-badge-count ${hasVencidos ? 'bg-danger text-white bell-pulse-red' : 'bg-warning text-dark'}`}>
+                {alertasCount}
+              </span>
+            )}
+          </button>
+
+          <button 
+            className="navbar-toggler border-0 p-1" 
+            type="button" 
+            onClick={() => setIsOpen(!isOpen)}
+            aria-controls="navbarSupportedContent" 
+            aria-expanded={isOpen} 
+            aria-label="Toggle navigation"
+          >
+            <i className="bi bi-list fs-2"></i>
+          </button>
+        </div>
 
         <div className={`collapse navbar-collapse ${isOpen ? "show" : ""}`} id="navbarSupportedContent">
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-1">
@@ -116,6 +137,21 @@ export default function Navbar() {
           </ul>
 
           <div className="d-none d-lg-flex align-items-center gap-2 ms-lg-3">
+            <button
+              className="btn btn-notification-bell d-flex align-items-center justify-content-center rounded-circle shadow-sm position-relative"
+              type="button"
+              onClick={openVencimientosModal}
+              title={alertasCount > 0 ? `${alertasCount} vencimientos pendientes (clic para ver)` : "Sin vencimientos pendientes"}
+              aria-label="Alertas de vencimientos y pagos pendientes"
+            >
+              <i className={`bi ${alertasCount > 0 ? "bi-bell-fill" : "bi-bell"} ${hasVencidos ? "text-danger" : (alertasCount > 0 ? "text-warning" : "text-muted")}`}></i>
+              {alertasCount > 0 && (
+                <span className={`bell-badge-count ${hasVencidos ? 'bg-danger text-white bell-pulse-red' : 'bg-warning text-dark'}`}>
+                  {alertasCount}
+                </span>
+              )}
+            </button>
+
             <button
               className={`btn btn-privacy-toggle d-flex align-items-center justify-content-center rounded-circle shadow-sm ${isPrivate ? 'active' : ''}`}
               type="button"
@@ -266,6 +302,21 @@ export default function Navbar() {
               >
                 <i className={`bi ${isPrivate ? "bi-eye-slash-fill" : "bi-eye"}`}></i>
                 <span>{isPrivate ? "Saldos Ocultos (Toca para ver)" : "Modo Privacidad (Ocultar saldos)"}</span>
+              </button>
+
+              <button
+                className={`btn ${alertasCount > 0 ? (hasVencidos ? 'btn-danger' : 'btn-warning text-dark') : 'btn-outline-secondary'} btn-sm w-100 d-flex align-items-center justify-content-between rounded-pill py-2 px-3`}
+                onClick={() => { closeMenu(); openVencimientosModal(); }}
+              >
+                <span className="d-flex align-items-center gap-2">
+                  <i className={`bi ${alertasCount > 0 ? "bi-bell-fill" : "bi-bell"}`}></i>
+                  <span>Vencimientos y Facturas</span>
+                </span>
+                {alertasCount > 0 && (
+                  <span className="badge rounded-pill bg-light text-dark fw-bold">
+                    {alertasCount}
+                  </span>
+                )}
               </button>
 
               <button

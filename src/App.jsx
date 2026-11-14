@@ -6,11 +6,13 @@ import { PrivacyProvider } from "./context/PrivacyContext";
 import { SecurityProvider } from "./context/SecurityContext";
 import { ToastProvider } from "./context/ToastContext";
 import { QuickMovementProvider } from "./context/QuickMovementContext";
+import { VencimientosProvider } from "./context/VencimientosContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LoginModal from "./components/LoginModal";
 import QuickMovementModal from "./components/QuickMovementModal";
+import VencimientosModal from "./components/VencimientosModal";
 import CustomizeModal from "./components/CustomizeModal";
 import SecurityConfirmModal from "./components/SecurityConfirmModal";
 import ScreenLockModal from "./components/ScreenLockModal";
@@ -121,6 +123,7 @@ function MainLayout() {
       <Footer />
       <LoginModal />
       <QuickMovementModal />
+      <VencimientosModal />
       <CustomizeModal />
       <SecurityConfirmModal />
       <ScreenLockModal />
@@ -140,7 +143,9 @@ export default function App() {
               <SecurityProvider>
                 <ToastProvider>
                   <QuickMovementProvider>
-                    <MainLayout />
+                    <VencimientosProvider>
+                      <MainLayout />
+                    </VencimientosProvider>
                   </QuickMovementProvider>
                 </ToastProvider>
               </SecurityProvider>

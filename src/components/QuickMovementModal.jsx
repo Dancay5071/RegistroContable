@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useToast } from "../context/ToastContext";
-import { MESES, MONEDAS, formatoMoneda, sanitizeTextInput } from "../utils/formatters";
+import { MESES, MONEDAS, formatoMoneda, sanitizeTextInput, getFechaHoyISO, formatoFechaVencimiento } from "../utils/formatters";
 import { CATEGORIAS_GASTO, CATEGORIAS_INGRESO, CATEGORIAS_AHORRO } from "../utils/categories";
 import { 
   addGastoUser, 
@@ -34,10 +34,13 @@ export default function QuickMovementModal() {
   const [categoriaIngreso, setCategoriaIngreso] = useState("Sueldo");
   const [categoriaAhorro, setCategoriaAhorro] = useState("Emergencia");
   const [monedaAhorro, setMonedaAhorro] = useState("ARS");
-  const [modoAhorroIngreso, setModoAhorroIngreso] = useState("porcentaje"); // "porcentaje" | "monto"
+  const [modoAhorroIngreso, setModoAhorroIngreso] = useState("porcentaje");
   const [porcentajeAhorro, setPorcentajeAhorro] = useState(0);
   const [montoAhorroFijoIngreso, setMontoAhorroFijoIngreso] = useState("");
-  const [tipoAhorro, setTipoAhorro] = useState("agregar"); // "agregar" | "extraer"
+  const [tipoAhorro, setTipoAhorro] = useState("agregar");
+  const [tieneVencimientoGasto, setTieneVencimientoGasto] = useState(false);
+  const [fechaVencimientoGasto, setFechaVencimientoGasto] = useState(getFechaHoyISO());
+  const [estadoPagoGasto, setEstadoPagoGasto] = useState("pendiente");
   const [loading, setLoading] = useState(false);
 
   if (!isOpen || !user) return null;
@@ -49,6 +52,8 @@ export default function QuickMovementModal() {
     setPorcentajeAhorro(0);
     setMontoAhorroFijoIngreso("");
     setTipoAhorro("agregar");
+    setTieneVencimientoGasto(false);
+    setEstadoPagoGasto("pendiente");
   };
 
   const handleClose = () => {
@@ -75,29 +80,43 @@ export default function QuickMovementModal() {
     try {
       if (activeTab === "gasto") {
         const descFinal = sanitizeTextInput(descripcion) || categoriaGasto;
+        const payloadGasto = {
+          descripcion: descFinal,
+          monto: montoNum,
+          categoria: categoriaGasto
+        };
+
+        if (tieneVencimientoGasto) {
+          payloadGasto.fechaVencimiento = fechaVencimientoGasto;
+          payloadGasto.estadoPago = estadoPagoGasto;
+        } else {
+          payloadGasto.estadoPago = "pagado";
+        }
+
         if (isDemo) {
-          addDemoGasto(mes, anio, {
-            descripcion: descFinal,
-            monto: montoNum,
-            categoria: categoriaGasto
-          });
+          addDemoGasto(mes, anio, payloadGasto);
         } else {
           await addGastoUser(user.uid, {
             mes,
             anio,
-            descripcion: descFinal,
-            monto: montoNum,
-            categoria: categoriaGasto
+            ...payloadGasto
           });
         }
         await logActivity(user?.uid, isDemo, {
-          action: "CREAR_GASTO",
+          action: tieneVencimientoGasto && estadoPagoGasto === "pendiente" ? "PROGRAMAR_VENCIMIENTO" : "CREAR_GASTO",
           category: "GASTOS",
-          details: `Gasto rápido: ${descFinal} (${categoriaGasto})`,
+          details: tieneVencimientoGasto && estadoPagoGasto === "pendiente"
+            ? `Vencimiento rápido programado: ${descFinal} (${categoriaGasto}) para ${formatoFechaVencimiento(fechaVencimientoGasto)}`
+            : `Gasto rápido: ${descFinal} (${categoriaGasto})`,
           amount: montoNum,
           currency: "ARS"
         });
-        showToast(`Gasto de $${montoNum.toLocaleString()} registrado.`, "success");
+
+        if (tieneVencimientoGasto && estadoPagoGasto === "pendiente") {
+          showToast(`Vencimiento programado para el ${formatoFechaVencimiento(fechaVencimientoGasto)}.`, "info");
+        } else {
+          showToast(`Gasto de $${montoNum.toLocaleString()} registrado.`, "success");
+        }
       } else if (activeTab === "ingreso") {
         const descFinal = sanitizeTextInput(descripcion) || categoriaIngreso;
         let ahorroFinal = 0;
@@ -340,6 +359,62 @@ export default function QuickMovementModal() {
                       <div className="amount-preview-badge">
                         <i className="bi bi-tag text-danger"></i>
                         Vista previa: {formatoMoneda(Number(monto))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-2 rounded-3 border mb-3" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
+                    <div className="form-check form-switch d-flex align-items-center justify-content-between p-0 mb-0">
+                      <label className="form-check-label fw-semibold text-dark small cursor-pointer" htmlFor="switchVencimientoQuick">
+                        <i className="bi bi-calendar-event text-warning me-1"></i> ¿Asignar fecha de vencimiento?
+                      </label>
+                      <input 
+                        className="form-check-input ms-2" 
+                        type="checkbox" 
+                        role="switch" 
+                        id="switchVencimientoQuick" 
+                        checked={tieneVencimientoGasto}
+                        onChange={(e) => setTieneVencimientoGasto(e.target.checked)}
+                        disabled={loading}
+                      />
+                    </div>
+
+                    {tieneVencimientoGasto && (
+                      <div className="mt-2 pt-2 border-top">
+                        <div className="mb-2">
+                          <label className="form-label text-muted small fw-semibold mb-1">
+                            Fecha Límite
+                          </label>
+                          <input 
+                            type="date" 
+                            className="form-control form-control-sm"
+                            value={fechaVencimientoGasto}
+                            onChange={(e) => setFechaVencimientoGasto(e.target.value)}
+                            required={tieneVencimientoGasto}
+                            disabled={loading}
+                          />
+                        </div>
+
+                        <div>
+                          <div className="btn-group w-100" role="group">
+                            <button
+                              type="button"
+                              className={`btn btn-sm ${estadoPagoGasto === 'pendiente' ? 'btn-warning text-dark fw-bold shadow-sm' : 'btn-outline-secondary'}`}
+                              onClick={() => setEstadoPagoGasto('pendiente')}
+                              disabled={loading}
+                            >
+                              <i className="bi bi-clock-history me-1"></i> Pendiente
+                            </button>
+                            <button
+                              type="button"
+                              className={`btn btn-sm ${estadoPagoGasto === 'pagado' ? 'btn-success text-white fw-bold shadow-sm' : 'btn-outline-secondary'}`}
+                              onClick={() => setEstadoPagoGasto('pagado')}
+                              disabled={loading}
+                            >
+                              <i className="bi bi-check2-circle me-1"></i> Pagado
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>

@@ -1779,3 +1779,77 @@ footer {
   display: none;
 }
 
+.btn-notification-bell {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  width: 38px;
+  height: 38px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.btn-notification-bell:hover {
+  background-color: var(--bg-card-alt);
+  border-color: var(--border-focus);
+}
+
+.bell-badge-count {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  font-size: 0.65rem;
+  padding: 0.18rem 0.38rem;
+  line-height: 1;
+  font-weight: 700;
+  border-radius: 9999px;
+  border: 2px solid var(--bg-card);
+}
+
+.bell-pulse-red {
+  animation: bellPulse 1.8s infinite;
+}
+
+@keyframes bellPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+.vencimiento-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border-left-width: 4px !important;
+}
+
+.vencimiento-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.vencimiento-card.vencido {
+  border-left-color: #ef4444 !important;
+  background-color: rgba(239, 68, 68, 0.06) !important;
+}
+
+.vencimiento-card.por-vencer {
+  border-left-color: #f59e0b !important;
+  background-color: rgba(245, 158, 11, 0.06) !important;
+}
+
+.vencimiento-card.pagado {
+  border-left-color: #10b981 !important;
+  background-color: rgba(16, 185, 129, 0.05) !important;
+}
+
+[data-theme="dark"] .vencimiento-card.vencido {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+[data-theme="dark"] .vencimiento-card.por-vencer {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+}
+
+.border-start-4 {
+  border-left-width: 4px !important;
+}
+

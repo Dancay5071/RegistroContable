@@ -43,3 +43,31 @@ export function sanitizeTextInput(input, maxLength = 150) {
     .trim()
     .slice(0, maxLength);
 }
+
+export function getFechaHoyISO() {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function getDiasRestantes(fechaStr) {
+  if (!fechaStr) return null;
+  const partes = fechaStr.split("-");
+  if (partes.length !== 3) return null;
+  const vencimiento = new Date(Number(partes[0]), Number(partes[1]) - 1, Number(partes[2]));
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  vencimiento.setHours(0, 0, 0, 0);
+  const diffTiempo = vencimiento.getTime() - hoy.getTime();
+  return Math.round(diffTiempo / (1000 * 60 * 60 * 24));
+}
+
+export function formatoFechaVencimiento(fechaStr) {
+  if (!fechaStr) return "";
+  const partes = fechaStr.split("-");
+  if (partes.length !== 3) return fechaStr;
+  const mesNombre = MESES[Number(partes[1]) - 1] ? MESES[Number(partes[1]) - 1].substring(0, 3) : partes[1];
+  return `${Number(partes[2])} ${mesNombre} ${partes[0]}`;
+}

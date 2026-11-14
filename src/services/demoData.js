@@ -7,6 +7,15 @@ function generarDatosIniciales() {
   const currentMonthIdx = new Date().getMonth();
   const currentMonthName = MESES[currentMonthIdx];
   const prevMonthName = MESES[(currentMonthIdx - 1 + 12) % 12];
+  const now = new Date();
+  const formatOffsetDate = (days) => {
+    const target = new Date(now);
+    target.setDate(target.getDate() + days);
+    const y = target.getFullYear();
+    const m = String(target.getMonth() + 1).padStart(2, "0");
+    const d = String(target.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
 
   return {
     balances: {
@@ -17,16 +26,17 @@ function generarDatosIniciales() {
     },
     gastosPorMes: {
       [`${currentMonthName}_${currentYear}`]: [
-        { descripcion: "Supermercado mensual", monto: 48500.00, categoria: "Supermercado", fecha: new Date().toISOString() },
-        { descripcion: "Factura de Luz (Edenor)", monto: 14200.00, categoria: "Servicios", fecha: new Date().toISOString() },
-        { descripcion: "Internet y cable fibra", monto: 18900.00, categoria: "Servicios", fecha: new Date().toISOString() },
-        { descripcion: "Combustible vehículo", monto: 25000.00, categoria: "Transporte", fecha: new Date().toISOString() },
-        { descripcion: "Farmacia y medicamentos", monto: 8600.00, categoria: "Salud", fecha: new Date().toISOString() }
+        { id: "demo_gasto_1", descripcion: "Supermercado mensual", monto: 48500.00, categoria: "Supermercado", estadoPago: "pagado", fecha: new Date().toISOString() },
+        { id: "demo_gasto_2", descripcion: "Factura de Luz (Edenor)", monto: 14200.00, categoria: "Servicios", fechaVencimiento: formatOffsetDate(3), estadoPago: "pendiente", fecha: new Date().toISOString() },
+        { id: "demo_gasto_3", descripcion: "Internet y cable fibra", monto: 18900.00, categoria: "Servicios", fechaVencimiento: formatOffsetDate(6), estadoPago: "pendiente", fecha: new Date().toISOString() },
+        { id: "demo_gasto_4", descripcion: "Seguro Automotor", monto: 12500.00, categoria: "Transporte", fechaVencimiento: formatOffsetDate(-2), estadoPago: "pendiente", fecha: new Date().toISOString() },
+        { id: "demo_gasto_5", descripcion: "Combustible vehículo", monto: 25000.00, categoria: "Transporte", estadoPago: "pagado", fecha: new Date().toISOString() },
+        { id: "demo_gasto_6", descripcion: "Farmacia y medicamentos", monto: 8600.00, categoria: "Salud", estadoPago: "pagado", fecha: new Date().toISOString() }
       ],
       [`${prevMonthName}_${currentYear}`]: [
-        { descripcion: "Supermercado", monto: 52000.00, categoria: "Supermercado", fecha: new Date().toISOString() },
-        { descripcion: "Servicios varios", monto: 22000.00, categoria: "Servicios", fecha: new Date().toISOString() },
-        { descripcion: "Salida restaurante", monto: 19500.00, categoria: "Comida", fecha: new Date().toISOString() }
+        { id: "demo_gasto_prev_1", descripcion: "Supermercado", monto: 52000.00, categoria: "Supermercado", estadoPago: "pagado", fecha: new Date().toISOString() },
+        { id: "demo_gasto_prev_2", descripcion: "Servicios varios", monto: 22000.00, categoria: "Servicios", estadoPago: "pagado", fecha: new Date().toISOString() },
+        { id: "demo_gasto_prev_3", descripcion: "Salida restaurante", monto: 19500.00, categoria: "Comida", estadoPago: "pagado", fecha: new Date().toISOString() }
       ]
     },
     ingresosPorMes: {
@@ -105,12 +115,16 @@ export function addDemoGasto(mes, anio, gasto) {
     store.gastosPorMes[clave] = [];
   }
   const gastoConMeta = {
+    id: gasto.id || `demo_gasto_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
     ...gasto,
     categoria: gasto.categoria || "Otros",
+    estadoPago: gasto.estadoPago || (gasto.fechaVencimiento ? "pendiente" : "pagado"),
     fecha: gasto.fecha || new Date().toISOString()
   };
   store.gastosPorMes[clave].push(gastoConMeta);
-  store.balances.montoActual = Math.max(0, (store.balances.montoActual || 0) - gasto.monto);
+  if (gastoConMeta.estadoPago === "pagado") {
+    store.balances.montoActual = Math.max(0, (store.balances.montoActual || 0) - gasto.monto);
+  }
   saveDemoStore(store);
 }
 
@@ -119,11 +133,62 @@ export function updateDemoGasto(mes, anio, index, nuevoGasto) {
   const clave = `${mes}_${anio}`;
   const lista = store.gastosPorMes[clave] || [];
   if (index >= 0 && index < lista.length) {
-    const diff = nuevoGasto.monto - lista[index].monto;
-    lista[index] = { ...lista[index], ...nuevoGasto };
-    store.balances.montoActual = Math.max(0, (store.balances.montoActual || 0) - diff);
+    const prev = lista[index];
+    const prevPaid = prev.estadoPago === "pagado";
+    const nextPaid = (nuevoGasto.estadoPago || prev.estadoPago) === "pagado";
+    lista[index] = { ...prev, ...nuevoGasto };
+    if (prevPaid && nextPaid) {
+      const diff = Number(nuevoGasto.monto) - Number(prev.monto);
+      store.balances.montoActual = Math.max(0, (store.balances.montoActual || 0) - diff);
+    } else if (!prevPaid && nextPaid) {
+      store.balances.montoActual = Math.max(0, (store.balances.montoActual || 0) - Number(nuevoGasto.monto));
+    } else if (prevPaid && !nextPaid) {
+      store.balances.montoActual = (store.balances.montoActual || 0) + Number(prev.monto);
+    }
     saveDemoStore(store);
   }
+}
+
+export function pagarDemoGasto(mes, anio, index, gastoId) {
+  const store = getDemoStore();
+  const clave = `${mes}_${anio}`;
+  const lista = store.gastosPorMes[clave] || [];
+  let targetIndex = index;
+  if (gastoId && (targetIndex === undefined || targetIndex === null || !lista[targetIndex] || lista[targetIndex].id !== gastoId)) {
+    targetIndex = lista.findIndex((g) => g.id === gastoId);
+  }
+  if (targetIndex >= 0 && targetIndex < lista.length) {
+    const item = lista[targetIndex];
+    if (item.estadoPago !== "pagado") {
+      item.estadoPago = "pagado";
+      item.fechaPago = new Date().toISOString();
+      store.balances.montoActual = Math.max(0, (store.balances.montoActual || 0) - Number(item.monto || 0));
+      saveDemoStore(store);
+    }
+  }
+}
+
+export function getDemoGastosPendientes() {
+  const store = getDemoStore();
+  const pendientes = [];
+  Object.keys(store.gastosPorMes || {}).forEach((clave) => {
+    const partes = clave.split("_");
+    const mes = partes[0];
+    const anio = Number(partes[1]);
+    const lista = store.gastosPorMes[clave] || [];
+    lista.forEach((gasto, idx) => {
+      if (gasto.estadoPago === "pendiente") {
+        pendientes.push({
+          ...gasto,
+          mes,
+          anio,
+          claveMesAnio: clave,
+          index: idx
+        });
+      }
+    });
+  });
+  return pendientes;
 }
 
 export function deleteDemoGasto(mes, anio, index) {
@@ -133,7 +198,9 @@ export function deleteDemoGasto(mes, anio, index) {
   if (index >= 0 && index < lista.length) {
     const eliminado = lista[index];
     lista.splice(index, 1);
-    store.balances.montoActual = (store.balances.montoActual || 0) + eliminado.monto;
+    if (eliminado.estadoPago === "pagado") {
+      store.balances.montoActual = (store.balances.montoActual || 0) + eliminado.monto;
+    }
     saveDemoStore(store);
   }
 }

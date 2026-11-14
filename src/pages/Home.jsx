@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useBalance } from "../context/BalanceContext";
 import { usePrivacy } from "../context/PrivacyContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
+import { useVencimientos } from "../context/VencimientosContext";
 import { getFechaHoy, formatoMoneda, MESES } from "../utils/formatters";
 import { resetDemoData, getDemoUltimasTransacciones, getDemoGastos, getDemoResumenAnual } from "../services/demoData";
 import { getUltimasTransaccionesUser, getGastosUser, getResumenAnualUser } from "../services/dbService";
@@ -18,6 +19,7 @@ export default function Home() {
   const { montoActual, totalAhorros } = useBalance();
   const { isPrivate, togglePrivacy, maskAmount } = usePrivacy();
   const { openQuickModal, movementCounter } = useQuickMovement();
+  const { vencimientos, vencidos, porVencer, totalPendiente, totalVencido, openVencimientosModal } = useVencimientos();
   const { showToast } = useToast();
   const [fecha, setFecha] = useState(getFechaHoy(window.innerWidth < 768));
   const [ultimasTransacciones, setUltimasTransacciones] = useState([]);
@@ -193,6 +195,55 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {vencimientos.length > 0 && (
+            <div 
+              className={`p-3 p-md-4 rounded-4 border shadow-sm mb-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 ${vencidos.length > 0 ? 'border-danger' : 'border-warning'}`}
+              style={{ 
+                backgroundColor: vencidos.length > 0 ? "var(--badge-danger-bg)" : "var(--badge-warning-bg)",
+                borderColor: vencidos.length > 0 ? "var(--badge-danger-border)" : "var(--badge-warning-border)"
+              }}
+            >
+              <div className="d-flex align-items-start gap-3">
+                <div 
+                  className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                  style={{ 
+                    width: "44px", 
+                    height: "44px", 
+                    backgroundColor: vencidos.length > 0 ? "#ef4444" : "#f59e0b", 
+                    color: "#ffffff" 
+                  }}
+                >
+                  <i className={`bi ${vencidos.length > 0 ? "bi-exclamation-triangle-fill" : "bi-clock-history"} fs-5`}></i>
+                </div>
+                <div>
+                  <div className="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                    <h6 className="fw-bold mb-0 text-dark">
+                      {vencidos.length > 0 ? "¡Atención! Tienes pagos vencidos" : "Vencimientos y facturas próximas"}
+                    </h6>
+                    <span className={`badge rounded-pill ${vencidos.length > 0 ? 'bg-danger text-white' : 'bg-warning text-dark'}`}>
+                      {vencimientos.length} {vencimientos.length === 1 ? 'pendiente' : 'pendientes'}
+                    </span>
+                  </div>
+                  <p className="small text-muted mb-0">
+                    {vencidos.length > 0 
+                      ? `${vencidos.length} ${vencidos.length === 1 ? 'pago vencido' : 'pagos vencidos'} por ${maskAmount(formatoMoneda(totalVencido))}. Evita recargos e interrupción de servicios.`
+                      : `Total de ${maskAmount(formatoMoneda(totalPendiente))} a pagar este mes. Mantén tus cuentas al día.`}
+                  </p>
+                </div>
+              </div>
+
+              <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                <button 
+                  type="button" 
+                  className="btn btn-sm btn-dark rounded-pill px-3 fw-semibold shadow-sm"
+                  onClick={openVencimientosModal}
+                >
+                  <i className="bi bi-eye me-1"></i> Ver Pagos ({vencimientos.length})
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="row g-3 mb-4">
             <div className="col-12 col-lg-5">
