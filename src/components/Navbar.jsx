@@ -16,6 +16,7 @@ export default function Navbar() {
   const { blue, oficial, mep, refresh: refreshDolar } = useDolar();
   const [isOpen, setIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const userMenuRef = useRef(null);
   const navigate = useNavigate();
 
@@ -54,7 +55,6 @@ export default function Navbar() {
   const nombreUsuario = user?.displayName || (isDemo ? "Daniela" : (user?.email?.split("@")[0] || "Usuario"));
   const inicial = nombreUsuario.charAt(0).toUpperCase();
   const userPhoto = !isDemo ? user?.photoURL : null;
-  const [imgError, setImgError] = useState(false);
 
   return (
     <nav className="navbar navbar-expand-lg" id="navbar">

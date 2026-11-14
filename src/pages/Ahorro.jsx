@@ -186,15 +186,15 @@ export default function Ahorro() {
     ahorrosPorCategoria[cat.id] = { ARS: 0, USD: 0, EUR: 0, count: 0 };
   });
 
-  historialAhorros.forEach((item) => {
+  (historialAhorros || []).forEach((item) => {
     const catId = item.categoria || "Metas";
     if (!ahorrosPorCategoria[catId]) {
       ahorrosPorCategoria[catId] = { ARS: 0, USD: 0, EUR: 0, count: 0 };
     }
     const moneda = item.moneda || "ARS";
-    const delta = item.tipo === "extraccion" ? -Number(item.monto) : Number(item.monto);
+    const delta = item.tipo === "extraccion" ? -Number(item.monto || 0) : Number(item.monto || 0);
     ahorrosPorCategoria[catId][moneda] = (ahorrosPorCategoria[catId][moneda] || 0) + delta;
-    ahorrosPorCategoria[catId].count += 1;
+    ahorrosPorCategoria[catId].count = (ahorrosPorCategoria[catId].count || 0) + 1;
   });
 
   const categoriasDisponibles = [...CATEGORIAS_AHORRO];
@@ -207,13 +207,13 @@ export default function Ahorro() {
   const categoriasConMovimientos = categoriasDisponibles.filter((cat) => {
     const datos = ahorrosPorCategoria[cat.id];
     if (!datos) return false;
-    if (monedaFiltro === "ARS") return datos.ARS > 0;
-    if (monedaFiltro === "USD") return datos.USD > 0;
-    if (monedaFiltro === "EUR") return datos.EUR > 0;
-    return datos.ARS > 0 || datos.USD > 0 || datos.EUR > 0;
+    if (monedaFiltro === "ARS") return (datos.ARS || 0) > 0;
+    if (monedaFiltro === "USD") return (datos.USD || 0) > 0;
+    if (monedaFiltro === "EUR") return (datos.EUR || 0) > 0;
+    return (datos.ARS || 0) > 0 || (datos.USD || 0) > 0 || (datos.EUR || 0) > 0;
   });
 
-  const historialFiltrado = historialAhorros.filter((h) => {
+  const historialFiltrado = (historialAhorros || []).filter((h) => {
     if (monedaFiltro === "TODAS") return true;
     return (h.moneda || "ARS") === monedaFiltro;
   });
