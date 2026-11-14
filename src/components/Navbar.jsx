@@ -53,6 +53,8 @@ export default function Navbar() {
 
   const nombreUsuario = user?.displayName || (isDemo ? "Daniela" : (user?.email?.split("@")[0] || "Usuario"));
   const inicial = nombreUsuario.charAt(0).toUpperCase();
+  const userPhoto = !isDemo ? user?.photoURL : null;
+  const [imgError, setImgError] = useState(false);
 
   return (
     <nav className="navbar navbar-expand-lg" id="navbar">
@@ -131,7 +133,17 @@ export default function Navbar() {
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 title="Opciones de cuenta y personalización"
               >
-                <span className="user-avatar-badge">{inicial}</span>
+                {userPhoto && !imgError ? (
+                  <img 
+                    src={userPhoto} 
+                    alt={nombreUsuario} 
+                    referrerPolicy="no-referrer"
+                    className="user-avatar-img"
+                    onError={() => setImgError(true)}
+                  />
+                ) : (
+                  <span className="user-avatar-badge">{inicial}</span>
+                )}
                 <span className="user-name-text fw-semibold small">{nombreUsuario}</span>
                 <i className="bi bi-chevron-down text-muted" style={{ fontSize: "0.75rem" }}></i>
               </button>
@@ -142,9 +154,24 @@ export default function Navbar() {
                   style={{ minWidth: "220px", position: "absolute", top: "115%", right: 0, zIndex: 1050 }}
                 >
                   <li className="px-3 py-2 border-bottom mb-1">
-                    <div className="fw-bold small dropdown-user-name">{nombreUsuario}</div>
-                    <div className="text-muted" style={{ fontSize: "0.75rem" }}>
-                      {isDemo ? "Modo Demo Activo" : (user?.email || "Cuenta personal")}
+                    <div className="d-flex align-items-center gap-2">
+                      {userPhoto && !imgError ? (
+                        <img 
+                          src={userPhoto} 
+                          alt={nombreUsuario} 
+                          referrerPolicy="no-referrer"
+                          className="user-avatar-img"
+                          onError={() => setImgError(true)}
+                        />
+                      ) : (
+                        <span className="user-avatar-badge">{inicial}</span>
+                      )}
+                      <div>
+                        <div className="fw-bold small dropdown-user-name">{nombreUsuario}</div>
+                        <div className="text-muted" style={{ fontSize: "0.75rem" }}>
+                          {isDemo ? "Modo Demo Activo" : (user?.email || "Cuenta personal")}
+                        </div>
+                      </div>
                     </div>
                   </li>
 
@@ -213,7 +240,17 @@ export default function Navbar() {
 
           <div className="d-lg-none mt-3 pt-3 border-top">
             <div className="d-flex align-items-center gap-2 mb-3 px-2">
-              <span className="user-avatar-badge">{inicial}</span>
+              {userPhoto && !imgError ? (
+                <img 
+                  src={userPhoto} 
+                  alt={nombreUsuario} 
+                  referrerPolicy="no-referrer"
+                  className="user-avatar-img"
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <span className="user-avatar-badge">{inicial}</span>
+              )}
               <div>
                 <div className="fw-bold small dropdown-user-name">{nombreUsuario}</div>
                 <div className="text-muted small" style={{ fontSize: "0.75rem" }}>

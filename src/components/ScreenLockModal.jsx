@@ -8,11 +8,13 @@ export default function ScreenLockModal() {
   const { isLocked, unlockScreen, quickPin } = useSecurity();
   const [pinInput, setPinInput] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [imgError, setImgError] = useState(false);
 
   if (!isLocked || !user) return null;
 
   const nombreUsuario = user?.displayName || (isDemo ? "Daniela" : (user?.email?.split("@")[0] || "Usuario"));
   const inicial = nombreUsuario.charAt(0).toUpperCase();
+  const userPhoto = !isDemo ? user?.photoURL : null;
 
   const handleUnlock = (e) => {
     if (e) e.preventDefault();
@@ -47,12 +49,22 @@ export default function ScreenLockModal() {
         </div>
 
         <div className="d-flex flex-column align-items-center mb-4">
-          <div 
-            className="user-avatar-badge mb-2 shadow"
-            style={{ width: "54px", height: "54px", fontSize: "1.4rem" }}
-          >
-            {inicial}
-          </div>
+          {userPhoto && !imgError ? (
+            <img 
+              src={userPhoto} 
+              alt={nombreUsuario} 
+              referrerPolicy="no-referrer"
+              className="user-avatar-img-lg mb-2 shadow"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div 
+              className="user-avatar-badge mb-2 shadow"
+              style={{ width: "54px", height: "54px", fontSize: "1.4rem" }}
+            >
+              {inicial}
+            </div>
+          )}
           <h4 className="fw-bold mb-0 fs-5">{nombreUsuario}</h4>
           <span className="text-muted small">Sesión protegida por inactividad</span>
         </div>

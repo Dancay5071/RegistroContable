@@ -36,6 +36,7 @@ export default function Ahorro() {
   const yearOptions = [currentYear - 3, currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
 
   const [anio, setAnio] = useState(currentYear);
+  const [monedaFiltro, setMonedaFiltro] = useState("TODAS");
   const [tablaAhorros, setTablaAhorros] = useState(null);
   const [historialAhorros, setHistorialAhorros] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -196,6 +197,27 @@ export default function Ahorro() {
     ahorrosPorCategoria[catId].count += 1;
   });
 
+  const categoriasDisponibles = [...CATEGORIAS_AHORRO];
+  Object.keys(ahorrosPorCategoria).forEach((catId) => {
+    if (!categoriasDisponibles.some((c) => c.id === catId)) {
+      categoriasDisponibles.push(getCategoriaAhorro(catId));
+    }
+  });
+
+  const categoriasConMovimientos = categoriasDisponibles.filter((cat) => {
+    const datos = ahorrosPorCategoria[cat.id];
+    if (!datos) return false;
+    if (monedaFiltro === "ARS") return datos.ARS > 0;
+    if (monedaFiltro === "USD") return datos.USD > 0;
+    if (monedaFiltro === "EUR") return datos.EUR > 0;
+    return datos.ARS > 0 || datos.USD > 0 || datos.EUR > 0;
+  });
+
+  const historialFiltrado = historialAhorros.filter((h) => {
+    if (monedaFiltro === "TODAS") return true;
+    return (h.moneda || "ARS") === monedaFiltro;
+  });
+
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
       <div className="container d-flex flex-column align-items-center" style={{ maxWidth: "1050px" }}>
@@ -232,132 +254,228 @@ export default function Ahorro() {
           </div>
         </div>
 
+        <div className="w-100 d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 p-2 rounded-4 border shadow-sm" style={{ backgroundColor: "var(--bg-card)" }}>
+          <div className="d-flex align-items-center gap-2 flex-wrap">
+            <span className="small fw-bold text-muted text-uppercase tracking-wider px-1">
+              <i className="bi bi-funnel me-1"></i> Moneda:
+            </span>
+            <div className="btn-group p-1 rounded-pill" style={{ backgroundColor: "var(--bg-card-alt)", border: "1px solid var(--border-subtle)" }}>
+              <button
+                type="button"
+                className="btn btn-sm rounded-pill px-3 fw-semibold border-0 transition-all"
+                style={{
+                  backgroundColor: monedaFiltro === "TODAS" ? "var(--accent-primary)" : "transparent",
+                  color: monedaFiltro === "TODAS" ? "#ffffff" : "var(--text-muted)"
+                }}
+                onClick={() => setMonedaFiltro("TODAS")}
+              >
+                🌐 Todas
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm rounded-pill px-3 fw-semibold border-0 transition-all"
+                style={{
+                  backgroundColor: monedaFiltro === "ARS" ? "#d97706" : "transparent",
+                  color: monedaFiltro === "ARS" ? "#ffffff" : "var(--text-muted)"
+                }}
+                onClick={() => setMonedaFiltro("ARS")}
+              >
+                🇦🇷 ARS
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm rounded-pill px-3 fw-semibold border-0 transition-all"
+                style={{
+                  backgroundColor: monedaFiltro === "USD" ? "#16a34a" : "transparent",
+                  color: monedaFiltro === "USD" ? "#ffffff" : "var(--text-muted)"
+                }}
+                onClick={() => setMonedaFiltro("USD")}
+              >
+                🇺🇸 USD
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm rounded-pill px-3 fw-semibold border-0 transition-all"
+                style={{
+                  backgroundColor: monedaFiltro === "EUR" ? "#2563eb" : "transparent",
+                  color: monedaFiltro === "EUR" ? "#ffffff" : "var(--text-muted)"
+                }}
+                onClick={() => setMonedaFiltro("EUR")}
+              >
+                🇪🇺 EUR
+              </button>
+            </div>
+          </div>
+
+          <div className="d-flex align-items-center gap-2 px-2 small text-muted">
+            <span>Metas con saldo: <strong className="text-dark">{categoriasConMovimientos.length}</strong></span>
+            <span>•</span>
+            <span>Movimientos: <strong className="text-dark">{historialFiltrado.length}</strong></span>
+          </div>
+        </div>
+
         <div className="row g-3 w-100 mb-4">
-          <div className="col-12 col-md-4">
-            <div className="hero-balance-card hero-ahorro p-3 rounded-4 shadow-sm h-100">
-              <div className="d-flex align-items-center justify-content-between mb-1">
-                <span className="badge px-2 py-1 rounded-pill small fw-semibold badge-warning-pastel" style={{ backgroundColor: "#fef0cd", color: "#854d0e" }}>
-                  🇦🇷 Pesos (ARS)
-                </span>
-                <i className="bi bi-cash-stack text-warning fs-4"></i>
-              </div>
-              <div className={`h3 fw-bold mb-0 text-dark ${isPrivate ? "privacy-masked" : ""}`}>
-                {maskAmount(formatoMoneda(totalAhorros, "ARS"))}
-              </div>
-              <span className="text-muted small">Total acumulado en pesos</span>
-            </div>
-          </div>
-
-          <div className="col-12 col-md-4">
-            <div className="hero-balance-card hero-usd p-3 rounded-4 shadow-sm h-100">
-              <div className="d-flex align-items-center justify-content-between mb-1">
-                <span className="badge px-2 py-1 rounded-pill small fw-semibold badge-success-pastel" style={{ backgroundColor: "#e2f2e5", color: "#166534" }}>
-                  🇺🇸 Dólares (USD)
-                </span>
-                <div className="d-flex align-items-center gap-1">
-                  {blue?.venta > 0 && (
-                    <span 
-                      className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 py-1 px-2"
-                      style={{ fontSize: "0.72rem" }}
-                      title={`Cotización Dólar Blue (Venta): $${blue.venta.toLocaleString('es-AR')}`}
-                    >
-                      Blue: ${blue.venta.toLocaleString("es-AR")}
-                    </span>
-                  )}
-                  <i className="bi bi-currency-dollar text-success fs-4"></i>
+          {(monedaFiltro === "TODAS" || monedaFiltro === "ARS") && (
+            <div className={monedaFiltro === "TODAS" ? "col-12 col-md-4" : "col-12"}>
+              <div className="hero-balance-card hero-ahorro p-3 rounded-4 shadow-sm h-100">
+                <div className="d-flex align-items-center justify-content-between mb-1">
+                  <span className="badge px-2 py-1 rounded-pill small fw-semibold badge-warning-pastel" style={{ backgroundColor: "#fef0cd", color: "#854d0e" }}>
+                    🇦🇷 Pesos (ARS)
+                  </span>
+                  <i className="bi bi-cash-stack text-warning fs-4"></i>
                 </div>
-              </div>
-              <div className={`h3 fw-bold mb-0 text-success ${isPrivate ? "privacy-masked" : ""}`}>
-                {maskAmount(formatoMoneda(totalAhorrosUSD, "USD"))}
-              </div>
-              {blue?.venta > 0 && totalAhorrosUSD > 0 ? (
-                <div className="small mt-1 d-flex align-items-center gap-1 text-muted" title={`Valuación estimada en pesos: ${totalAhorrosUSD} USD × $${blue.venta.toLocaleString('es-AR')}`}>
-                  <span>≈ <strong className={`text-dark ${isPrivate ? "privacy-masked" : ""}`}>{maskAmount(formatoMoneda(totalAhorrosUSD * blue.venta, "ARS"))}</strong></span>
-                  <span className="badge bg-light text-secondary border px-1" style={{ fontSize: "0.68rem" }}>al Blue</span>
+                <div className={`h3 fw-bold mb-0 text-dark ${isPrivate ? "privacy-masked" : ""}`}>
+                  {maskAmount(formatoMoneda(totalAhorros, "ARS"))}
                 </div>
-              ) : (
-                <span className="text-muted small">Reserva en moneda fuerte</span>
-              )}
+                <span className="text-muted small">Total acumulado en pesos</span>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="col-12 col-md-4">
-            <div className="hero-balance-card hero-eur p-3 rounded-4 shadow-sm h-100">
-              <div className="d-flex align-items-center justify-content-between mb-1">
-                <span className="badge px-2 py-1 rounded-pill small fw-semibold badge-primary-pastel" style={{ backgroundColor: "#ddeaf6", color: "#1e40af" }}>
-                  🇪🇺 Euros (EUR)
-                </span>
-                <i className="bi bi-currency-euro text-primary fs-4"></i>
+          {(monedaFiltro === "TODAS" || monedaFiltro === "USD") && (
+            <div className={monedaFiltro === "TODAS" ? "col-12 col-md-4" : "col-12"}>
+              <div className="hero-balance-card hero-usd p-3 rounded-4 shadow-sm h-100">
+                <div className="d-flex align-items-center justify-content-between mb-1">
+                  <span className="badge px-2 py-1 rounded-pill small fw-semibold badge-success-pastel" style={{ backgroundColor: "#e2f2e5", color: "#166534" }}>
+                    🇺🇸 Dólares (USD)
+                  </span>
+                  <div className="d-flex align-items-center gap-1">
+                    {blue?.venta > 0 && (
+                      <span 
+                        className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 py-1 px-2"
+                        style={{ fontSize: "0.72rem" }}
+                        title={`Cotización Dólar Blue (Venta): $${blue.venta.toLocaleString('es-AR')}`}
+                      >
+                        Blue: ${blue.venta.toLocaleString("es-AR")}
+                      </span>
+                    )}
+                    <i className="bi bi-currency-dollar text-success fs-4"></i>
+                  </div>
+                </div>
+                <div className={`h3 fw-bold mb-0 text-success ${isPrivate ? "privacy-masked" : ""}`}>
+                  {maskAmount(formatoMoneda(totalAhorrosUSD, "USD"))}
+                </div>
+                {blue?.venta > 0 && totalAhorrosUSD > 0 ? (
+                  <div className="small mt-1 d-flex align-items-center gap-1 text-muted" title={`Valuación estimada en pesos: ${totalAhorrosUSD} USD × $${blue.venta.toLocaleString('es-AR')}`}>
+                    <span>≈ <strong className={`text-dark ${isPrivate ? "privacy-masked" : ""}`}>{maskAmount(formatoMoneda(totalAhorrosUSD * blue.venta, "ARS"))}</strong></span>
+                    <span className="badge bg-light text-secondary border px-1" style={{ fontSize: "0.68rem" }}>al Blue</span>
+                  </div>
+                ) : (
+                  <span className="text-muted small">Reserva en moneda fuerte</span>
+                )}
               </div>
-              <div className={`h3 fw-bold mb-0 text-primary ${isPrivate ? "privacy-masked" : ""}`}>
-                {maskAmount(formatoMoneda(totalAhorrosEUR, "EUR"))}
-              </div>
-              <span className="text-muted small">Fondo en moneda europea</span>
             </div>
-          </div>
+          )}
+
+          {(monedaFiltro === "TODAS" || monedaFiltro === "EUR") && (
+            <div className={monedaFiltro === "TODAS" ? "col-12 col-md-4" : "col-12"}>
+              <div className="hero-balance-card hero-eur p-3 rounded-4 shadow-sm h-100">
+                <div className="d-flex align-items-center justify-content-between mb-1">
+                  <span className="badge px-2 py-1 rounded-pill small fw-semibold badge-primary-pastel" style={{ backgroundColor: "#ddeaf6", color: "#1e40af" }}>
+                    🇪🇺 Euros (EUR)
+                  </span>
+                  <i className="bi bi-currency-euro text-primary fs-4"></i>
+                </div>
+                <div className={`h3 fw-bold mb-0 text-primary ${isPrivate ? "privacy-masked" : ""}`}>
+                  {maskAmount(formatoMoneda(totalAhorrosEUR, "EUR"))}
+                </div>
+                <span className="text-muted small">Fondo en moneda europea</span>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="principal p-4 rounded-4 shadow-sm border w-100 mb-4">
           <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
             <h5 className="h6 text-muted text-uppercase fw-bold mb-0 tracking-wider d-flex align-items-center gap-2">
-              <i className="bi bi-tags text-warning"></i> Distribución por Metas y Categorías
+              <i className="bi bi-tags text-warning"></i> Metas y Categorías Activas
             </h5>
-            <button
-              className="btn btn-sm btn-outline-warning text-dark rounded-pill px-3 fw-semibold"
-              onClick={() => openQuickModal("ahorro")}
-            >
-              <i className="bi bi-arrow-left-right me-1"></i> Aportar o Extraer
-            </button>
+            <div className="d-flex align-items-center gap-2">
+              <button
+                className="btn btn-sm btn-outline-warning text-dark rounded-pill px-3 fw-semibold"
+                onClick={() => openQuickModal("ahorro")}
+              >
+                <i className="bi bi-arrow-left-right me-1"></i> Aportar o Extraer
+              </button>
+            </div>
           </div>
 
-          <div className="row g-2">
-            {CATEGORIAS_AHORRO.map((cat) => {
-              const datos = ahorrosPorCategoria[cat.id] || { ARS: 0, USD: 0, EUR: 0, count: 0 };
-              const tieneMonto = datos.ARS > 0 || datos.USD > 0 || datos.EUR > 0;
-              return (
-                <div key={cat.id} className="col-12 col-sm-6 col-md-4">
-                  <div 
-                    className="p-3 rounded-3 border d-flex flex-column justify-content-between h-100 ahorro-categoria-card"
-                    style={{ backgroundColor: cat.bg, borderColor: cat.border }}
-                  >
-                    <div className="d-flex align-items-center gap-2 mb-2">
-                      <div 
-                        className="rounded-circle d-flex align-items-center justify-content-center ahorro-icon-circle"
-                        style={{ width: "32px", height: "32px", backgroundColor: "#ffffff", color: cat.color }}
-                      >
-                        <i className={`bi ${cat.icon}`}></i>
+          {categoriasConMovimientos.length === 0 ? (
+            <div className="text-center py-5 px-3">
+              <div 
+                className="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm"
+                style={{ width: "64px", height: "64px", backgroundColor: "var(--bg-card-alt)", color: "var(--text-muted)" }}
+              >
+                <i className="bi bi-piggy-bank fs-2"></i>
+              </div>
+              <h6 className="fw-bold text-dark mb-1">
+                Sin metas con saldo en {monedaFiltro === "TODAS" ? "ahorros" : monedaFiltro}
+              </h6>
+              <p className="text-muted small mb-3" style={{ maxWidth: "420px", margin: "0 auto" }}>
+                {monedaFiltro === "TODAS"
+                  ? "Aún no tienes fondos asignados a ninguna categoría de ahorro."
+                  : `No se registran fondos acumulados en ${monedaFiltro} para tus metas de ahorro.`}
+              </p>
+              <button
+                type="button"
+                className="btn btn-sm btn-success rounded-pill px-3 fw-semibold shadow-sm"
+                onClick={() => openQuickModal("ahorro")}
+              >
+                <i className="bi bi-plus-lg me-1"></i> Asignar a una meta
+              </button>
+            </div>
+          ) : (
+            <div className="row g-2">
+              {categoriasConMovimientos.map((cat) => {
+                const datos = ahorrosPorCategoria[cat.id] || { ARS: 0, USD: 0, EUR: 0, count: 0 };
+                return (
+                  <div key={cat.id} className="col-12 col-sm-6 col-md-4">
+                    <div 
+                      className="p-3 rounded-3 border d-flex flex-column justify-content-between h-100 ahorro-categoria-card"
+                      style={{ backgroundColor: cat.bg, borderColor: cat.border }}
+                    >
+                      <div className="d-flex align-items-center justify-content-between gap-2 mb-2">
+                        <div className="d-flex align-items-center gap-2">
+                          <div 
+                            className="rounded-circle d-flex align-items-center justify-content-center ahorro-icon-circle"
+                            style={{ width: "32px", height: "32px", backgroundColor: "#ffffff", color: cat.color }}
+                          >
+                            <i className={`bi ${cat.icon}`}></i>
+                          </div>
+                          <span className="fw-bold text-dark small">{cat.nombre}</span>
+                        </div>
+                        {datos.count > 0 && (
+                          <span className="badge rounded-pill border small" style={{ backgroundColor: "var(--bg-card)", color: "var(--text-muted)", fontSize: "0.68rem" }}>
+                            {datos.count} mov.
+                          </span>
+                        )}
                       </div>
-                      <span className="fw-bold text-dark small">{cat.nombre}</span>
-                    </div>
 
-                    <div>
-                      {tieneMonto ? (
+                      <div>
                         <div className={`small ${isPrivate ? "privacy-masked" : ""}`}>
-                          {datos.ARS !== 0 && (
+                          {(monedaFiltro === "TODAS" || monedaFiltro === "ARS") && datos.ARS > 0 && (
                             <div className="fw-bold" style={{ color: cat.color }}>
                               {maskAmount(formatoMoneda(datos.ARS, "ARS"))}
                             </div>
                           )}
-                          {datos.USD !== 0 && (
+                          {(monedaFiltro === "TODAS" || monedaFiltro === "USD") && datos.USD > 0 && (
                             <div className="fw-bold text-success">
                               {maskAmount(formatoMoneda(datos.USD, "USD"))}
                             </div>
                           )}
-                          {datos.EUR !== 0 && (
+                          {(monedaFiltro === "TODAS" || monedaFiltro === "EUR") && datos.EUR > 0 && (
                             <div className="fw-bold text-primary">
                               {maskAmount(formatoMoneda(datos.EUR, "EUR"))}
                             </div>
                           )}
                         </div>
-                      ) : (
-                        <span className="text-muted small fst-italic">Sin fondos asignados</span>
-                      )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {loading && <Loader />}
@@ -397,13 +515,13 @@ export default function Ahorro() {
             </h5>
             <div className="d-flex align-items-center gap-2">
               <span className="badge px-3 py-1 rounded-pill small badge-warning-pastel" style={{ backgroundColor: "#fef0cd", color: "#854d0e" }}>
-                {historialAhorros.length} registros
+                {historialFiltrado.length} registros
               </span>
-              {historialAhorros.length > 0 && (
+              {historialFiltrado.length > 0 && (
                 <button 
                   type="button" 
                   className="btn btn-outline-success btn-sm d-flex align-items-center gap-1 shadow-sm"
-                  onClick={() => exportAhorrosToCSV(historialAhorros)}
+                  onClick={() => exportAhorrosToCSV(historialFiltrado)}
                   title="Exportar movimientos de ahorro a Excel (CSV)"
                 >
                   <i className="bi bi-file-earmark-excel"></i>
@@ -413,13 +531,15 @@ export default function Ahorro() {
             </div>
           </div>
 
-          {historialAhorros.length === 0 ? (
+          {historialFiltrado.length === 0 ? (
             <div className="text-center py-4 text-muted small">
-              No tienes movimientos de ahorro registrados aún.
+              {monedaFiltro === "TODAS"
+                ? "No tienes movimientos de ahorro registrados aún."
+                : `No tienes movimientos de ahorro registrados en ${monedaFiltro}.`}
             </div>
           ) : (
             <div className="list-group list-group-flush">
-              {historialAhorros.slice(0, 12).map((h, idx) => {
+              {historialFiltrado.slice(0, 12).map((h, idx) => {
                 const cat = getCategoriaAhorro(h.categoria);
                 const esExtraccion = h.tipo === "extraccion";
                 const moneda = h.moneda || "ARS";
