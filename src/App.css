@@ -1896,3 +1896,28 @@ footer {
   background-color: var(--bg-card-alt) !important;
 }
 
+.btn-powerbi-brand {
+  background-color: #f2c811;
+  color: #1e293b;
+  border: 1px solid #d4ad07;
+  font-weight: 600;
+}
+
+.btn-powerbi-brand:hover {
+  background-color: #e5bd0e;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .btn-warning {
+  background-color: #f59e0b !important;
+  border-color: #d97706 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="dark"] .btn-warning:hover {
+  background-color: #d97706 !important;
+  border-color: #b45309 !important;
+  color: #ffffff !important;
+}
+
+

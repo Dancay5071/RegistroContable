@@ -520,3 +520,72 @@ export function getDemoUltimasTransacciones(limitCount = 5) {
   return transacciones.slice(0, limitCount);
 }
 
+export function getDemoAllTransacciones() {
+  const store = getDemoStore();
+  const list = [];
+
+  if (store.gastosPorMes) {
+    Object.entries(store.gastosPorMes).forEach(([clave, gastos]) => {
+      const parts = clave.split("_");
+      const mes = parts[0] || "";
+      const anio = Number(parts[1]) || new Date().getFullYear();
+      (gastos || []).forEach((g, idx) => {
+        list.push({
+          id: g.id || `demo_g_${clave}_${idx}`,
+          tipo: "gasto",
+          descripcion: g.descripcion || "",
+          monto: Number(g.monto || 0),
+          categoria: g.categoria || "Otros",
+          mes: g.mes || mes,
+          anio: Number(g.anio || anio),
+          fecha: g.fecha,
+          fechaVencimiento: g.fechaVencimiento,
+          estadoPago: g.estadoPago || "pagado",
+          moneda: "ARS"
+        });
+      });
+    });
+  }
+
+  if (store.ingresosPorMes) {
+    Object.entries(store.ingresosPorMes).forEach(([clave, ingresos]) => {
+      const parts = clave.split("_");
+      const mes = parts[0] || "";
+      const anio = Number(parts[1]) || new Date().getFullYear();
+      (ingresos || []).forEach((i, idx) => {
+        list.push({
+          id: i.id || `demo_i_${clave}_${idx}`,
+          tipo: "ingreso",
+          descripcion: i.descripcion || "",
+          monto: Number(i.monto || 0),
+          montoBruto: Number(i.montoBruto || i.monto || 0),
+          ahorro: Number(i.ahorro || 0),
+          categoria: i.categoria || "Sueldo",
+          mes: i.mes || mes,
+          anio: Number(i.anio || anio),
+          fecha: i.fecha,
+          moneda: "ARS"
+        });
+      });
+    });
+  }
+
+  if (store.ahorrosDetallados) {
+    (store.ahorrosDetallados || []).forEach((a, idx) => {
+      list.push({
+        id: a.id || `demo_a_${idx}`,
+        tipo: a.tipo || "ahorro",
+        descripcion: a.descripcion || "Fondo de Ahorro",
+        monto: Number(a.monto || 0),
+        moneda: a.moneda || "ARS",
+        categoria: a.categoria || "Ahorro General",
+        mes: a.mes || "",
+        anio: Number(a.anio || new Date().getFullYear()),
+        fecha: a.fecha
+      });
+    });
+  }
+
+  return list;
+}
+

@@ -5,6 +5,7 @@ import { useBalance } from "../context/BalanceContext";
 import { usePrivacy } from "../context/PrivacyContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useVencimientos } from "../context/VencimientosContext";
+import { usePowerBiExport } from "../context/PowerBiExportContext";
 import { getFechaHoy, formatoMoneda, MESES } from "../utils/formatters";
 import { resetDemoData, getDemoUltimasTransacciones, getDemoGastos, getDemoResumenAnual } from "../services/demoData";
 import { getUltimasTransaccionesUser, getGastosUser, getResumenAnualUser } from "../services/dbService";
@@ -20,6 +21,7 @@ export default function Home() {
   const { isPrivate, togglePrivacy, maskAmount } = usePrivacy();
   const { openQuickModal, movementCounter } = useQuickMovement();
   const { vencimientos, vencidos, porVencer, totalPendiente, totalVencido, openVencimientosModal } = useVencimientos();
+  const { openPowerBiExport } = usePowerBiExport();
   const { showToast } = useToast();
   const [fecha, setFecha] = useState(getFechaHoy(window.innerWidth < 768));
   const [ultimasTransacciones, setUltimasTransacciones] = useState([]);
@@ -395,6 +397,13 @@ export default function Home() {
               <Link to="/ahorros" className="btn btn-sm btn-outline-secondary rounded-pill px-3">
                 <i className="bi bi-piggy-bank me-1"></i> Administrar Ahorros
               </Link>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-warning text-dark border-warning-subtle rounded-pill px-3 fw-semibold d-flex align-items-center gap-1"
+                onClick={openPowerBiExport}
+              >
+                <i className="bi bi-file-earmark-bar-graph-fill text-warning"></i> Power BI Hub
+              </button>
             </div>
           </div>
         </div>

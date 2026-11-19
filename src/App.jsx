@@ -7,6 +7,7 @@ import { SecurityProvider } from "./context/SecurityContext";
 import { ToastProvider } from "./context/ToastContext";
 import { QuickMovementProvider } from "./context/QuickMovementContext";
 import { VencimientosProvider } from "./context/VencimientosContext";
+import { PowerBiExportProvider } from "./context/PowerBiExportContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -17,6 +18,7 @@ import CustomizeModal from "./components/CustomizeModal";
 import SecurityConfirmModal from "./components/SecurityConfirmModal";
 import ScreenLockModal from "./components/ScreenLockModal";
 import SecurityAuditModal from "./components/SecurityAuditModal";
+import PowerBiExportModal from "./components/PowerBiExportModal";
 import FloatingActionButton from "./components/FloatingActionButton";
 import Loader from "./components/Loader";
 
@@ -137,6 +139,7 @@ function MainLayout() {
       <SecurityConfirmModal />
       <ScreenLockModal />
       <SecurityAuditModal />
+      <PowerBiExportModal />
       <FloatingActionButton />
     </div>
   );
@@ -153,7 +156,9 @@ export default function App() {
                 <ToastProvider>
                   <QuickMovementProvider>
                     <VencimientosProvider>
-                      <MainLayout />
+                      <PowerBiExportProvider>
+                        <MainLayout />
+                      </PowerBiExportProvider>
                     </VencimientosProvider>
                   </QuickMovementProvider>
                 </ToastProvider>

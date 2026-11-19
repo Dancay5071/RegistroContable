@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { usePrivacy } from "../context/PrivacyContext";
+import { usePowerBiExport } from "../context/PowerBiExportContext";
 import { getDemoResumenAnual } from "../services/demoData";
 import { getResumenAnualUser } from "../services/dbService";
 import { MESES, formatoNumber } from "../utils/formatters";
@@ -13,6 +14,7 @@ export default function Resumen() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
   const { isPrivate, maskAmount } = usePrivacy();
+  const { openPowerBiExport } = usePowerBiExport();
   const currentYear = new Date().getFullYear();
   const yearOptions = [currentYear - 3, currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
   const [anio, setAnio] = useState(currentYear);
@@ -64,6 +66,15 @@ export default function Resumen() {
           <i className="bi bi-bar-chart-line me-1"></i>
           {loading ? "Calculando..." : "Consultar Resumen"}
         </button>
+        <button
+          type="button"
+          className="btn btn-outline-warning text-dark border-warning-subtle btn-sm px-3 fw-semibold shadow-sm d-flex align-items-center gap-1"
+          onClick={openPowerBiExport}
+          title="Exportar dataset y fórmulas DAX para Microsoft Power BI y Excel"
+        >
+          <i className="bi bi-file-earmark-bar-graph-fill text-warning"></i>
+          <span>Power BI Pro</span>
+        </button>
       </div>
 
       {loading && <Loader message="Procesando resumen anual..." />}
@@ -72,7 +83,17 @@ export default function Resumen() {
         <div className="principal text-center text-muted p-5 rounded-4 border shadow-sm" style={{ maxWidth: "600px" }}>
           <i className="bi bi-table fs-1 text-secondary opacity-50 mb-3 d-block"></i>
           <h5 className="text-dark fw-bold">Matriz Financiera Anual</h5>
-          <p className="small mb-0">Selecciona el año que deseas auditar y haz clic en <strong>Consultar Resumen</strong> para ver la tabla comparativa de 12 meses.</p>
+          <p className="small mb-3">Selecciona el año que deseas auditar y haz clic en <strong>Consultar Resumen</strong> para ver la tabla comparativa de 12 meses.</p>
+          <div className="pt-3 border-top d-flex justify-content-center">
+            <button
+              type="button"
+              className="btn btn-warning text-dark btn-sm px-3 fw-semibold shadow-sm d-flex align-items-center gap-2"
+              onClick={openPowerBiExport}
+            >
+              <i className="bi bi-file-earmark-bar-graph-fill"></i>
+              <span>Abrir Power BI &amp; Analytics Hub</span>
+            </button>
+          </div>
         </div>
       )}
 
@@ -93,6 +114,15 @@ export default function Resumen() {
               <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fw-semibold">
                 12 Meses Auditados
               </span>
+              <button 
+                type="button" 
+                className="btn btn-warning btn-sm d-flex align-items-center gap-1 no-print shadow-sm fw-semibold text-dark"
+                onClick={openPowerBiExport}
+                title="Abrir Hub de Power BI, esquemas estrella y fórmulas DAX"
+              >
+                <i className="bi bi-file-earmark-bar-graph-fill"></i>
+                <span>Power BI</span>
+              </button>
               <button 
                 type="button" 
                 className="btn btn-outline-success btn-sm d-flex align-items-center gap-1 no-print shadow-sm"

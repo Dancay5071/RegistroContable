@@ -5,6 +5,7 @@ import { useTheme } from "../context/ThemeContext";
 import { usePrivacy } from "../context/PrivacyContext";
 import { useSecurity } from "../context/SecurityContext";
 import { useVencimientos } from "../context/VencimientosContext";
+import { usePowerBiExport } from "../context/PowerBiExportContext";
 import { useDolar } from "../hooks/useDolar";
 import { logActivity } from "../services/auditService";
 import FinTrackLogo from "./FinTrackLogo";
@@ -16,6 +17,7 @@ export default function Navbar() {
   const { lockScreen, openAuditModal } = useSecurity();
   const { blue, oficial, mep, refresh: refreshDolar } = useDolar();
   const { vencidos, porVencer, openVencimientosModal } = useVencimientos();
+  const { openPowerBiExport } = usePowerBiExport();
   const [isOpen, setIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -264,6 +266,17 @@ export default function Navbar() {
                     </button>
                   </li>
 
+                  <li>
+                    <button 
+                      className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 text-dark fw-semibold"
+                      onClick={() => { setUserMenuOpen(false); openPowerBiExport(); }}
+                      title="Exportar dataset y fórmulas DAX para Microsoft Power BI y Excel"
+                    >
+                      <i className="bi bi-file-earmark-bar-graph-fill text-warning"></i>
+                      <span>Power BI &amp; Excel Hub</span>
+                    </button>
+                  </li>
+
                   <li><hr className="dropdown-divider my-1 opacity-50" /></li>
 
                   <li>
@@ -347,6 +360,14 @@ export default function Navbar() {
               >
                 <i className="bi bi-shield-shaded"></i>
                 <span>Auditoría & Respaldos</span>
+              </button>
+
+              <button
+                className="btn btn-outline-warning text-dark btn-sm w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill py-2 fw-semibold"
+                onClick={() => { closeMenu(); openPowerBiExport(); }}
+              >
+                <i className="bi bi-file-earmark-bar-graph-fill text-warning"></i>
+                <span>Power BI &amp; Excel Hub</span>
               </button>
 
               <button 

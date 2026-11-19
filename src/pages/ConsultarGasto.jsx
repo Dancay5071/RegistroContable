@@ -6,6 +6,7 @@ import { usePrivacy } from "../context/PrivacyContext";
 import { useSecurity } from "../context/SecurityContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useVencimientos } from "../context/VencimientosContext";
+import { usePowerBiExport } from "../context/PowerBiExportContext";
 import { 
   getDemoGastos, 
   updateDemoGasto, 
@@ -30,6 +31,7 @@ export default function ConsultarGasto() {
   const { requestConfirmation } = useSecurity();
   const { movementCounter } = useQuickMovement();
   const { marcarComoPagado } = useVencimientos();
+  const { openPowerBiExport } = usePowerBiExport();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -281,6 +283,15 @@ export default function ConsultarGasto() {
                 </div>
 
                 <div className="d-flex align-items-center gap-2 no-print">
+                  <button 
+                    type="button" 
+                    className="btn btn-warning btn-sm d-flex align-items-center gap-1 shadow-sm text-dark fw-semibold"
+                    onClick={openPowerBiExport}
+                    title="Abrir Hub de Power BI, esquemas estrella y fórmulas DAX"
+                  >
+                    <i className="bi bi-file-earmark-bar-graph-fill"></i>
+                    <span>Power BI</span>
+                  </button>
                   <button 
                     type="button" 
                     className="btn btn-outline-success btn-sm d-flex align-items-center gap-1 shadow-sm"

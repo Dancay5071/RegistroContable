@@ -620,3 +620,19 @@ export async function getUltimasTransaccionesUser(userId, limitCount = 5) {
     return [];
   }
 }
+
+export async function getAllUserTransacciones(userId) {
+  if (!userId) return [];
+  try {
+    const transaccionesRef = collection(db, "users", userId, "transacciones");
+    const snap = await getDocs(transaccionesRef);
+    const items = [];
+    snap.forEach((d) => {
+      items.push({ id: d.id, ...d.data() });
+    });
+    return items;
+  } catch (error) {
+    console.error("Error al obtener todas las transacciones:", error);
+    return [];
+  }
+}
