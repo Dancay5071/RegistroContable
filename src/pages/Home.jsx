@@ -127,8 +127,18 @@ export default function Home() {
               </h1>
               <p className="text-muted small mb-0">Resumen de tus saldos y actividad mensual</p>
             </div>
-            <div className="badge shadow-sm border px-3 py-2 text-dark fw-medium rounded-pill" style={{ backgroundColor: "var(--bg-card)" }}>
-              {fecha}
+            <div className="d-flex align-items-center gap-2">
+              <Link 
+                to="/calendario" 
+                className="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm d-flex align-items-center gap-1"
+                title="Abrir vista de calendario financiero"
+              >
+                <i className="bi bi-calendar3"></i>
+                <span>Calendario</span>
+              </Link>
+              <div className="badge shadow-sm border px-3 py-2 text-dark fw-medium rounded-pill" style={{ backgroundColor: "var(--bg-card)" }}>
+                {fecha}
+              </div>
             </div>
           </div>
 

@@ -27,6 +27,7 @@ const NuevoIngreso = lazy(() => import("./pages/NuevoIngreso"));
 const ConsultarIngreso = lazy(() => import("./pages/ConsultarIngreso"));
 const Ahorro = lazy(() => import("./pages/Ahorro"));
 const Resumen = lazy(() => import("./pages/Resumen"));
+const Calendario = lazy(() => import("./pages/Calendario"));
 
 import "./App.css";
 
@@ -113,6 +114,14 @@ function MainLayout() {
               element={
                 <ProtectedRoute>
                   <Resumen />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/calendario" 
+              element={
+                <ProtectedRoute>
+                  <Calendario />
                 </ProtectedRoute>
               } 
             />

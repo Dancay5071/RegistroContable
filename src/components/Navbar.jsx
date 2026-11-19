@@ -134,6 +134,12 @@ export default function Navbar() {
                 <i className="bi bi-bar-chart-line me-1 text-primary"></i> Resumen
               </NavLink>
             </li>
+
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/calendario" onClick={closeMenu}>
+                <i className="bi bi-calendar3 me-1 text-info"></i> Calendario
+              </NavLink>
+            </li>
           </ul>
 
           <div className="d-none d-lg-flex align-items-center gap-2 ms-lg-3">

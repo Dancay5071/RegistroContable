@@ -71,3 +71,23 @@ export function formatoFechaVencimiento(fechaStr) {
   const mesNombre = MESES[Number(partes[1]) - 1] ? MESES[Number(partes[1]) - 1].substring(0, 3) : partes[1];
   return `${Number(partes[2])} ${mesNombre} ${partes[0]}`;
 }
+
+export function getDiasEnMes(mesIndex, anio) {
+  return new Date(anio, mesIndex + 1, 0).getDate();
+}
+
+export function getPrimerDiaSemana(mesIndex, anio) {
+  return (new Date(anio, mesIndex, 1).getDay() + 6) % 7;
+}
+
+export function formatoFechaLarga(fechaStr) {
+  if (!fechaStr) return "";
+  const partes = fechaStr.split("-");
+  if (partes.length !== 3) return fechaStr;
+  const fecha = new Date(Number(partes[0]), Number(partes[1]) - 1, Number(partes[2]));
+  const diaSemana = DIAS_SEMANA[fecha.getDay()];
+  const diaMes = Number(partes[2]);
+  const mesNombre = MESES[Number(partes[1]) - 1];
+  const anio = partes[0];
+  return `${diaSemana}, ${diaMes} de ${mesNombre} de ${anio}`;
+}

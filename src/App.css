@@ -1853,3 +1853,46 @@ footer {
   border-left-width: 4px !important;
 }
 
+.calendar-cell {
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.calendar-cell:hover {
+  border-color: var(--border-focus) !important;
+  transform: translateY(-1px);
+}
+
+.calendar-cell-today {
+  border: 1.5px solid var(--accent-primary) !important;
+  background-color: rgba(56, 189, 248, 0.05);
+}
+
+.calendar-cell-selected {
+  border: 2px solid var(--border-focus) !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25) !important;
+}
+
+.calendar-event-pill {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+}
+
+.badge-gasto-pastel {
+  background-color: var(--badge-danger-bg);
+  color: var(--accent-danger);
+  border: 1px solid var(--badge-danger-border);
+}
+
+[data-theme="dark"] .calendar-cell-today {
+  background-color: rgba(56, 189, 248, 0.12) !important;
+}
+
+[data-theme="dark"] .calendar-cell-selected {
+  background-color: var(--bg-card-alt) !important;
+}
+

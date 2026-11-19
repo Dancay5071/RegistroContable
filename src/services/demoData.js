@@ -16,6 +16,7 @@ function generarDatosIniciales() {
     const d = String(target.getDate()).padStart(2, "0");
     return `${y}-${m}-${d}`;
   };
+  const formatDayISO = (d) => `${currentYear}-${String(currentMonthIdx + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
   return {
     balances: {
@@ -26,12 +27,12 @@ function generarDatosIniciales() {
     },
     gastosPorMes: {
       [`${currentMonthName}_${currentYear}`]: [
-        { id: "demo_gasto_1", descripcion: "Supermercado mensual", monto: 48500.00, categoria: "Supermercado", estadoPago: "pagado", fecha: new Date().toISOString() },
-        { id: "demo_gasto_2", descripcion: "Factura de Luz (Edenor)", monto: 14200.00, categoria: "Servicios", fechaVencimiento: formatOffsetDate(3), estadoPago: "pendiente", fecha: new Date().toISOString() },
-        { id: "demo_gasto_3", descripcion: "Internet y cable fibra", monto: 18900.00, categoria: "Servicios", fechaVencimiento: formatOffsetDate(6), estadoPago: "pendiente", fecha: new Date().toISOString() },
-        { id: "demo_gasto_4", descripcion: "Seguro Automotor", monto: 12500.00, categoria: "Transporte", fechaVencimiento: formatOffsetDate(-2), estadoPago: "pendiente", fecha: new Date().toISOString() },
-        { id: "demo_gasto_5", descripcion: "Combustible vehículo", monto: 25000.00, categoria: "Transporte", estadoPago: "pagado", fecha: new Date().toISOString() },
-        { id: "demo_gasto_6", descripcion: "Farmacia y medicamentos", monto: 8600.00, categoria: "Salud", estadoPago: "pagado", fecha: new Date().toISOString() }
+        { id: "demo_gasto_1", descripcion: "Supermercado mensual", monto: 48500.00, categoria: "Supermercado", estadoPago: "pagado", fecha: formatDayISO(3) },
+        { id: "demo_gasto_2", descripcion: "Factura de Luz (Edenor)", monto: 14200.00, categoria: "Servicios", fechaVencimiento: formatOffsetDate(3), estadoPago: "pendiente", fecha: formatDayISO(15) },
+        { id: "demo_gasto_3", descripcion: "Internet y cable fibra", monto: 18900.00, categoria: "Servicios", fechaVencimiento: formatOffsetDate(6), estadoPago: "pendiente", fecha: formatDayISO(18) },
+        { id: "demo_gasto_4", descripcion: "Seguro Automotor", monto: 12500.00, categoria: "Transporte", fechaVencimiento: formatOffsetDate(-2), estadoPago: "pendiente", fecha: formatDayISO(10) },
+        { id: "demo_gasto_5", descripcion: "Combustible vehículo", monto: 25000.00, categoria: "Transporte", estadoPago: "pagado", fecha: formatDayISO(8) },
+        { id: "demo_gasto_6", descripcion: "Farmacia y medicamentos", monto: 8600.00, categoria: "Salud", estadoPago: "pagado", fecha: formatDayISO(12) }
       ],
       [`${prevMonthName}_${currentYear}`]: [
         { id: "demo_gasto_prev_1", descripcion: "Supermercado", monto: 52000.00, categoria: "Supermercado", estadoPago: "pagado", fecha: new Date().toISOString() },
@@ -41,8 +42,8 @@ function generarDatosIniciales() {
     },
     ingresosPorMes: {
       [`${currentMonthName}_${currentYear}`]: [
-        { descripcion: "Sueldo mensual principal", monto: 243000.00, ahorro: 27000.00, categoria: "Sueldo", fecha: new Date().toISOString() },
-        { descripcion: "Proyecto freelance diseño", monto: 58500.00, ahorro: 6500.00, categoria: "Freelance", fecha: new Date().toISOString() }
+        { id: "demo_ing_1", descripcion: "Sueldo mensual principal", monto: 243000.00, ahorro: 27000.00, categoria: "Sueldo", fecha: formatDayISO(1) },
+        { id: "demo_ing_2", descripcion: "Proyecto freelance diseño", monto: 58500.00, ahorro: 6500.00, categoria: "Freelance", fecha: formatDayISO(14) }
       ],
       [`${prevMonthName}_${currentYear}`]: [
         { descripcion: "Sueldo mensual principal", monto: 243000.00, ahorro: 27000.00, categoria: "Sueldo", fecha: new Date().toISOString() }
