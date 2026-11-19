@@ -397,7 +397,7 @@ export default function ConsultarGasto() {
                   <thead>
                     <tr>
                       <th scope="col" style={{ width: "36px" }}></th>
-                      <th>Detalle & Categoría</th>
+                      <th>Detalle y Categoría</th>
                       <th>Monto</th>
                       <th className="text-end">Acciones</th>
                     </tr>

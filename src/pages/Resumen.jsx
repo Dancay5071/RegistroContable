@@ -91,7 +91,7 @@ export default function Resumen() {
               onClick={openPowerBiExport}
             >
               <i className="bi bi-file-earmark-bar-graph-fill"></i>
-              <span>Abrir Power BI &amp; Analytics Hub</span>
+              <span>Abrir Power BI y Analytics Hub</span>
             </button>
           </div>
         </div>

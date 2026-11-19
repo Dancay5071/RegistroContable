@@ -337,7 +337,7 @@ CALCULATE(
   {
     id: "vencimientos_pendientes",
     nombre: "Vencimientos Pendientes",
-    categoria: "Pasivos & Compromisos",
+    categoria: "Pasivos y Compromisos",
     descripcion: "Total de facturas, vencimientos y servicios aún pendientes de pago.",
     formula: `Vencimientos Pendientes = 
 CALCULATE(

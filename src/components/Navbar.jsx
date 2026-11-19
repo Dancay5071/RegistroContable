@@ -273,7 +273,7 @@ export default function Navbar() {
                       title="Exportar dataset y fórmulas DAX para Microsoft Power BI y Excel"
                     >
                       <i className="bi bi-file-earmark-bar-graph-fill text-warning"></i>
-                      <span>Power BI &amp; Excel Hub</span>
+                      <span>Power BI y Excel Hub</span>
                     </button>
                   </li>
 
@@ -359,7 +359,7 @@ export default function Navbar() {
                 onClick={() => { closeMenu(); openAuditModal(); }}
               >
                 <i className="bi bi-shield-shaded"></i>
-                <span>Auditoría & Respaldos</span>
+                <span>Auditoría y Respaldos</span>
               </button>
 
               <button
@@ -367,7 +367,7 @@ export default function Navbar() {
                 onClick={() => { closeMenu(); openPowerBiExport(); }}
               >
                 <i className="bi bi-file-earmark-bar-graph-fill text-warning"></i>
-                <span>Power BI &amp; Excel Hub</span>
+                <span>Power BI y Excel Hub</span>
               </button>
 
               <button 

@@ -316,7 +316,7 @@ export default function ConsultarIngreso() {
                   <thead>
                     <tr>
                       <th scope="col" style={{ width: "36px" }}></th>
-                      <th>Detalle & Origen</th>
+                      <th>Detalle y Origen</th>
                       <th>Monto Neto</th>
                       <th className="text-end">Acciones</th>
                     </tr>

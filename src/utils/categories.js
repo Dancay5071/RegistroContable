@@ -1,13 +1,13 @@
 export const CATEGORIAS_GASTO = [
   { id: "Supermercado", nombre: "Supermercado", icon: "bi-cart3", color: "#166534", bg: "#e2f2e5", border: "#b3dfbb" },
-  { id: "Vivienda", nombre: "Vivienda & Alquiler", icon: "bi-house-door", color: "#1e40af", bg: "#ddeaf6", border: "#b8d3ee" },
-  { id: "Servicios", nombre: "Servicios & Impuestos", icon: "bi-lightning-charge", color: "#854d0e", bg: "#fef0cd", border: "#fae09c" },
-  { id: "Transporte", nombre: "Transporte & Auto", icon: "bi-car-front", color: "#334155", bg: "#e2e8f0", border: "#cbd5e1" },
-  { id: "Salud", nombre: "Salud & Farmacia", icon: "bi-heart-pulse", color: "#991b1b", bg: "#fbe5e3", border: "#f4b8b3" },
-  { id: "Comida", nombre: "Restaurantes & Salidas", icon: "bi-cup-hot", color: "#c2410c", bg: "#ffedd5", border: "#fed7aa" },
-  { id: "Ocio", nombre: "Ocio & Entretenimiento", icon: "bi-film", color: "#6b21a8", bg: "#f3e8ff", border: "#e9d5ff" },
-  { id: "Compras", nombre: "Ropa & Tiendas", icon: "bi-bag-check", color: "#9d174d", bg: "#fce7f3", border: "#fbcfe8" },
-  { id: "Educacion", nombre: "Educación & Cursos", icon: "bi-book", color: "#0f766e", bg: "#ccfbf1", border: "#99f6e4" },
+  { id: "Vivienda", nombre: "Vivienda y Alquiler", icon: "bi-house-door", color: "#1e40af", bg: "#ddeaf6", border: "#b8d3ee" },
+  { id: "Servicios", nombre: "Servicios e Impuestos", icon: "bi-lightning-charge", color: "#854d0e", bg: "#fef0cd", border: "#fae09c" },
+  { id: "Transporte", nombre: "Transporte y Auto", icon: "bi-car-front", color: "#334155", bg: "#e2e8f0", border: "#cbd5e1" },
+  { id: "Salud", nombre: "Salud y Farmacia", icon: "bi-heart-pulse", color: "#991b1b", bg: "#fbe5e3", border: "#f4b8b3" },
+  { id: "Comida", nombre: "Restaurantes y Salidas", icon: "bi-cup-hot", color: "#c2410c", bg: "#ffedd5", border: "#fed7aa" },
+  { id: "Ocio", nombre: "Ocio y Entretenimiento", icon: "bi-film", color: "#6b21a8", bg: "#f3e8ff", border: "#e9d5ff" },
+  { id: "Compras", nombre: "Ropa y Tiendas", icon: "bi-bag-check", color: "#9d174d", bg: "#fce7f3", border: "#fbcfe8" },
+  { id: "Educacion", nombre: "Educación y Cursos", icon: "bi-book", color: "#0f766e", bg: "#ccfbf1", border: "#99f6e4" },
   { id: "Otros", nombre: "Otros Gastos", icon: "bi-tags", color: "#475569", bg: "#f1f5f9", border: "#cbd5e1" }
 ];
 
@@ -22,7 +22,7 @@ export const CATEGORIAS_INGRESO = [
 
 export const CATEGORIAS_AHORRO = [
   { id: "Emergencia", nombre: "Fondo de Emergencia", icon: "bi-shield-check", color: "#15803d", bg: "#dcfce7", border: "#bbf7d0" },
-  { id: "Vacaciones", nombre: "Vacaciones & Viajes", icon: "bi-airplane", color: "#0369a1", bg: "#e0f2fe", border: "#bae6fd" },
+  { id: "Vacaciones", nombre: "Vacaciones y Viajes", icon: "bi-airplane", color: "#0369a1", bg: "#e0f2fe", border: "#bae6fd" },
   { id: "Vehiculo", nombre: "Auto / Vehículo", icon: "bi-car-front", color: "#b45309", bg: "#fef3c7", border: "#fde68a" },
   { id: "Vivienda", nombre: "Vivienda / Hogar", icon: "bi-house-heart", color: "#4338ca", bg: "#e0e7ff", border: "#c7d2fe" },
   { id: "Inversiones", nombre: "Inversión / Futuro", icon: "bi-graph-up-arrow", color: "#047857", bg: "#d1fae5", border: "#a7f3d0" },

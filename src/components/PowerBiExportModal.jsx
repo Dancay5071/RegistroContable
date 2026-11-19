@@ -176,7 +176,7 @@ export default function PowerBiExportModal() {
             </div>
             <div>
               <div className="d-flex align-items-center gap-2">
-                <h5 className="fw-bold text-dark mb-0 fs-6 fs-md-5">Power BI & Excel Analytics Hub</h5>
+                <h5 className="fw-bold text-dark mb-0 fs-6 fs-md-5">Power BI y Excel Analytics Hub</h5>
                 <span className="badge rounded-pill bg-warning text-dark border border-warning-subtle px-2 py-0" style={{ fontSize: "0.68rem" }}>
                   PRO
                 </span>

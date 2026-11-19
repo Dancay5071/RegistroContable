@@ -287,7 +287,7 @@ export default function SecurityAuditModal() {
                 <i className="bi bi-shield-lock-fill fs-5"></i>
               </div>
               <div>
-                <h5 className="modal-title fw-bold fs-6 mb-0">Auditoría, Cifrado & Respaldos</h5>
+                <h5 className="modal-title fw-bold fs-6 mb-0">Auditoría, Cifrado y Respaldos</h5>
                 <span className="text-muted small">Capa 5 de Seguridad: Protección AES-256, Escudo de Pestaña y Diagnóstico de Salud</span>
               </div>
             </div>
@@ -723,7 +723,7 @@ export default function SecurityAuditModal() {
                     <div className="d-flex align-items-center gap-3">
                       <i className={`bi ${isCloudAccount ? 'bi-check-circle-fill text-success' : 'bi-info-circle-fill text-primary'} fs-4`}></i>
                       <div>
-                        <strong className="d-block text-dark small">Autenticación & Almacenamiento Cifrado</strong>
+                        <strong className="d-block text-dark small">Autenticación y Almacenamiento Cifrado</strong>
                         <span className="text-muted small">
                           {isCloudAccount ? `Sesión autenticada (${user?.email}) con reglas estrictas de Firestore.` : "Modo Demo local. Crea una cuenta para proteger tus datos en la nube."}
                         </span>
@@ -751,7 +751,7 @@ export default function SecurityAuditModal() {
                       onChange={(e) => setFilterCategory(e.target.value)}
                     >
                       <option value="TODOS">Todas las actividades</option>
-                      <option value="SEGURIDAD">Seguridad & Sesión</option>
+                      <option value="SEGURIDAD">Seguridad y Sesión</option>
                       <option value="GASTOS">Gastos</option>
                       <option value="INGRESOS">Ingresos</option>
                       <option value="AHORROS">Ahorros</option>
