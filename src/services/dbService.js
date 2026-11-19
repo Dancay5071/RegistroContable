@@ -159,6 +159,12 @@ export async function getGastosUser(userId, mes, anio) {
     items.push({ id: d.id, ...d.data() });
   });
 
+  items.sort((a, b) => {
+    const timeA = a.fecha ? new Date(a.fecha).getTime() : (a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0));
+    const timeB = b.fecha ? new Date(b.fecha).getTime() : (b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0));
+    return timeB - timeA;
+  });
+
   return items;
 }
 
@@ -276,6 +282,12 @@ export async function getIngresosUser(userId, mes, anio) {
   const items = [];
   snap.forEach((d) => {
     items.push({ id: d.id, ...d.data() });
+  });
+
+  items.sort((a, b) => {
+    const timeA = a.fecha ? new Date(a.fecha).getTime() : (a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0));
+    const timeB = b.fecha ? new Date(b.fecha).getTime() : (b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0));
+    return timeB - timeA;
   });
 
   return items;
@@ -411,8 +423,8 @@ export async function getDetalleAhorrosUser(userId) {
     });
 
     ahorros.sort((a, b) => {
-      const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
-      const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+      const timeA = a.fecha ? new Date(a.fecha).getTime() : (a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0));
+      const timeB = b.fecha ? new Date(b.fecha).getTime() : (b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0));
       return timeB - timeA;
     });
 

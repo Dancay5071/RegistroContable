@@ -1382,9 +1382,9 @@ body {
   margin-bottom: 0;
 }
 
-.table th,
-.table-light th,
-thead th {
+:root:not([data-theme="dark"]) .table th,
+:root:not([data-theme="dark"]) .table-light th,
+:root:not([data-theme="dark"]) thead th {
   color: #1e293b !important;
   font-weight: 700 !important;
   font-size: 0.85rem;
@@ -1394,19 +1394,19 @@ thead th {
   background-color: #ede5d5 !important;
 }
 
-.table td {
+:root:not([data-theme="dark"]) .table td {
   border-bottom: 1px solid #e7dfd0 !important;
   font-size: 0.95rem;
   vertical-align: middle;
 }
 
-.table-hover tbody tr:hover td {
+:root:not([data-theme="dark"]) .table-hover tbody tr:hover td {
   background-color: #f4ecde !important;
 }
 
-tfoot,
-tfoot td,
-.table-light td {
+:root:not([data-theme="dark"]) tfoot,
+:root:not([data-theme="dark"]) tfoot td,
+:root:not([data-theme="dark"]) .table-light td {
   background-color: #ede5d5 !important;
   border-top: 2px solid var(--border-subtle) !important;
   color: #1e293b !important;
@@ -1919,5 +1919,111 @@ footer {
   border-color: #b45309 !important;
   color: #ffffff !important;
 }
+
+[data-theme="dark"] .table {
+  --bs-table-bg: #131b2e !important;
+  --bs-table-color: #f1f5f9 !important;
+  --bs-table-hover-bg: #1a253a !important;
+  --bs-table-hover-color: #ffffff !important;
+  --bs-table-striped-bg: #162035 !important;
+  --bs-table-border-color: #24344d !important;
+  background-color: #131b2e !important;
+  color: #f1f5f9 !important;
+  border-color: #24344d !important;
+}
+
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td {
+  background-color: #131b2e !important;
+  color: #f1f5f9 !important;
+  border-bottom: 1px solid #24344d !important;
+  border-color: #24344d !important;
+}
+
+[data-theme="dark"] thead th,
+[data-theme="dark"] .table thead th,
+[data-theme="dark"] .table-light th,
+[data-theme="dark"] thead.table-light th {
+  background-color: #0f172a !important;
+  color: #94a3b8 !important;
+  border-bottom: 2px solid #24344d !important;
+  border-color: #24344d !important;
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover td {
+  background-color: #1a273e !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .table-hover tbody tr td {
+  background-color: #131b2e !important;
+}
+
+[data-theme="dark"] .table-light,
+[data-theme="dark"] .table-light td,
+[data-theme="dark"] tfoot.table-light,
+[data-theme="dark"] tfoot.table-light td {
+  background-color: #162035 !important;
+  color: #f1f5f9 !important;
+  border-color: #24344d !important;
+}
+
+[data-theme="dark"] .table-danger,
+[data-theme="dark"] .table-danger td,
+[data-theme="dark"] .table-hover tbody tr.table-danger:hover td {
+  background-color: rgba(244, 63, 94, 0.18) !important;
+  color: #fda4af !important;
+}
+
+[data-theme="dark"] .table-warning,
+[data-theme="dark"] .table-warning td,
+[data-theme="dark"] .table-hover tbody tr.table-warning:hover td {
+  background-color: rgba(245, 158, 11, 0.18) !important;
+  color: #fde68a !important;
+}
+
+[data-theme="dark"] .card-consulta,
+[data-theme="dark"] .consulta {
+  background-color: #131b2e !important;
+  border-color: #24344d !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .table .btn-outline-secondary {
+  border-color: #334155 !important;
+  background-color: #1a253a !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .table .btn-outline-secondary:hover {
+  background-color: #24344d !important;
+  border-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .navbar-collapse .btn-outline-warning,
+[data-theme="dark"] .navbar-collapse .btn-outline-success,
+[data-theme="dark"] .navbar-collapse .btn-outline-danger,
+[data-theme="dark"] .navbar-collapse .btn-outline-secondary {
+  background-color: #162032 !important;
+  color: #f1f5f9 !important;
+  border-width: 1px !important;
+}
+
+[data-theme="dark"] .navbar-collapse .btn-outline-warning:hover {
+  background-color: rgba(245, 158, 11, 0.18) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .navbar-collapse .btn-outline-success:hover {
+  background-color: rgba(16, 185, 129, 0.18) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .navbar-collapse .btn-outline-danger:hover {
+  background-color: rgba(244, 63, 94, 0.18) !important;
+  color: #ffffff !important;
+}
+
 
 

@@ -213,10 +213,25 @@ export default function Ahorro() {
     return (datos.ARS || 0) > 0 || (datos.USD || 0) > 0 || (datos.EUR || 0) > 0;
   });
 
-  const historialFiltrado = (historialAhorros || []).filter((h) => {
-    if (monedaFiltro === "TODAS") return true;
-    return (h.moneda || "ARS") === monedaFiltro;
-  });
+  const getAhorroTime = (item) => {
+    if (item.fecha) {
+      const t = new Date(item.fecha).getTime();
+      if (!isNaN(t)) return t;
+    }
+    if (item.createdAt?.toMillis) return item.createdAt.toMillis();
+    if (item.createdAt) {
+      const t = new Date(item.createdAt).getTime();
+      if (!isNaN(t)) return t;
+    }
+    return 0;
+  };
+
+  const historialFiltrado = (historialAhorros || [])
+    .filter((h) => {
+      if (monedaFiltro === "TODAS") return true;
+      return (h.moneda || "ARS") === monedaFiltro;
+    })
+    .sort((a, b) => getAhorroTime(b) - getAhorroTime(a));
 
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">

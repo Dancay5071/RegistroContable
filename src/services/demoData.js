@@ -106,7 +106,12 @@ export function getDemoBalances() {
 export function getDemoGastos(mes, anio) {
   const store = getDemoStore();
   const clave = `${mes}_${anio}`;
-  return store.gastosPorMes[clave] || [];
+  const list = store.gastosPorMes[clave] || [];
+  return [...list].sort((a, b) => {
+    const timeA = a.fecha ? new Date(a.fecha).getTime() : 0;
+    const timeB = b.fecha ? new Date(b.fecha).getTime() : 0;
+    return timeB - timeA;
+  });
 }
 
 export function addDemoGasto(mes, anio, gasto) {
@@ -129,10 +134,14 @@ export function addDemoGasto(mes, anio, gasto) {
   saveDemoStore(store);
 }
 
-export function updateDemoGasto(mes, anio, index, nuevoGasto) {
+export function updateDemoGasto(mes, anio, target, nuevoGasto) {
   const store = getDemoStore();
   const clave = `${mes}_${anio}`;
   const lista = store.gastosPorMes[clave] || [];
+  let index = typeof target === "number" ? target : lista.findIndex((g) => g.id === target);
+  if (index < 0 && nuevoGasto?.id) {
+    index = lista.findIndex((g) => g.id === nuevoGasto.id);
+  }
   if (index >= 0 && index < lista.length) {
     const prev = lista[index];
     const prevPaid = prev.estadoPago === "pagado";
@@ -192,10 +201,11 @@ export function getDemoGastosPendientes() {
   return pendientes;
 }
 
-export function deleteDemoGasto(mes, anio, index) {
+export function deleteDemoGasto(mes, anio, target) {
   const store = getDemoStore();
   const clave = `${mes}_${anio}`;
   const lista = store.gastosPorMes[clave] || [];
+  const index = typeof target === "number" ? target : lista.findIndex((g) => g.id === target);
   if (index >= 0 && index < lista.length) {
     const eliminado = lista[index];
     lista.splice(index, 1);
@@ -209,7 +219,12 @@ export function deleteDemoGasto(mes, anio, index) {
 export function getDemoIngresos(mes, anio) {
   const store = getDemoStore();
   const clave = `${mes}_${anio}`;
-  return store.ingresosPorMes[clave] || [];
+  const list = store.ingresosPorMes[clave] || [];
+  return [...list].sort((a, b) => {
+    const timeA = a.fecha ? new Date(a.fecha).getTime() : 0;
+    const timeB = b.fecha ? new Date(b.fecha).getTime() : 0;
+    return timeB - timeA;
+  });
 }
 
 export function addDemoIngreso(mes, anio, ingreso) {
@@ -260,10 +275,14 @@ export function addDemoIngreso(mes, anio, ingreso) {
   return ingresoConMeta;
 }
 
-export function updateDemoIngreso(mes, anio, index, nuevoIngreso) {
+export function updateDemoIngreso(mes, anio, target, nuevoIngreso) {
   const store = getDemoStore();
   const clave = `${mes}_${anio}`;
   const lista = store.ingresosPorMes[clave] || [];
+  let index = typeof target === "number" ? target : lista.findIndex((i) => i.id === target);
+  if (index < 0 && nuevoIngreso?.id) {
+    index = lista.findIndex((i) => i.id === nuevoIngreso.id);
+  }
   if (index >= 0 && index < lista.length) {
     const diff = nuevoIngreso.monto - lista[index].monto;
     lista[index] = nuevoIngreso;
@@ -272,10 +291,11 @@ export function updateDemoIngreso(mes, anio, index, nuevoIngreso) {
   }
 }
 
-export function deleteDemoIngreso(mes, anio, index) {
+export function deleteDemoIngreso(mes, anio, target) {
   const store = getDemoStore();
   const clave = `${mes}_${anio}`;
   const lista = store.ingresosPorMes[clave] || [];
+  const index = typeof target === "number" ? target : lista.findIndex((i) => i.id === target);
   if (index >= 0 && index < lista.length) {
     const eliminado = lista[index];
     lista.splice(index, 1);
@@ -369,7 +389,12 @@ export function addDemoExtraccion(mes, anio, monto, moneda = "ARS", categoria = 
 
 export function getDemoDetalleAhorros() {
   const store = getDemoStore();
-  return store.ahorrosDetallados || [];
+  const list = store.ahorrosDetallados || [];
+  return [...list].sort((a, b) => {
+    const timeA = a.fecha ? new Date(a.fecha).getTime() : 0;
+    const timeB = b.fecha ? new Date(b.fecha).getTime() : 0;
+    return timeB - timeA;
+  });
 }
 
 export function updateDemoAhorro(id, { descripcion, monto, moneda, categoria }) {

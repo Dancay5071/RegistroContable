@@ -7,13 +7,13 @@ import { useQuickMovement } from "../context/QuickMovementContext";
 import { useVencimientos } from "../context/VencimientosContext";
 import { getDemoGastos, getDemoIngresos } from "../services/demoData";
 import { getGastosUser, getIngresosUser } from "../services/dbService";
-import { 
-  MESES, 
-  DIAS_SEMANA, 
-  formatoMoneda, 
-  getDiasEnMes, 
-  getPrimerDiaSemana, 
-  formatoFechaLarga, 
+import {
+  MESES,
+  DIAS_SEMANA,
+  formatoMoneda,
+  getDiasEnMes,
+  getPrimerDiaSemana,
+  formatoFechaLarga,
   getDiasRestantes,
   formatoFechaVencimiento
 } from "../utils/formatters";
@@ -219,7 +219,7 @@ export default function Calendario() {
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
       <div className="container d-flex flex-column align-items-center" style={{ maxWidth: "1120px" }}>
-        
+
         <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between w-100 mb-3 gap-2">
           <div>
             <h2 className="h4 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
@@ -279,9 +279,9 @@ export default function Calendario() {
           </div>
 
           <div className="col-6 col-md-3">
-            <div 
-              className="p-3 rounded-4 border shadow-sm h-100 cursor-pointer transition-all" 
-              style={{ 
+            <div
+              className="p-3 rounded-4 border shadow-sm h-100 cursor-pointer transition-all"
+              style={{
                 backgroundColor: totalVencimientosPendientes > 0 ? "var(--badge-warning-bg)" : "var(--bg-card)",
                 borderColor: totalVencimientosPendientes > 0 ? "var(--badge-warning-border)" : "var(--border-subtle)"
               }}
@@ -342,10 +342,10 @@ export default function Calendario() {
             </button>
           </div>
 
-          <div className="btn-group p-1 rounded-pill" style={{ backgroundColor: "var(--bg-card-alt)", border: "1px solid var(--border-subtle)" }}>
+          <div className="d-flex flex-wrap align-items-center p-1 rounded-4 gap-1" style={{ backgroundColor: "var(--bg-card-alt)", border: "1px solid var(--border-subtle)" }}>
             <button
               type="button"
-              className={`btn btn-sm rounded-pill px-3 fw-semibold border-0 ${filtroTipo === "todos" ? "btn-dark shadow-sm" : "text-muted"}`}
+              className={`btn btn-sm rounded-pill px-3 fw-semibold border-0 ${filtroTipo === "todos" ? "btn-primary text-white shadow-sm" : "text-muted"}`}
               onClick={() => setFiltroTipo("todos")}
             >
               Todos ({totalEventos})
@@ -377,7 +377,7 @@ export default function Calendario() {
         <div className="row g-3 w-100 mb-4">
           <div className="col-12 col-lg-8">
             <div className="principal p-3 p-md-4 rounded-4 shadow-sm border h-100">
-              
+
               <div className="row g-1 text-center mb-2 pb-2 border-bottom">
                 {NOMBRES_DIAS_CORTOS.map((diaNom) => (
                   <div key={diaNom} className="col text-muted small fw-bold text-uppercase" style={{ fontSize: "0.75rem" }}>
@@ -412,12 +412,12 @@ export default function Calendario() {
 
                     if (!esDiaValido) {
                       return (
-                        <div 
-                          key={`empty_${idx}`} 
+                        <div
+                          key={`empty_${idx}`}
                           className="col-12/7 calendar-cell-col"
                           style={{ width: "14.285%" }}
                         >
-                          <div 
+                          <div
                             className="p-1 rounded-3 calendar-cell opacity-25"
                             style={{ minHeight: "84px", backgroundColor: "transparent" }}
                           ></div>
@@ -426,14 +426,14 @@ export default function Calendario() {
                     }
 
                     return (
-                      <div 
-                        key={`dia_${diaNum}`} 
+                      <div
+                        key={`dia_${diaNum}`}
                         className="calendar-cell-col"
                         style={{ width: "14.285%" }}
                       >
-                        <div 
+                        <div
                           className={`p-1 p-md-2 rounded-3 border calendar-cell cursor-pointer transition-all d-flex flex-column justify-content-between ${esHoy ? 'calendar-cell-today' : ''} ${esSeleccionado ? 'calendar-cell-selected shadow-sm' : ''}`}
-                          style={{ 
+                          style={{
                             minHeight: "84px",
                             backgroundColor: esSeleccionado ? "var(--bg-card-alt)" : "var(--bg-card)",
                             borderColor: esSeleccionado ? "var(--border-focus)" : "var(--border-subtle)"
@@ -441,7 +441,7 @@ export default function Calendario() {
                           onClick={() => setDiaSeleccionado(diaNum)}
                         >
                           <div className="d-flex align-items-center justify-content-between mb-1">
-                            <span 
+                            <span
                               className={`small fw-bold d-inline-flex align-items-center justify-content-center rounded-circle ${esHoy ? 'bg-primary text-white' : 'text-dark'}`}
                               style={{ width: "24px", height: "24px", fontSize: "0.75rem" }}
                             >
@@ -472,7 +472,7 @@ export default function Calendario() {
                               else if (esIng) badgeClass = "badge-success-pastel";
 
                               return (
-                                <div 
+                                <div
                                   key={ev.id || eIdx}
                                   className={`calendar-event-pill text-truncate px-1 py-0 rounded small ${badgeClass}`}
                                   style={{ fontSize: "0.65rem", lineHeight: "1.2" }}
@@ -518,7 +518,7 @@ export default function Calendario() {
               <div className="flex-grow-1 overflow-auto" style={{ maxHeight: "380px" }}>
                 {eventosDiaSeleccionado.length === 0 ? (
                   <div className="text-center py-5 px-3">
-                    <div 
+                    <div
                       className="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm"
                       style={{ width: "54px", height: "54px", backgroundColor: "var(--bg-card-alt)", color: "var(--text-muted)" }}
                     >
@@ -564,14 +564,14 @@ export default function Calendario() {
                       }
 
                       return (
-                        <div 
+                        <div
                           key={ev.id || idx}
                           className="p-3 rounded-3 border d-flex flex-column gap-2"
                           style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}
                         >
                           <div className="d-flex align-items-center justify-content-between">
                             <div className="d-flex align-items-center gap-2">
-                              <div 
+                              <div
                                 className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
                                 style={{ width: "32px", height: "32px", backgroundColor: cat.bg, color: cat.color }}
                               >
@@ -579,7 +579,7 @@ export default function Calendario() {
                               </div>
                               <div>
                                 <div className="fw-bold text-dark small">{ev.descripcion}</div>
-                                <span 
+                                <span
                                   className="badge px-2 py-0 rounded-pill"
                                   style={{ backgroundColor: cat.bg, color: cat.color, border: `1px solid ${cat.border}`, fontSize: "0.68rem" }}
                                 >

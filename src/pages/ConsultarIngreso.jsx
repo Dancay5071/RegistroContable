@@ -70,10 +70,8 @@ export default function ConsultarIngreso() {
     }
   };
 
-  const handleOpenEdit = (index) => {
-    const item = ingresos[index];
+  const handleOpenEdit = (item) => {
     if (!item) return;
-    setEditingIndex(index);
     setEditingItem(item);
     setEditDescripcion(item.descripcion);
     setEditCategoria(item.categoria || "Sueldo");
@@ -94,8 +92,8 @@ export default function ConsultarIngreso() {
 
     try {
       if (isDemo) {
-        updateDemoIngreso(mes, anio, editingIndex, {
-          ...ingresos[editingIndex],
+        updateDemoIngreso(mes, anio, editingItem.id, {
+          id: editingItem.id,
           descripcion: editDescripcion.trim(),
           monto: montoNum,
           categoria: editCategoria
@@ -131,8 +129,7 @@ export default function ConsultarIngreso() {
     }
   };
 
-  const handleEliminarIngreso = (index) => {
-    const item = ingresos[index];
+  const handleEliminarIngreso = (item) => {
     if (!item) return;
 
     requestConfirmation({
@@ -145,7 +142,7 @@ export default function ConsultarIngreso() {
         setLoading(true);
         try {
           if (isDemo) {
-            deleteDemoIngreso(mes, anio, index);
+            deleteDemoIngreso(mes, anio, item.id);
             setIngresos(getDemoIngresos(mes, anio));
           } else {
             await deleteIngresoUser(user.uid, item.id, {
@@ -175,14 +172,29 @@ export default function ConsultarIngreso() {
     });
   };
 
-  const ingresosFiltrados = (ingresos || []).filter((i) => {
-    const coincideTexto = !filtroTexto.trim() || 
-      i.descripcion.toLowerCase().includes(filtroTexto.toLowerCase()) ||
-      (i.categoria && i.categoria.toLowerCase().includes(filtroTexto.toLowerCase()));
-    const coincideCat = filtroCategoria === "todas" || 
-      (i.categoria || "Sueldo").toLowerCase() === filtroCategoria.toLowerCase();
-    return coincideTexto && coincideCat;
-  });
+  const getTimeValue = (i) => {
+    if (i.fecha) {
+      const t = new Date(i.fecha).getTime();
+      if (!isNaN(t)) return t;
+    }
+    if (i.createdAt?.toMillis) return i.createdAt.toMillis();
+    if (i.createdAt) {
+      const t = new Date(i.createdAt).getTime();
+      if (!isNaN(t)) return t;
+    }
+    return 0;
+  };
+
+  const ingresosFiltrados = (ingresos || [])
+    .filter((i) => {
+      const coincideTexto = !filtroTexto.trim() || 
+        i.descripcion.toLowerCase().includes(filtroTexto.toLowerCase()) ||
+        (i.categoria && i.categoria.toLowerCase().includes(filtroTexto.toLowerCase()));
+      const coincideCat = filtroCategoria === "todas" || 
+        (i.categoria || "Sueldo").toLowerCase() === filtroCategoria.toLowerCase();
+      return coincideTexto && coincideCat;
+    })
+    .sort((a, b) => getTimeValue(b) - getTimeValue(a));
 
   const sumaIngresos = ingresosFiltrados.reduce((acc, ing) => acc + (Number(ing.monto) || 0), 0);
 
@@ -350,7 +362,7 @@ export default function ConsultarIngreso() {
                                 type="button" 
                                 className="btn btn-outline-secondary btn-sm me-2" 
                                 title="Editar" 
-                                onClick={() => handleOpenEdit(index)}
+                                onClick={() => handleOpenEdit(ingreso)}
                               >
                                 <i className="bi bi-pencil-fill text-warning"></i>
                               </button>
@@ -358,7 +370,7 @@ export default function ConsultarIngreso() {
                                 type="button" 
                                 className="btn btn-outline-secondary btn-sm" 
                                 title="Eliminar" 
-                                onClick={() => handleEliminarIngreso(index)}
+                                onClick={() => handleEliminarIngreso(ingreso)}
                               >
                                 <i className="bi bi-trash3-fill text-danger"></i>
                               </button>

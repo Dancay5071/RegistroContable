@@ -129,17 +129,21 @@ export default function Home() {
               </h1>
               <p className="text-muted small mb-0">Resumen de tus saldos y actividad mensual</p>
             </div>
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-2 flex-wrap">
               <Link 
                 to="/calendario" 
-                className="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm d-flex align-items-center gap-1"
+                className="btn btn-sm btn-primary rounded-pill px-3 shadow-sm d-flex align-items-center gap-1 fw-semibold"
                 title="Abrir vista de calendario financiero"
               >
                 <i className="bi bi-calendar3"></i>
                 <span>Calendario</span>
               </Link>
-              <div className="badge shadow-sm border px-3 py-2 text-dark fw-medium rounded-pill" style={{ backgroundColor: "var(--bg-card)" }}>
-                {fecha}
+              <div 
+                className="badge shadow-sm border px-3 py-2 fw-medium rounded-pill d-flex align-items-center gap-1" 
+                style={{ backgroundColor: "var(--bg-card)", color: "var(--text-main)", borderColor: "var(--border-subtle)" }}
+              >
+                <i className="bi bi-calendar-check text-muted"></i>
+                <span>{fecha}</span>
               </div>
             </div>
           </div>
@@ -313,16 +317,16 @@ export default function Home() {
           </div>
 
           <div className="principal p-3 p-md-4 rounded-4 shadow-sm border mb-4">
-            <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
-              <h5 className="h6 text-muted text-uppercase fw-bold mb-0 tracking-wider d-flex align-items-center gap-2">
+            <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 border-bottom pb-2">
+              <h5 className="h6 text-muted text-uppercase fw-bold mb-0 tracking-wider d-flex align-items-center gap-2 text-nowrap">
                 <i className="bi bi-clock-history text-primary"></i> Últimos Movimientos
               </h5>
               <button 
                 type="button" 
-                className="btn btn-sm btn-outline-success rounded-pill px-3 fw-semibold shadow-sm"
+                className="btn btn-sm btn-outline-success rounded-pill px-3 fw-semibold shadow-sm text-nowrap flex-shrink-0"
                 onClick={() => openQuickModal("gasto")}
               >
-                <i className="bi bi-plus-lg me-1"></i>  Movimiento
+                <i className="bi bi-plus-lg me-1"></i> Movimiento
               </button>
             </div>
 

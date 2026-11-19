@@ -194,7 +194,7 @@ export default function PowerBiExportModal() {
           ></button>
         </div>
 
-        <div className="px-3 px-md-4 py-2 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-2" style={{ backgroundColor: "var(--bg-card-alt)", fontSize: "0.82rem" }}>
+        <div className="px-3 px-md-4 py-2 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-2 flex-shrink-0" style={{ backgroundColor: "var(--bg-card-alt)", fontSize: "0.82rem" }}>
           <div className="d-flex align-items-center gap-2 text-muted">
             <i className="bi bi-database-check text-success"></i>
             <span>Auditoría de datos:</span>
@@ -213,10 +213,11 @@ export default function PowerBiExportModal() {
           </div>
         </div>
 
-        <div className="d-flex border-bottom px-3 px-md-4 pt-2 gap-1 overflow-auto" style={{ backgroundColor: "var(--bg-card)" }}>
+        <div className="d-flex border-bottom px-3 px-md-4 pt-2 gap-1 overflow-x-auto flex-shrink-0" style={{ backgroundColor: "var(--bg-card)", minHeight: "48px" }}>
           <button
             type="button"
-            className={`btn btn-sm border-0 border-bottom border-3 rounded-0 px-3 py-2 fw-semibold d-flex align-items-center gap-1 text-nowrap ${activeTab === 'datasets' ? 'border-warning text-dark active' : 'border-transparent text-muted'}`}
+            className={`btn btn-sm border-0 border-bottom border-3 rounded-0 px-3 py-2 fw-semibold d-flex align-items-center gap-1 text-nowrap flex-shrink-0 ${activeTab === 'datasets' ? 'border-warning active' : 'border-transparent text-muted'}`}
+            style={{ color: activeTab === 'datasets' ? 'var(--text-main)' : 'var(--text-muted)' }}
             onClick={() => setActiveTab('datasets')}
           >
             <i className="bi bi-download text-warning"></i>
@@ -225,7 +226,8 @@ export default function PowerBiExportModal() {
 
           <button
             type="button"
-            className={`btn btn-sm border-0 border-bottom border-3 rounded-0 px-3 py-2 fw-semibold d-flex align-items-center gap-1 text-nowrap ${activeTab === 'dax' ? 'border-warning text-dark active' : 'border-transparent text-muted'}`}
+            className={`btn btn-sm border-0 border-bottom border-3 rounded-0 px-3 py-2 fw-semibold d-flex align-items-center gap-1 text-nowrap flex-shrink-0 ${activeTab === 'dax' ? 'border-warning active' : 'border-transparent text-muted'}`}
+            style={{ color: activeTab === 'dax' ? 'var(--text-main)' : 'var(--text-muted)' }}
             onClick={() => setActiveTab('dax')}
           >
             <i className="bi bi-code-square text-primary"></i>
@@ -234,7 +236,8 @@ export default function PowerBiExportModal() {
 
           <button
             type="button"
-            className={`btn btn-sm border-0 border-bottom border-3 rounded-0 px-3 py-2 fw-semibold d-flex align-items-center gap-1 text-nowrap ${activeTab === 'm' ? 'border-warning text-dark active' : 'border-transparent text-muted'}`}
+            className={`btn btn-sm border-0 border-bottom border-3 rounded-0 px-3 py-2 fw-semibold d-flex align-items-center gap-1 text-nowrap flex-shrink-0 ${activeTab === 'm' ? 'border-warning active' : 'border-transparent text-muted'}`}
+            style={{ color: activeTab === 'm' ? 'var(--text-main)' : 'var(--text-muted)' }}
             onClick={() => setActiveTab('m')}
           >
             <i className="bi bi-lightning-charge text-warning"></i>
@@ -243,7 +246,8 @@ export default function PowerBiExportModal() {
 
           <button
             type="button"
-            className={`btn btn-sm border-0 border-bottom border-3 rounded-0 px-3 py-2 fw-semibold d-flex align-items-center gap-1 text-nowrap ${activeTab === 'guia' ? 'border-warning text-dark active' : 'border-transparent text-muted'}`}
+            className={`btn btn-sm border-0 border-bottom border-3 rounded-0 px-3 py-2 fw-semibold d-flex align-items-center gap-1 text-nowrap flex-shrink-0 ${activeTab === 'guia' ? 'border-warning active' : 'border-transparent text-muted'}`}
+            style={{ color: activeTab === 'guia' ? 'var(--text-main)' : 'var(--text-muted)' }}
             onClick={() => setActiveTab('guia')}
           >
             <i className="bi bi-info-circle text-info"></i>

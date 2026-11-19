@@ -794,8 +794,8 @@ export default function SecurityAuditModal() {
                     <span className="small">Las acciones contables y de seguridad que realices quedarán registradas aquí.</span>
                   </div>
                 ) : (
-                  <div className="table-responsive rounded-3 border" style={{ maxHeight: "380px" }}>
-                    <table className="table table-hover table-sm align-middle mb-0">
+                  <div className="table-responsive rounded-3 border" style={{ maxHeight: "380px", borderColor: "var(--border-subtle)", backgroundColor: "var(--bg-card)" }}>
+                    <table className="table table-hover table-sm align-middle mb-0" style={{ backgroundColor: "var(--bg-card)" }}>
                       <thead className="table-light small text-muted text-uppercase">
                         <tr>
                           <th className="ps-3 py-2">Fecha / Hora</th>

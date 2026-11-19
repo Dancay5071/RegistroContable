@@ -77,10 +77,8 @@ export default function ConsultarGasto() {
     }
   };
 
-  const handleOpenEdit = (index) => {
-    const item = gastos[index];
+  const handleOpenEdit = (item) => {
     if (!item) return;
-    setEditingIndex(index);
     setEditingItem(item);
     setEditDescripcion(item.descripcion);
     setEditCategoria(item.categoria || "Otros");
@@ -103,7 +101,8 @@ export default function ConsultarGasto() {
 
     try {
       if (isDemo) {
-        updateDemoGasto(mes, anio, editingIndex, {
+        updateDemoGasto(mes, anio, editingItem.id, {
+          id: editingItem.id,
           descripcion: editDescripcion.trim(),
           monto: montoNum,
           categoria: editCategoria,
@@ -163,8 +162,7 @@ export default function ConsultarGasto() {
     });
   };
 
-  const handleEliminarGasto = (index) => {
-    const item = gastos[index];
+  const handleEliminarGasto = (item) => {
     if (!item) return;
 
     const esPendiente = item.estadoPago === "pendiente";
@@ -182,7 +180,7 @@ export default function ConsultarGasto() {
         setLoading(true);
         try {
           if (isDemo) {
-            deleteDemoGasto(mes, anio, index);
+            deleteDemoGasto(mes, anio, item.id);
             setGastos(getDemoGastos(mes, anio));
           } else {
             await deleteGastoUser(user.uid, item.id, {
@@ -213,17 +211,32 @@ export default function ConsultarGasto() {
     });
   };
 
-  const gastosFiltrados = (gastos || []).filter((g) => {
-    const coincideTexto = !filtroTexto.trim() || 
-      g.descripcion.toLowerCase().includes(filtroTexto.toLowerCase()) ||
-      (g.categoria && g.categoria.toLowerCase().includes(filtroTexto.toLowerCase()));
-    const coincideCat = filtroCategoria === "todas" || 
-      (g.categoria || "Otros").toLowerCase() === filtroCategoria.toLowerCase();
-    const esPendiente = g.estadoPago === "pendiente";
-    const coincideEstado = filtroEstado === "todos" || 
-      (filtroEstado === "pendientes" ? esPendiente : !esPendiente);
-    return coincideTexto && coincideCat && coincideEstado;
-  });
+  const getTimeValue = (g) => {
+    if (g.fecha) {
+      const t = new Date(g.fecha).getTime();
+      if (!isNaN(t)) return t;
+    }
+    if (g.createdAt?.toMillis) return g.createdAt.toMillis();
+    if (g.createdAt) {
+      const t = new Date(g.createdAt).getTime();
+      if (!isNaN(t)) return t;
+    }
+    return 0;
+  };
+
+  const gastosFiltrados = (gastos || [])
+    .filter((g) => {
+      const coincideTexto = !filtroTexto.trim() || 
+        g.descripcion.toLowerCase().includes(filtroTexto.toLowerCase()) ||
+        (g.categoria && g.categoria.toLowerCase().includes(filtroTexto.toLowerCase()));
+      const coincideCat = filtroCategoria === "todas" || 
+        (g.categoria || "Otros").toLowerCase() === filtroCategoria.toLowerCase();
+      const esPendiente = g.estadoPago === "pendiente";
+      const coincideEstado = filtroEstado === "todos" || 
+        (filtroEstado === "pendientes" ? esPendiente : !esPendiente);
+      return coincideTexto && coincideCat && coincideEstado;
+    })
+    .sort((a, b) => getTimeValue(b) - getTimeValue(a));
 
   const sumaGastos = gastosFiltrados.reduce((acc, g) => acc + (Number(g.monto) || 0), 0);
 
@@ -458,7 +471,7 @@ export default function ConsultarGasto() {
                                 type="button" 
                                 className="btn btn-outline-secondary btn-sm me-2" 
                                 title="Editar" 
-                                onClick={() => handleOpenEdit(index)}
+                                onClick={() => handleOpenEdit(gasto)}
                               >
                                 <i className="bi bi-pencil-fill text-warning"></i>
                               </button>
@@ -466,7 +479,7 @@ export default function ConsultarGasto() {
                                 type="button" 
                                 className="btn btn-outline-secondary btn-sm" 
                                 title="Eliminar" 
-                                onClick={() => handleEliminarGasto(index)}
+                                onClick={() => handleEliminarGasto(gasto)}
                               >
                                 <i className="bi bi-trash3-fill text-danger"></i>
                               </button>
