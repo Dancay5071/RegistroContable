@@ -13,7 +13,7 @@ const AuthContext = createContext(null);
 
 const DEMO_USER = {
   uid: "demo-user-id",
-  email: "demo@registrocontable.com",
+  email: "demo@fintrack.app",
   displayName: "Usuario Demo",
   isDemo: true
 };
@@ -30,15 +30,16 @@ export function AuthProvider({ children }) {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
-    const storedDemo = localStorage.getItem("registro_contable_demo_active");
-    if (storedDemo === "true") {
+    const isDemoActive = localStorage.getItem("fintrack_demo_active") === "true" || localStorage.getItem("registro_contable_demo_active") === "true";
+    if (isDemoActive) {
       setUser(DEMO_USER);
       setLoading(false);
       return;
     }
 
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (localStorage.getItem("registro_contable_demo_active") !== "true") {
+      const demoCheck = localStorage.getItem("fintrack_demo_active") === "true" || localStorage.getItem("registro_contable_demo_active") === "true";
+      if (!demoCheck) {
         setUser(normalizeUser(currentUser));
       }
       setLoading(false);
@@ -48,6 +49,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
+    localStorage.removeItem("fintrack_demo_active");
     localStorage.removeItem("registro_contable_demo_active");
     const cred = await signInWithEmailAndPassword(auth, email, password);
     setUser(normalizeUser(cred.user));
@@ -55,6 +57,7 @@ export function AuthProvider({ children }) {
   };
 
   const register = async (email, password) => {
+    localStorage.removeItem("fintrack_demo_active");
     localStorage.removeItem("registro_contable_demo_active");
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     setUser(normalizeUser(cred.user));
@@ -62,6 +65,7 @@ export function AuthProvider({ children }) {
   };
 
   const loginWithGoogle = async () => {
+    localStorage.removeItem("fintrack_demo_active");
     localStorage.removeItem("registro_contable_demo_active");
     const cred = await signInWithPopup(auth, googleProvider);
     setUser(normalizeUser(cred.user));
@@ -73,13 +77,14 @@ export function AuthProvider({ children }) {
   };
 
   const loginAsDemo = () => {
-    localStorage.setItem("registro_contable_demo_active", "true");
+    localStorage.setItem("fintrack_demo_active", "true");
     setUser(DEMO_USER);
     setIsLoginModalOpen(false);
   };
 
   const logout = async () => {
-    if (user?.isDemo || localStorage.getItem("registro_contable_demo_active") === "true") {
+    if (user?.isDemo || localStorage.getItem("fintrack_demo_active") === "true" || localStorage.getItem("registro_contable_demo_active") === "true") {
+      localStorage.removeItem("fintrack_demo_active");
       localStorage.removeItem("registro_contable_demo_active");
       setUser(null);
       return;

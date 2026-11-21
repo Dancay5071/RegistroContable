@@ -126,24 +126,6 @@ export function listenGastosPendientesUser(userId, callback) {
   });
 }
 
-export async function getGastosPendientesUser(userId) {
-  if (!userId) return [];
-  const transaccionesRef = collection(db, "users", userId, "transacciones");
-  const q = query(
-    transaccionesRef,
-    where("estadoPago", "==", "pendiente")
-  );
-  const snap = await getDocs(q);
-  const items = [];
-  snap.forEach((d) => {
-    const data = d.data();
-    if (data.tipo === "gasto") {
-      items.push({ id: d.id, ...data });
-    }
-  });
-  return items;
-}
-
 export async function getGastosUser(userId, mes, anio) {
   const clave = `${mes}_${anio}`;
   const transaccionesRef = collection(db, "users", userId, "transacciones");
@@ -798,33 +780,4 @@ export function listenSubscriptionStatusUser(userId, userCreationTime, callback,
     console.error("Error al escuchar suscripción:", err);
     callback(calculateSubscription({}, userCreationTime, userEmail, userObj));
   });
-}
-
-export async function getSubscriptionStatusUser(userId, userCreationTime, userEmail = null) {
-  if (!userId) return calculateSubscription({}, userCreationTime, userEmail);
-  if (isUserAdmin(userEmail)) {
-    return calculateSubscription({ status: "active", plan: "admin_unlimited", isAdmin: true }, userCreationTime, userEmail);
-  }
-  try {
-    const subDocRef = doc(db, "users", userId, "config", "subscription");
-    const docSnap = await getDoc(subDocRef);
-    if (docSnap.exists()) {
-      return calculateSubscription(docSnap.data(), userCreationTime, userEmail);
-    }
-    const now = new Date();
-    const trialStart = userCreationTime ? new Date(userCreationTime) : now;
-    const trialEnd = new Date(trialStart.getTime() + 60 * 24 * 60 * 60 * 1000);
-    const initialData = {
-      status: "trial",
-      trialStartDate: trialStart.toISOString(),
-      trialEndDate: trialEnd.toISOString(),
-      plan: "free_trial",
-      createdAt: serverTimestamp()
-    };
-    await setDoc(subDocRef, initialData, { merge: true });
-    return calculateSubscription(initialData, userCreationTime, userEmail);
-  } catch (err) {
-    console.error("Error al obtener suscripción:", err);
-    return calculateSubscription({}, userCreationTime, userEmail);
-  }
 }

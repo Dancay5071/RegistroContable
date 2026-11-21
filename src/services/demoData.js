@@ -1,6 +1,7 @@
 import { MESES } from "../utils/formatters";
 
-const STORAGE_KEY = "registro_contable_demo_data_v1";
+const STORAGE_KEY = "fintrack_demo_data_v1";
+const LEGACY_STORAGE_KEY = "registro_contable_demo_data_v1";
 
 function generarDatosIniciales() {
   const currentYear = new Date().getFullYear();
@@ -70,7 +71,7 @@ function generarDatosIniciales() {
 
 export function getDemoStore() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
     if (!raw) {
       const initial = generarDatosIniciales();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));

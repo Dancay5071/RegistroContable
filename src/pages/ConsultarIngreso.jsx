@@ -41,7 +41,6 @@ export default function ConsultarIngreso() {
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  const [editingIndex, setEditingIndex] = useState(null);
   const [editDescripcion, setEditDescripcion] = useState("");
   const [editCategoria, setEditCategoria] = useState("Sueldo");
   const [editMonto, setEditMonto] = useState("");
