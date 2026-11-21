@@ -6,6 +6,7 @@ import { usePrivacy } from "../context/PrivacyContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useVencimientos } from "../context/VencimientosContext";
 import { usePowerBiExport } from "../context/PowerBiExportContext";
+import { useSubscription } from "../context/SubscriptionContext";
 import { getFechaHoy, formatoMoneda, MESES } from "../utils/formatters";
 import { resetDemoData, getDemoUltimasTransacciones, getDemoGastos, getDemoResumenAnual } from "../services/demoData";
 import { getUltimasTransaccionesUser, getGastosUser, getResumenAnualUser } from "../services/dbService";
@@ -22,6 +23,7 @@ export default function Home() {
   const { openQuickModal, movementCounter } = useQuickMovement();
   const { vencimientos, vencidos, porVencer, totalPendiente, totalVencido, openVencimientosModal } = useVencimientos();
   const { openPowerBiExport } = usePowerBiExport();
+  const { subscription, openSubscriptionModal } = useSubscription();
   const { showToast } = useToast();
   const [fecha, setFecha] = useState(getFechaHoy(window.innerWidth < 768));
   const [ultimasTransacciones, setUltimasTransacciones] = useState([]);
@@ -122,6 +124,26 @@ export default function Home() {
         </div>
       ) : (
         <div className="w-100" style={{ maxWidth: "1020px" }}>
+          {subscription?.isExpired && (
+            <div className="alert alert-warning border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2 p-3">
+              <div className="d-flex align-items-center gap-2">
+                <i className="bi bi-shield-exclamation text-warning fs-3"></i>
+                <div>
+                  <div className="fw-bold small text-dark">Modo Solo Lectura Activo</div>
+                  <div className="small text-muted">
+                    Tu periodo de prueba de 60 días ha concluido. Tus datos y reportes continúan seguros y accesibles.
+                  </div>
+                </div>
+              </div>
+              <button 
+                className="btn btn-warning text-dark btn-sm rounded-pill px-3 fw-bold shadow-sm"
+                onClick={openSubscriptionModal}
+              >
+                <i className="bi bi-stars me-1"></i> Activar FinTrack Pro
+              </button>
+            </div>
+          )}
+
           <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
             <div>
               <h1 className="h4 fw-bold text-dark mb-1">

@@ -5,6 +5,7 @@ import { useToast } from "../context/ToastContext";
 import { usePrivacy } from "../context/PrivacyContext";
 import { useSecurity } from "../context/SecurityContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
+import { useSubscription } from "../context/SubscriptionContext";
 import { 
   getDemoIngresos, 
   updateDemoIngreso, 
@@ -28,6 +29,7 @@ export default function ConsultarIngreso() {
   const { isPrivate, maskAmount } = usePrivacy();
   const { requestConfirmation } = useSecurity();
   const { movementCounter } = useQuickMovement();
+  const { subscription, openSubscriptionModal } = useSubscription();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -72,6 +74,11 @@ export default function ConsultarIngreso() {
 
   const handleOpenEdit = (item) => {
     if (!item) return;
+    if (subscription?.isExpired) {
+      showToast("Tu periodo de prueba ha finalizado. Suscríbete a FinTrack Pro para editar transacciones.", "warning");
+      openSubscriptionModal();
+      return;
+    }
     setEditingItem(item);
     setEditDescripcion(item.descripcion);
     setEditCategoria(item.categoria || "Sueldo");
@@ -131,6 +138,11 @@ export default function ConsultarIngreso() {
 
   const handleEliminarIngreso = (item) => {
     if (!item) return;
+    if (subscription?.isExpired) {
+      showToast("Tu periodo de prueba ha finalizado. Suscríbete a FinTrack Pro para eliminar transacciones.", "warning");
+      openSubscriptionModal();
+      return;
+    }
 
     requestConfirmation({
       title: "¿Eliminar este ingreso?",

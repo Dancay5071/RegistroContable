@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useToast } from "../context/ToastContext";
+import { useSubscription } from "../context/SubscriptionContext";
 import { MESES, MONEDAS, formatoMoneda, sanitizeTextInput, getFechaHoyISO, formatoFechaVencimiento } from "../utils/formatters";
 import { CATEGORIAS_GASTO, CATEGORIAS_INGRESO, CATEGORIAS_AHORRO } from "../utils/categories";
 import { 
@@ -23,6 +24,7 @@ export default function QuickMovementModal() {
   const { user, isDemo } = useAuth();
   const { isOpen, activeTab, setActiveTab, closeQuickModal, notifyMovementSaved } = useQuickMovement();
   const { showToast } = useToast();
+  const { subscription, openSubscriptionModal } = useSubscription();
 
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
@@ -68,6 +70,11 @@ export default function QuickMovementModal() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (subscription?.isExpired) {
+      showToast("Tu periodo de prueba ha finalizado. Suscríbete para agregar nuevos movimientos.", "warning");
+      openSubscriptionModal();
+      return;
+    }
     const montoNum = parseFloat(monto);
 
     if (isNaN(montoNum) || montoNum <= 0) {

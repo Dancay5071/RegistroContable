@@ -7,6 +7,7 @@ import { useSecurity } from "../context/SecurityContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useVencimientos } from "../context/VencimientosContext";
 import { usePowerBiExport } from "../context/PowerBiExportContext";
+import { useSubscription } from "../context/SubscriptionContext";
 import { 
   getDemoGastos, 
   updateDemoGasto, 
@@ -32,6 +33,7 @@ export default function ConsultarGasto() {
   const { movementCounter } = useQuickMovement();
   const { marcarComoPagado } = useVencimientos();
   const { openPowerBiExport } = usePowerBiExport();
+  const { subscription, openSubscriptionModal } = useSubscription();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -79,6 +81,11 @@ export default function ConsultarGasto() {
 
   const handleOpenEdit = (item) => {
     if (!item) return;
+    if (subscription?.isExpired) {
+      showToast("Tu periodo de prueba ha finalizado. Suscríbete a FinTrack Pro para editar transacciones.", "warning");
+      openSubscriptionModal();
+      return;
+    }
     setEditingItem(item);
     setEditDescripcion(item.descripcion);
     setEditCategoria(item.categoria || "Otros");
@@ -144,6 +151,11 @@ export default function ConsultarGasto() {
   };
 
   const handlePagarItem = (gasto) => {
+    if (subscription?.isExpired) {
+      showToast("Tu periodo de prueba ha finalizado. Suscríbete a FinTrack Pro para gestionar pagos.", "warning");
+      openSubscriptionModal();
+      return;
+    }
     requestConfirmation({
       title: "¿Confirmar pago de servicio?",
       message: `Estás por registrar el pago de "${gasto.descripcion}" por ${formatoMoneda(gasto.monto)}.`,
@@ -164,6 +176,11 @@ export default function ConsultarGasto() {
 
   const handleEliminarGasto = (item) => {
     if (!item) return;
+    if (subscription?.isExpired) {
+      showToast("Tu periodo de prueba ha finalizado. Suscríbete a FinTrack Pro para eliminar transacciones.", "warning");
+      openSubscriptionModal();
+      return;
+    }
 
     const esPendiente = item.estadoPago === "pendiente";
     const impactoTexto = esPendiente

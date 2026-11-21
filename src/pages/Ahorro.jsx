@@ -23,6 +23,7 @@ import { CATEGORIAS_AHORRO, getCategoriaAhorro } from "../utils/categories";
 import Loader from "../components/Loader";
 import { exportAhorrosToCSV } from "../utils/exportUtils";
 import { useDolar } from "../hooks/useDolar";
+import { useSubscription } from "../context/SubscriptionContext";
 
 export default function Ahorro() {
   const { user, isDemo } = useAuth();
@@ -31,6 +32,7 @@ export default function Ahorro() {
   const { requestConfirmation } = useSecurity();
   const { openQuickModal, movementCounter, notifyMovementSaved } = useQuickMovement();
   const { showToast } = useToast();
+  const { subscription, openSubscriptionModal } = useSubscription();
   const { blue } = useDolar();
   const currentYear = new Date().getFullYear();
   const yearOptions = [currentYear - 3, currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
@@ -76,6 +78,11 @@ export default function Ahorro() {
   };
 
   const handleOpenEdit = (item) => {
+    if (subscription?.isExpired) {
+      showToast("Tu periodo de prueba ha finalizado. Suscríbete a FinTrack Pro para editar ahorros.", "warning");
+      openSubscriptionModal();
+      return;
+    }
     setEditingItem(item);
     setEditDescripcion(item.descripcion || "");
     setEditMonto(String(item.monto || ""));
@@ -137,6 +144,11 @@ export default function Ahorro() {
 
   const handleDeleteAhorro = () => {
     if (!editingItem) return;
+    if (subscription?.isExpired) {
+      showToast("Tu periodo de prueba ha finalizado. Suscríbete a FinTrack Pro para eliminar ahorros.", "warning");
+      openSubscriptionModal();
+      return;
+    }
 
     const moneda = editingItem.moneda || "ARS";
     const esExtraccion = editingItem.tipo === "extraccion";

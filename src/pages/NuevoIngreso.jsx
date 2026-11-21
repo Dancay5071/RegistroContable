@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { useSubscription } from "../context/SubscriptionContext";
 import { addDemoIngreso } from "../services/demoData";
 import { addIngresoUser } from "../services/dbService";
 import { logActivity } from "../services/auditService";
@@ -12,6 +14,7 @@ import Loader from "../components/Loader";
 export default function NuevoIngreso() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
+  const { subscription, openSubscriptionModal } = useSubscription();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
@@ -22,6 +25,30 @@ export default function NuevoIngreso() {
   const [porcentaje, setPorcentaje] = useState(0);
   const [montoAhorroFijo, setMontoAhorroFijo] = useState("");
   const [loading, setLoading] = useState(false);
+
+  if (subscription?.isExpired) {
+    return (
+      <div className="fade-in container my-4 d-flex justify-content-center">
+        <div className="principal text-center p-5 rounded-4 shadow-sm border" style={{ maxWidth: "560px" }}>
+          <div className="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3 subscription-icon-wrapper">
+            <i className="bi bi-shield-lock-fill text-warning fs-1"></i>
+          </div>
+          <h4 className="fw-bold mb-2">Modo Solo Lectura Activo</h4>
+          <p className="text-muted small mb-4">
+            Tu periodo de prueba de 60 días ha concluido. Todos tus datos y balances históricos continúan disponibles para consulta o descarga. Suscríbete para registrar nuevos ingresos.
+          </p>
+          <div className="d-flex flex-column flex-sm-row justify-content-center gap-2">
+            <button className="btn btn-warning text-dark px-4 py-2 fw-semibold shadow-sm" onClick={openSubscriptionModal}>
+              <i className="bi bi-stars me-1"></i> Activar FinTrack Pro
+            </button>
+            <Link to="/ingresos/consultar" className="btn btn-outline-secondary px-4 py-2 fw-semibold">
+              <i className="bi bi-arrow-up-circle me-1"></i> Ver Mis Ingresos
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const addQuickAmount = (val) => {
     const current = parseFloat(monto) || 0;
