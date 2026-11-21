@@ -4,7 +4,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { BalanceProvider } from "./context/BalanceContext";
 import { PrivacyProvider } from "./context/PrivacyContext";
 import { SecurityProvider } from "./context/SecurityContext";
-import { ToastProvider } from "./context/ToastContext";
+import { ToastProvider, useToast } from "./context/ToastContext";
 import { QuickMovementProvider } from "./context/QuickMovementContext";
 import { VencimientosProvider } from "./context/VencimientosContext";
 import { PowerBiExportProvider } from "./context/PowerBiExportContext";
