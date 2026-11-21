@@ -2065,11 +2065,11 @@ footer {
 }
 
 .subscription-pill-badge {
-  background-color: rgba(245, 158, 11, 0.15);
-  color: #b45309;
+  background-color: rgba(36, 104, 69, 0.12) !important;
+  color: #246845 !important;
   letter-spacing: 0.08em;
-  font-size: 0.72rem;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  font-size: 0.74rem;
+  border: 1px solid rgba(36, 104, 69, 0.25) !important;
 }
 
 .subscription-status-trial {
@@ -2128,9 +2128,9 @@ footer {
 }
 
 [data-theme="dark"] .subscription-pill-badge {
-  background-color: rgba(245, 158, 11, 0.22);
-  color: #fbbf24;
-  border-color: rgba(245, 158, 11, 0.4);
+  background-color: rgba(52, 211, 153, 0.15) !important;
+  color: #34d399 !important;
+  border-color: rgba(52, 211, 153, 0.35) !important;
 }
 
 [data-theme="dark"] .subscription-progress {

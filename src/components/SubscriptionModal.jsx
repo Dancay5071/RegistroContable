@@ -3,6 +3,7 @@ import { useSubscription } from "../context/SubscriptionContext";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { createSubscriptionCheckout, cancelSubscriptionAutoRenew } from "../services/subscriptionService";
+import FinTrackLogo from "./FinTrackLogo";
 
 export default function SubscriptionModal() {
   const { 
@@ -136,11 +137,13 @@ export default function SubscriptionModal() {
           ></button>
 
         <div className="text-center mb-4">
-          <div className="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3 subscription-icon-wrapper">
-            <i className="bi bi-stars fs-1 text-warning"></i>
+          <div className="d-inline-flex align-items-center justify-content-center gap-2 mb-3">
+            <FinTrackLogo size={40} showText={true} textClass="fs-3" />
           </div>
-          <div className="badge rounded-pill subscription-pill-badge mb-2 px-3 py-1 fw-bold">
-            FINTRACK PRO
+          <div className="d-flex justify-content-center mb-2">
+            <span className="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 fw-bold" style={{ letterSpacing: "0.08em", fontSize: "0.76rem" }}>
+              PLANES Y SUSCRIPCIÓN
+            </span>
           </div>
           <h2 className="fw-bold mb-2">Tu tranquilidad financiera comienza aquí</h2>
           <p className="text-muted small mx-auto" style={{ maxWidth: "540px" }}>
