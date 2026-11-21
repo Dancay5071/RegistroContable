@@ -154,7 +154,7 @@ export default function Navbar() {
                 onClick={openSubscriptionModal}
                 title="Estado de tu cuenta FinTrack (Clic para ver planes)"
               >
-                <i className={`bi ${subscription.isExpired ? 'bi-exclamation-triangle-fill text-danger' : (subscription.status === 'active' ? 'bi-patch-check-fill text-success' : 'bi-stars text-warning')}`}></i>
+                <i className={`bi ${subscription.isExpired ? 'bi-exclamation-triangle-fill text-danger' : (subscription.status === 'active' ? 'bi-patch-check-fill text-success' : 'bi-clock-history text-primary')}`}></i>
                 <span className="subscription-badge-text fw-semibold small">{subscription.badgeText}</span>
               </button>
             )}
@@ -254,7 +254,7 @@ export default function Navbar() {
                           style={{ fontSize: "0.74rem" }}
                           onClick={() => { setUserMenuOpen(false); openSubscriptionModal(); }}
                         >
-                          <i className="bi bi-stars"></i>
+                          <i className="bi bi-shield-check"></i>
                           <span>{subscription.status === "active" ? "Gestionar Plan" : "Ver Planes Pro"}</span>
                         </button>
                       </div>
@@ -376,7 +376,7 @@ export default function Navbar() {
                   className="btn btn-primary btn-sm w-100 rounded-pill mt-2 py-1 fw-semibold d-flex align-items-center justify-content-center gap-1"
                   onClick={() => { closeMenu(); openSubscriptionModal(); }}
                 >
-                  <i className="bi bi-stars"></i>
+                  <i className="bi bi-shield-check"></i>
                   <span>Ver Planes y Suscripción</span>
                 </button>
               </div>

@@ -665,7 +665,7 @@ export function calculateSubscription(data = {}, userCreationTime = null) {
       trialStartDate: data.trialStartDate || null,
       trialEndDate: data.trialEndDate || null,
       label: "Plan Pro Activo",
-      badgeText: "👑 Pro Activo",
+      badgeText: "Pro Activo",
       badgeVariant: "success"
     };
   }
@@ -688,17 +688,17 @@ export function calculateSubscription(data = {}, userCreationTime = null) {
   const isTrialActive = !isExpired;
   const isPro = isTrialActive;
 
-  let badgeText = `✨ ${daysLeft} días de prueba`;
+  let badgeText = `${daysLeft} días de prueba`;
   let badgeVariant = "primary";
 
   if (isExpired) {
-    badgeText = "⚠️ Prueba Vencida";
+    badgeText = "Prueba Vencida";
     badgeVariant = "danger";
   } else if (daysLeft === 1) {
-    badgeText = "⏳ 1 día de prueba";
+    badgeText = "1 día de prueba";
     badgeVariant = "warning";
   } else if (daysLeft <= 7) {
-    badgeText = `⏳ ${daysLeft} días de prueba`;
+    badgeText = `${daysLeft} días de prueba`;
     badgeVariant = "warning";
   }
 

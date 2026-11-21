@@ -633,7 +633,7 @@ export function getDemoSubscription() {
     trialStartDate: trialStart.toISOString(),
     trialEndDate: trialEnd.toISOString(),
     label: "Prueba Pro (45 días restantes)",
-    badgeText: "✨ 45 días de prueba",
+    badgeText: "45 días de prueba",
     badgeVariant: "primary"
   };
   store.subscription = demoSub;
@@ -657,7 +657,7 @@ export function setDemoSubscription(mode = "trial_45") {
       trialStartDate: null,
       trialEndDate: null,
       label: "Plan Pro Activo",
-      badgeText: "👑 Pro Activo",
+      badgeText: "Pro Activo",
       badgeVariant: "success"
     };
   } else if (mode === "expiring_5") {
@@ -674,7 +674,7 @@ export function setDemoSubscription(mode = "trial_45") {
       trialStartDate: trialStart.toISOString(),
       trialEndDate: trialEnd.toISOString(),
       label: "Prueba Pro (5 días restantes)",
-      badgeText: "⏳ 5 días de prueba",
+      badgeText: "5 días de prueba",
       badgeVariant: "warning"
     };
   } else if (mode === "expired") {
@@ -691,7 +691,7 @@ export function setDemoSubscription(mode = "trial_45") {
       trialStartDate: trialStart.toISOString(),
       trialEndDate: trialEnd.toISOString(),
       label: "Periodo de prueba finalizado",
-      badgeText: "⚠️ Prueba Vencida",
+      badgeText: "Prueba Vencida",
       badgeVariant: "danger"
     };
   } else {
@@ -708,7 +708,7 @@ export function setDemoSubscription(mode = "trial_45") {
       trialStartDate: trialStart.toISOString(),
       trialEndDate: trialEnd.toISOString(),
       label: "Prueba Pro (45 días restantes)",
-      badgeText: "✨ 45 días de prueba",
+      badgeText: "45 días de prueba",
       badgeVariant: "primary"
     };
   }

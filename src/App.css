@@ -2153,5 +2153,22 @@ footer {
   border-color: #25334c;
 }
 
+.modal-backdrop-custom {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 2000 !important;
+  background-color: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 
 

@@ -97,23 +97,43 @@ export default function SubscriptionModal() {
 
   return (
     <div 
-      className="modal-backdrop-custom d-flex align-items-center justify-content-center p-3" 
-      style={{ zIndex: 1060 }}
-      onClick={closeSubscriptionModal}
+      className="modal fade show d-block" 
+      tabIndex="-1" 
+      role="dialog" 
+      aria-modal="true"
+      style={{ 
+        position: "fixed", 
+        top: 0, 
+        left: 0, 
+        right: 0, 
+        bottom: 0, 
+        width: "100vw", 
+        height: "100vh", 
+        zIndex: 2000, 
+        backgroundColor: "rgba(15, 23, 42, 0.75)", 
+        backdropFilter: "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
+        overflowY: "auto"
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) closeSubscriptionModal();
+      }}
     >
-      <div 
-        className="modal-card-custom shadow-lg rounded-4 p-4 p-md-5 position-relative border"
-        style={{ maxWidth: "780px", width: "100%", maxHeight: "90vh", overflowY: "auto" }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          type="button"
-          className="btn-close-custom position-absolute top-0 end-0 m-3 m-md-4"
-          onClick={closeSubscriptionModal}
-          aria-label="Cerrar ventana"
+      <div className="modal-dialog modal-dialog-centered modal-lg my-4" style={{ maxWidth: "800px" }}>
+        <div 
+          className="modal-content border-0 rounded-4 shadow-lg p-4 p-md-5 position-relative"
+          style={{ 
+            backgroundColor: "var(--bg-card)",
+            color: "var(--text-main)"
+          }}
+          onClick={(e) => e.stopPropagation()}
         >
-          <i className="bi bi-x-lg"></i>
-        </button>
+          <button
+            type="button"
+            className="btn-close position-absolute top-0 end-0 m-3 m-md-4"
+            onClick={closeSubscriptionModal}
+            aria-label="Cerrar ventana"
+          ></button>
 
         <div className="text-center mb-4">
           <div className="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3 subscription-icon-wrapper">
@@ -470,6 +490,7 @@ export default function SubscriptionModal() {
             </div>
           </>
         )}
+        </div>
       </div>
     </div>
   );
