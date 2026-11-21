@@ -99,7 +99,7 @@ export default function CustomizeModal() {
                 <i className="bi bi-palette2 fs-5"></i>
               </div>
               <div>
-                <h5 className="modal-title fw-bold mb-0 text-dark">Personalizar Apariencia</h5>
+                <h5 className="modal-title fw-bold mb-0 text-dark">Personalizar apariencia</h5>
                 <span className="text-muted small">Elige tu paleta favorita y el fondo que más te inspire</span>
               </div>
             </div>
@@ -166,7 +166,7 @@ export default function CustomizeModal() {
 
             <div>
               <label className="form-label small fw-bold text-uppercase text-muted tracking-wider d-block mb-3">
-                2. Estilo de Fondo
+                2. Estilo de fondo
               </label>
 
               <div className="row g-2 mb-3">

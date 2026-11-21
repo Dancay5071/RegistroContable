@@ -33,7 +33,7 @@ export default function NuevoIngreso() {
           <div className="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3 subscription-icon-wrapper">
             <i className="bi bi-shield-lock-fill text-warning fs-1"></i>
           </div>
-          <h4 className="fw-bold mb-2">Modo Solo Lectura Activo</h4>
+          <h4 className="fw-bold mb-2">Modo solo lectura activo</h4>
           <p className="text-muted small mb-4">
             Tu periodo de prueba de 60 días ha concluido. Todos tus datos y balances históricos continúan disponibles para consulta o descarga. Suscríbete para registrar nuevos ingresos.
           </p>
@@ -42,7 +42,7 @@ export default function NuevoIngreso() {
               <i className="bi bi-stars me-1"></i> Activar FinTrack Pro
             </button>
             <Link to="/ingresos/consultar" className="btn btn-outline-secondary px-4 py-2 fw-semibold">
-              <i className="bi bi-arrow-up-circle me-1"></i> Ver Mis Ingresos
+              <i className="bi bi-arrow-up-circle me-1"></i> Ver mis ingresos
             </Link>
           </div>
         </div>

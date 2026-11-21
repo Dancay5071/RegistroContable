@@ -98,7 +98,7 @@ export default function Home() {
           <div className="d-flex justify-content-center mb-3">
             <FinTrackLogo size={56} showText={true} textClass="h2" />
           </div>
-          <h2 className="h4 fw-bold mb-3">Control Financiero Simple y Eficiente</h2>
+          <h2 className="h4 fw-bold mb-3">Control financiero simple y eficiente</h2>
           <p className="text-muted mb-4 small">
             Gestiona tus ingresos, gastos diarios y metas de ahorro con balances en tiempo real y estadísticas mensuales organizadas.
           </p>
@@ -109,7 +109,6 @@ export default function Home() {
               type="button" 
               onClick={openLoginModal}
             >
-              <i className="bi bi-box-arrow-in-right fs-5"></i>
               Iniciar sesión
             </button>
             <button 
@@ -117,8 +116,7 @@ export default function Home() {
               type="button" 
               onClick={loginAsDemo}
             >
-              <i className="bi bi-eye fs-5"></i>
-              Probar Modo Demo
+              Probar Modo demo
             </button>
           </div>
         </div>

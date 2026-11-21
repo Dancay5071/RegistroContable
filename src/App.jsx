@@ -51,7 +51,7 @@ function ProtectedRoute({ children }) {
       <div className="fade-in d-flex flex-column align-items-center justify-content-center flex-grow-1 p-3">
         <div className="principal text-center p-5 rounded-4 shadow-sm border" style={{ maxWidth: "480px" }}>
           <i className="bi bi-shield-lock text-warning fs-1 mb-3 d-block"></i>
-          <h4 className="fw-bold mb-2">Acceso Restringido</h4>
+          <h4 className="fw-bold mb-2">Acceso restringido</h4>
           <p className="text-muted small mb-4">Debes iniciar sesión con tu cuenta o ingresar en Modo Demo para ver tus finanzas.</p>
           <button className="btn btn-success px-4 py-2 fw-semibold" onClick={openLoginModal}>
             <i className="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión

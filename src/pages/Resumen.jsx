@@ -82,7 +82,7 @@ export default function Resumen() {
       {!loading && !resumenData && (
         <div className="principal text-center text-muted p-5 rounded-4 border shadow-sm" style={{ maxWidth: "600px" }}>
           <i className="bi bi-table fs-1 text-secondary opacity-50 mb-3 d-block"></i>
-          <h5 className="text-dark fw-bold">Matriz Financiera Anual</h5>
+          <h5 className="text-dark fw-bold">Matriz financiera anual</h5>
           <p className="small mb-3">Selecciona el año que deseas auditar y haz clic en <strong>Consultar Resumen</strong> para ver la tabla comparativa de 12 meses.</p>
           <div className="pt-3 border-top d-flex justify-content-center">
             <button
@@ -100,19 +100,19 @@ export default function Resumen() {
       {!loading && resumenData && (
         <div className="principal w-100 p-4 rounded-4 shadow-sm border mt-2" style={{ maxWidth: "1280px" }}>
           <div className="print-header">
-            <h1>FinTrack — Resumen Anual {anio}</h1>
-            <p>Auditoría de 12 Meses | Total Ingresos: ${formatoNumber(resumenData.totalAnualIngresos)} | Total Gastos: ${formatoNumber(resumenData.totalAnualGastos)} | Total Ahorros: ${formatoNumber(resumenData.totalAnualAhorros)}</p>
+            <h1>FinTrack — Resumen anual {anio}</h1>
+            <p>Auditoría de 12 meses | Total ingresos: ${formatoNumber(resumenData.totalAnualIngresos)} | Total Gastos: ${formatoNumber(resumenData.totalAnualGastos)} | Total Ahorros: ${formatoNumber(resumenData.totalAnualAhorros)}</p>
           </div>
 
           <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 border-bottom pb-2">
             <h5 className="text-dark fw-bold mb-0 d-flex align-items-center gap-2">
               <i className="bi bi-graph-up-arrow text-success"></i>
-              Resumen Financiero Anual — {anio}
+              Resumen financiero anual — {anio}
             </h5>
 
             <div className="d-flex align-items-center gap-2">
               <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fw-semibold">
-                12 Meses Auditados
+                12 Meses auditados
               </span>
               <button 
                 type="button" 
@@ -161,12 +161,12 @@ export default function Resumen() {
                 {MESES.map((m) => (
                   <th key={m} scope="col" className="small">{m.substring(0, 3)}</th>
                 ))}
-                <th scope="col" className="resumen-th-total fw-bold">Total Anual</th>
+                <th scope="col" className="resumen-th-total fw-bold">Total anual</th>
               </tr>
             </thead>
             <tbody>
               <tr className="row-resto-anterior">
-                <th scope="row" className="text-start text-muted small">Resto Mes Anterior</th>
+                <th scope="row" className="text-start text-muted small">Resto mes anterior</th>
                 {resumenData.restosMesAnterior.map((val, idx) => (
                   <td key={idx} className={`small text-muted ${isPrivate ? "privacy-masked" : ""}`}>
                     {maskAmount(`$${formatoNumber(val)}`)}
@@ -219,7 +219,7 @@ export default function Resumen() {
 
               <tr className="row-resumen-resto table-light">
                 <th scope="row" className="text-start text-dark fw-bold">
-                  <i className="bi bi-wallet2 text-success me-1"></i> Resto Neto
+                  <i className="bi bi-wallet2 text-success me-1"></i> Resto neto
                 </th>
                 {resumenData.restosTotales.map((val, idx) => (
                   <td key={idx} className={`fw-bold ${val >= 0 ? "text-dark" : "text-danger"} ${isPrivate ? "privacy-masked" : ""}`}>
