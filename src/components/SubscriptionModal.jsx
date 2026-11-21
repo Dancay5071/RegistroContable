@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSubscription } from "../context/SubscriptionContext";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { createSubscriptionCheckout } from "../services/subscriptionService";
 
 export default function SubscriptionModal() {
   const { 
@@ -10,11 +11,12 @@ export default function SubscriptionModal() {
     closeSubscriptionModal,
     changeDemoSubscriptionMode
   } = useSubscription();
-  const { isDemo } = useAuth();
+  const { user, isDemo } = useAuth();
   const { showToast } = useToast();
 
   const [billingCycle, setBillingCycle] = useState("annual");
   const [selectedPlan, setSelectedPlan] = useState("annual");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -28,10 +30,44 @@ export default function SubscriptionModal() {
 
   if (!isSubscriptionModalOpen) return null;
 
-  const handleSelectPlan = (planKey) => {
+  const handleCheckout = async (planKey) => {
     setSelectedPlan(planKey);
     const planName = planKey === "annual" ? "Plan Anual Pro" : "Plan Mensual Pro";
-    showToast(`Has seleccionado el ${planName}. En la Fase 2 se habilitará el pago directo con Mercado Pago.`, "info");
+
+    if (isDemo) {
+      setIsProcessing(true);
+      setTimeout(() => {
+        setIsProcessing(false);
+        changeDemoSubscriptionMode("active");
+        showToast(`¡Suscripción al ${planName} simulada con éxito! Has activado FinTrack Pro en Modo Demo.`, "success");
+      }, 600);
+      return;
+    }
+
+    if (!user) {
+      showToast("Debes iniciar sesión para suscribirte", "warning");
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const result = await createSubscriptionCheckout({
+        userId: user.uid,
+        userEmail: user.email,
+        planType: planKey
+      });
+
+      if (result?.initPoint) {
+        window.location.href = result.initPoint;
+      } else {
+        showToast("Sesión de pago generada exitosamente", "success");
+      }
+    } catch (err) {
+      console.error("Error en checkout:", err);
+      showToast(`Servicio de pago: ${err.message || "Recuerda desplegar tus Cloud Functions con tu clave de Mercado Pago."}`, "warning");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const isExpired = subscription?.isExpired;
@@ -208,10 +244,18 @@ export default function SubscriptionModal() {
                 </li>
               </ul>
               <button
-                className={`btn w-100 rounded-pill py-2 fw-semibold ${selectedPlan === "monthly" ? "btn-primary" : "btn-outline-primary"}`}
-                onClick={() => handleSelectPlan("monthly")}
+                className={`btn w-100 rounded-pill py-2 fw-semibold d-flex align-items-center justify-content-center gap-2 ${selectedPlan === "monthly" ? "btn-primary" : "btn-outline-primary"}`}
+                onClick={() => handleCheckout("monthly")}
+                disabled={isProcessing}
               >
-                Elegir Plan Mensual
+                {isProcessing && selectedPlan === "monthly" ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span>Procesando...</span>
+                  </>
+                ) : (
+                  <span>Elegir Plan Mensual</span>
+                )}
               </button>
             </div>
           </div>
@@ -262,10 +306,18 @@ export default function SubscriptionModal() {
                 </li>
               </ul>
               <button
-                className={`btn w-100 rounded-pill py-2 fw-semibold ${selectedPlan === "annual" ? "btn-success" : "btn-outline-success"}`}
-                onClick={() => handleSelectPlan("annual")}
+                className={`btn w-100 rounded-pill py-2 fw-semibold d-flex align-items-center justify-content-center gap-2 ${selectedPlan === "annual" ? "btn-success" : "btn-outline-success"}`}
+                onClick={() => handleCheckout("annual")}
+                disabled={isProcessing}
               >
-                Comenzar con Plan Anual
+                {isProcessing && selectedPlan === "annual" ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span>Procesando...</span>
+                  </>
+                ) : (
+                  <span>Comenzar con Plan Anual</span>
+                )}
               </button>
             </div>
           </div>

@@ -54,6 +54,16 @@ service cloud.firestore {
         allow delete: if false;
       }
 
+      match /config/subscription {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId)
+          && request.resource.data.status in ['trial', 'expired']
+          && (!('plan' in request.resource.data) || request.resource.data.plan == 'free_trial');
+        allow update: if isOwner(userId)
+          && request.resource.data.status != 'active';
+        allow delete: if false;
+      }
+
       match /transacciones/{transaccionId} {
         allow read, delete: if isOwner(userId);
 
