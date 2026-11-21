@@ -649,9 +649,38 @@ export async function getAllUserTransacciones(userId) {
   }
 }
 
-export function calculateSubscription(data = {}, userCreationTime = null) {
+export const ADMIN_EMAILS = [
+  "daniela.cabrera5071@gmail.com"
+];
+
+export function isUserAdmin(email) {
+  if (!email) return false;
+  return ADMIN_EMAILS.includes(email.toLowerCase().trim());
+}
+
+export function calculateSubscription(data = {}, userCreationTime = null, userEmail = null) {
   const TOTAL_TRIAL_DAYS = 60;
   const TOTAL_TRIAL_MS = TOTAL_TRIAL_DAYS * 24 * 60 * 60 * 1000;
+
+  const isAdmin = isUserAdmin(userEmail) || data?.plan === "admin_unlimited" || data?.isAdmin === true;
+
+  if (isAdmin) {
+    return {
+      status: "active",
+      plan: "admin_unlimited",
+      isPro: true,
+      isTrialActive: false,
+      isExpired: false,
+      daysLeft: null,
+      percentUsed: 100,
+      trialStartDate: data?.trialStartDate || null,
+      trialEndDate: null,
+      label: "Cuenta Administrador",
+      badgeText: "Admin Pro",
+      badgeVariant: "success",
+      isAdmin: true
+    };
+  }
 
   if (data?.status === "active") {
     return {
@@ -666,7 +695,8 @@ export function calculateSubscription(data = {}, userCreationTime = null) {
       trialEndDate: data.trialEndDate || null,
       label: "Plan Pro Activo",
       badgeText: "Pro Activo",
-      badgeVariant: "success"
+      badgeVariant: "success",
+      isAdmin: false
     };
   }
 
@@ -716,17 +746,32 @@ export function calculateSubscription(data = {}, userCreationTime = null) {
       ? "Periodo de prueba finalizado" 
       : (daysLeft === 1 ? "Último día de prueba" : `Prueba Pro (${daysLeft} días restantes)`),
     badgeText,
-    badgeVariant
+    badgeVariant,
+    isAdmin: false
   };
 }
 
-export function listenSubscriptionStatusUser(userId, userCreationTime, callback) {
+export function listenSubscriptionStatusUser(userId, userCreationTime, callback, userEmail = null) {
   if (!userId) return () => {};
+  
+  if (isUserAdmin(userEmail)) {
+    const adminSub = calculateSubscription({ status: "active", plan: "admin_unlimited", isAdmin: true }, userCreationTime, userEmail);
+    const subDocRef = doc(db, "users", userId, "config", "subscription");
+    setDoc(subDocRef, {
+      status: "active",
+      plan: "admin_unlimited",
+      isAdmin: true,
+      updatedAt: serverTimestamp()
+    }, { merge: true }).catch(() => {});
+    callback(adminSub);
+    return () => {};
+  }
+
   const subDocRef = doc(db, "users", userId, "config", "subscription");
 
   return onSnapshot(subDocRef, (docSnap) => {
     if (docSnap.exists()) {
-      const sub = calculateSubscription(docSnap.data(), userCreationTime);
+      const sub = calculateSubscription(docSnap.data(), userCreationTime, userEmail);
       callback(sub);
     } else {
       const now = new Date();
@@ -740,21 +785,24 @@ export function listenSubscriptionStatusUser(userId, userCreationTime, callback)
         createdAt: serverTimestamp()
       };
       setDoc(subDocRef, initialData, { merge: true }).catch(() => {});
-      callback(calculateSubscription(initialData, userCreationTime));
+      callback(calculateSubscription(initialData, userCreationTime, userEmail));
     }
   }, (err) => {
     console.error("Error al escuchar suscripción:", err);
-    callback(calculateSubscription({}, userCreationTime));
+    callback(calculateSubscription({}, userCreationTime, userEmail));
   });
 }
 
-export async function getSubscriptionStatusUser(userId, userCreationTime) {
-  if (!userId) return calculateSubscription({}, userCreationTime);
+export async function getSubscriptionStatusUser(userId, userCreationTime, userEmail = null) {
+  if (!userId) return calculateSubscription({}, userCreationTime, userEmail);
+  if (isUserAdmin(userEmail)) {
+    return calculateSubscription({ status: "active", plan: "admin_unlimited", isAdmin: true }, userCreationTime, userEmail);
+  }
   try {
     const subDocRef = doc(db, "users", userId, "config", "subscription");
     const docSnap = await getDoc(subDocRef);
     if (docSnap.exists()) {
-      return calculateSubscription(docSnap.data(), userCreationTime);
+      return calculateSubscription(docSnap.data(), userCreationTime, userEmail);
     }
     const now = new Date();
     const trialStart = userCreationTime ? new Date(userCreationTime) : now;
@@ -767,9 +815,9 @@ export async function getSubscriptionStatusUser(userId, userCreationTime) {
       createdAt: serverTimestamp()
     };
     await setDoc(subDocRef, initialData, { merge: true });
-    return calculateSubscription(initialData, userCreationTime);
+    return calculateSubscription(initialData, userCreationTime, userEmail);
   } catch (err) {
     console.error("Error al obtener suscripción:", err);
-    return calculateSubscription({}, userCreationTime);
+    return calculateSubscription({}, userCreationTime, userEmail);
   }
 }

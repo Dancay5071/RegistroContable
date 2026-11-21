@@ -230,18 +230,18 @@ export default function SubscriptionModal() {
               <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3 flex-wrap gap-2">
                 <div>
                   <span className="badge rounded-pill bg-success text-white mb-1">
-                    <i className="bi bi-patch-check-fill me-1"></i> FINTRACK PRO ACTIVO
+                    <i className="bi bi-patch-check-fill me-1"></i> {subscription?.isAdmin ? "CUENTA ADMINISTRADOR PRO" : "FINTRACK PRO ACTIVO"}
                   </span>
                   <h4 className="fw-bold mb-0 text-dark">
-                    {subscription?.plan === "pro_annual" ? "Plan Anual Pro" : "Plan Mensual Pro"}
+                    {subscription?.isAdmin ? "Acceso Vitalicio Ilimitado" : (subscription?.plan === "pro_annual" ? "Plan Anual Pro" : "Plan Mensual Pro")}
                   </h4>
                 </div>
                 <div className="text-sm-end">
                   <div className="fs-4 fw-bold text-success">
-                    {subscription?.plan === "pro_annual" ? "$32.000 ARS" : "$3.900 ARS"}
+                    {subscription?.isAdmin ? "Gratis de por vida" : (subscription?.plan === "pro_annual" ? "$32.000 ARS" : "$3.900 ARS")}
                   </div>
                   <span className="small text-muted">
-                    {subscription?.plan === "pro_annual" ? "Facturación anual (-32% OFF)" : "Facturación mensual"}
+                    {subscription?.isAdmin ? "Permisos de Propietario / Admin" : (subscription?.plan === "pro_annual" ? "Facturación anual (-32% OFF)" : "Facturación mensual")}
                   </span>
                 </div>
               </div>
@@ -251,7 +251,7 @@ export default function SubscriptionModal() {
                   <div className="p-3 rounded-3 border bg-card-alt">
                     <span className="small text-muted d-block">Estado de la suscripción</span>
                     <strong className="text-success small d-flex align-items-center gap-1 mt-1">
-                      <span className="dot dot-dolar-pulse"></span> Activa y al día
+                      <span className="dot dot-dolar-pulse"></span> {subscription?.isAdmin ? "Activa permanente (Sin vencimiento)" : "Activa y al día"}
                     </strong>
                   </div>
                 </div>
@@ -259,9 +259,9 @@ export default function SubscriptionModal() {
                   <div className="p-3 rounded-3 border bg-card-alt">
                     <span className="small text-muted d-block">Próxima renovación</span>
                     <strong className="text-dark small d-block mt-1">
-                      {subscription?.nextBillingDate 
+                      {subscription?.isAdmin ? "Vitalicio (No requiere pagos)" : (subscription?.nextBillingDate 
                         ? new Date(subscription.nextBillingDate).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })
-                        : "Automática con Mercado Pago"}
+                        : "Automática con Mercado Pago")}
                     </strong>
                   </div>
                 </div>
@@ -290,7 +290,7 @@ export default function SubscriptionModal() {
               </div>
             </div>
 
-            {subscription?.plan !== "pro_annual" && (
+            {!subscription?.isAdmin && subscription?.plan !== "pro_annual" && (
               <div className="p-3 rounded-4 border border-warning bg-card mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div>
                   <strong className="small d-block text-dark">¿Deseas ahorrar con el Plan Anual?</strong>
@@ -307,14 +307,20 @@ export default function SubscriptionModal() {
             )}
 
             <div className="d-flex justify-content-between align-items-center pt-2 border-top flex-wrap gap-2">
-              <button
-                type="button"
-                className="btn btn-link text-muted small p-0 text-decoration-none"
-                onClick={handleCancelAutoRenew}
-                disabled={isProcessing}
-              >
-                <i className="bi bi-x-circle me-1"></i> Cancelar renovación automática
-              </button>
+              {!subscription?.isAdmin ? (
+                <button
+                  type="button"
+                  className="btn btn-link text-muted small p-0 text-decoration-none"
+                  onClick={handleCancelAutoRenew}
+                  disabled={isProcessing}
+                >
+                  <i className="bi bi-x-circle me-1"></i> Cancelar renovación automática
+                </button>
+              ) : (
+                <span className="small text-muted">
+                  <i className="bi bi-shield-lock-fill text-success me-1"></i> Cuenta de Administrador autorizada
+                </span>
+              )}
               <button
                 type="button"
                 className="btn btn-secondary btn-sm rounded-pill px-4"

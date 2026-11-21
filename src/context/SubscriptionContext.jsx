@@ -31,7 +31,7 @@ export function SubscriptionProvider({ children }) {
     const unsubscribe = listenSubscriptionStatusUser(user.uid, creationTime, (subData) => {
       setSubscription(subData);
       setLoadingSubscription(false);
-    });
+    }, user.email);
 
     return () => unsubscribe();
   }, [user, isDemo]);
