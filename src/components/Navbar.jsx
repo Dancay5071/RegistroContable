@@ -6,6 +6,7 @@ import { usePrivacy } from "../context/PrivacyContext";
 import { useSecurity } from "../context/SecurityContext";
 import { useVencimientos } from "../context/VencimientosContext";
 import { usePowerBiExport } from "../context/PowerBiExportContext";
+import { useSubscription } from "../context/SubscriptionContext";
 import { useDolar } from "../hooks/useDolar";
 import { logActivity } from "../services/auditService";
 import FinTrackLogo from "./FinTrackLogo";
@@ -18,6 +19,7 @@ export default function Navbar() {
   const { blue, oficial, mep, refresh: refreshDolar } = useDolar();
   const { vencidos, porVencer, openVencimientosModal } = useVencimientos();
   const { openPowerBiExport } = usePowerBiExport();
+  const { subscription, openSubscriptionModal } = useSubscription();
   const [isOpen, setIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -145,6 +147,18 @@ export default function Navbar() {
           </ul>
 
           <div className="d-none d-lg-flex align-items-center gap-2 ms-lg-3">
+            {subscription && (
+              <button
+                className={`btn btn-subscription-badge d-flex align-items-center gap-1 rounded-pill px-2 py-1 shadow-sm subscription-${subscription.badgeVariant}`}
+                type="button"
+                onClick={openSubscriptionModal}
+                title="Estado de tu cuenta FinTrack (Clic para ver planes)"
+              >
+                <i className={`bi ${subscription.isExpired ? 'bi-exclamation-triangle-fill text-danger' : (subscription.status === 'active' ? 'bi-patch-check-fill text-success' : 'bi-stars text-warning')}`}></i>
+                <span className="subscription-badge-text fw-semibold small">{subscription.badgeText}</span>
+              </button>
+            )}
+
             <button
               className="btn btn-notification-bell d-flex align-items-center justify-content-center rounded-circle shadow-sm position-relative"
               type="button"
@@ -217,6 +231,34 @@ export default function Navbar() {
                         </div>
                       </div>
                     </div>
+                    {subscription && (
+                      <div className="mt-2 pt-2 border-top">
+                        <div className="d-flex align-items-center justify-content-between mb-1">
+                          <span className="text-muted fw-semibold" style={{ fontSize: "0.7rem" }}>
+                            {subscription.status === "active" ? "PLAN PRO" : "PRUEBA 60 DÍAS"}
+                          </span>
+                          <span className={`badge rounded-pill ${subscription.isExpired ? 'bg-danger text-white' : (subscription.status === 'active' ? 'bg-success text-white' : (subscription.daysLeft <= 7 ? 'bg-warning text-dark' : 'bg-primary text-white'))}`} style={{ fontSize: "0.68rem" }}>
+                            {subscription.badgeText}
+                          </span>
+                        </div>
+                        {subscription.status === "trial" && (
+                          <div className="progress my-1" style={{ height: "4px" }}>
+                            <div 
+                              className={`progress-bar ${subscription.daysLeft <= 7 ? 'bg-warning' : 'bg-primary'}`} 
+                              style={{ width: `${subscription.percentUsed}%` }}
+                            ></div>
+                          </div>
+                        )}
+                        <button 
+                          className="btn btn-sm btn-outline-primary w-100 rounded-pill py-1 mt-1 fw-semibold d-flex align-items-center justify-content-center gap-1"
+                          style={{ fontSize: "0.74rem" }}
+                          onClick={() => { setUserMenuOpen(false); openSubscriptionModal(); }}
+                        >
+                          <i className="bi bi-stars"></i>
+                          <span>{subscription.status === "active" ? "Gestionar Plan" : "Ver Planes Pro"}</span>
+                        </button>
+                      </div>
+                    )}
                   </li>
 
                   <li>
@@ -313,6 +355,32 @@ export default function Navbar() {
                 </div>
               </div>
             </div>
+
+            {subscription && (
+              <div className="subscription-drawer-card p-2 rounded-3 mb-2 border">
+                <div className="d-flex align-items-center justify-content-between mb-1">
+                  <span className="fw-semibold small">{subscription.label}</span>
+                  <span className={`badge rounded-pill ${subscription.isExpired ? 'bg-danger text-white' : (subscription.status === 'active' ? 'bg-success text-white' : (subscription.daysLeft <= 7 ? 'bg-warning text-dark' : 'bg-primary text-white'))}`} style={{ fontSize: "0.72rem" }}>
+                    {subscription.badgeText}
+                  </span>
+                </div>
+                {subscription.status === "trial" && (
+                  <div className="progress my-1" style={{ height: "4px" }}>
+                    <div 
+                      className={`progress-bar ${subscription.daysLeft <= 7 ? 'bg-warning' : 'bg-primary'}`} 
+                      style={{ width: `${subscription.percentUsed}%` }}
+                    ></div>
+                  </div>
+                )}
+                <button
+                  className="btn btn-primary btn-sm w-100 rounded-pill mt-2 py-1 fw-semibold d-flex align-items-center justify-content-center gap-1"
+                  onClick={() => { closeMenu(); openSubscriptionModal(); }}
+                >
+                  <i className="bi bi-stars"></i>
+                  <span>Ver Planes y Suscripción</span>
+                </button>
+              </div>
+            )}
 
             <div className="d-flex flex-column gap-2">
               <button

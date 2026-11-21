@@ -2025,5 +2025,133 @@ footer {
   color: #ffffff !important;
 }
 
+.btn-subscription-badge {
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-width: 1px;
+}
+
+.btn-subscription-badge:hover {
+  transform: translateY(-1px);
+}
+
+.btn-subscription-badge.subscription-primary {
+  background-color: var(--badge-primary-bg);
+  border-color: var(--badge-primary-border);
+  color: var(--accent-primary);
+}
+
+.btn-subscription-badge.subscription-warning {
+  background-color: var(--badge-warning-bg);
+  border-color: var(--badge-warning-border);
+  color: var(--accent-warning);
+}
+
+.btn-subscription-badge.subscription-danger {
+  background-color: var(--badge-danger-bg);
+  border-color: var(--badge-danger-border);
+  color: var(--accent-danger);
+}
+
+.btn-subscription-badge.subscription-success {
+  background-color: var(--badge-success-bg);
+  border-color: var(--badge-success-border);
+  color: var(--accent-success);
+}
+
+.subscription-icon-wrapper {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0) 70%);
+}
+
+.subscription-pill-badge {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #b45309;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.subscription-status-trial {
+  background-color: var(--badge-primary-bg);
+  border-color: var(--badge-primary-border) !important;
+}
+
+.subscription-status-expired {
+  background-color: var(--badge-danger-bg);
+  border-color: var(--badge-danger-border) !important;
+}
+
+.subscription-status-active {
+  background-color: var(--badge-success-bg);
+  border-color: var(--badge-success-border) !important;
+}
+
+.subscription-progress {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.subscription-billing-switch {
+  background-color: var(--bg-card-alt);
+  border-color: var(--border-subtle);
+}
+
+.pricing-card {
+  background-color: var(--bg-card);
+  border-color: var(--border-subtle);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.pricing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.12);
+}
+
+.pricing-card.popular-plan {
+  border-color: rgba(245, 158, 11, 0.45);
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-card-alt) 100%);
+}
+
+.pricing-card.active-plan {
+  box-shadow: 0 0 0 2px var(--accent-primary);
+}
+
+.subscription-guarantee {
+  background-color: var(--bg-card-alt);
+  border-color: var(--border-subtle);
+}
+
+.subscription-drawer-card {
+  background-color: var(--bg-card-alt);
+  border-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .subscription-pill-badge {
+  background-color: rgba(245, 158, 11, 0.22);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+[data-theme="dark"] .subscription-progress {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .pricing-card {
+  background-color: #131c2e;
+  border-color: #25334c;
+}
+
+[data-theme="dark"] .pricing-card.popular-plan {
+  background: linear-gradient(180deg, #131c2e 0%, #1a253a 100%);
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+[data-theme="dark"] .subscription-guarantee,
+[data-theme="dark"] .subscription-drawer-card {
+  background-color: #1a253a;
+  border-color: #25334c;
+}
+
 
 

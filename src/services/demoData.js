@@ -614,3 +614,106 @@ export function getDemoAllTransacciones() {
   return list;
 }
 
+export function getDemoSubscription() {
+  const store = getDemoStore();
+  if (store.subscription) {
+    return store.subscription;
+  }
+  const now = new Date();
+  const trialStart = new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000);
+  const trialEnd = new Date(now.getTime() + 45 * 24 * 60 * 60 * 1000);
+  const demoSub = {
+    status: "trial",
+    plan: "free_trial",
+    isPro: true,
+    isTrialActive: true,
+    isExpired: false,
+    daysLeft: 45,
+    percentUsed: 25,
+    trialStartDate: trialStart.toISOString(),
+    trialEndDate: trialEnd.toISOString(),
+    label: "Prueba Pro (45 días restantes)",
+    badgeText: "✨ 45 días de prueba",
+    badgeVariant: "primary"
+  };
+  store.subscription = demoSub;
+  saveDemoStore(store);
+  return demoSub;
+}
+
+export function setDemoSubscription(mode = "trial_45") {
+  const store = getDemoStore();
+  const now = new Date();
+  let updated;
+  if (mode === "active") {
+    updated = {
+      status: "active",
+      plan: "pro_annual",
+      isPro: true,
+      isTrialActive: false,
+      isExpired: false,
+      daysLeft: null,
+      percentUsed: 100,
+      trialStartDate: null,
+      trialEndDate: null,
+      label: "Plan Pro Activo",
+      badgeText: "👑 Pro Activo",
+      badgeVariant: "success"
+    };
+  } else if (mode === "expiring_5") {
+    const trialStart = new Date(now.getTime() - 55 * 24 * 60 * 60 * 1000);
+    const trialEnd = new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000);
+    updated = {
+      status: "trial",
+      plan: "free_trial",
+      isPro: true,
+      isTrialActive: true,
+      isExpired: false,
+      daysLeft: 5,
+      percentUsed: 92,
+      trialStartDate: trialStart.toISOString(),
+      trialEndDate: trialEnd.toISOString(),
+      label: "Prueba Pro (5 días restantes)",
+      badgeText: "⏳ 5 días de prueba",
+      badgeVariant: "warning"
+    };
+  } else if (mode === "expired") {
+    const trialStart = new Date(now.getTime() - 62 * 24 * 60 * 60 * 1000);
+    const trialEnd = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+    updated = {
+      status: "expired",
+      plan: "free_trial",
+      isPro: false,
+      isTrialActive: false,
+      isExpired: true,
+      daysLeft: 0,
+      percentUsed: 100,
+      trialStartDate: trialStart.toISOString(),
+      trialEndDate: trialEnd.toISOString(),
+      label: "Periodo de prueba finalizado",
+      badgeText: "⚠️ Prueba Vencida",
+      badgeVariant: "danger"
+    };
+  } else {
+    const trialStart = new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000);
+    const trialEnd = new Date(now.getTime() + 45 * 24 * 60 * 60 * 1000);
+    updated = {
+      status: "trial",
+      plan: "free_trial",
+      isPro: true,
+      isTrialActive: true,
+      isExpired: false,
+      daysLeft: 45,
+      percentUsed: 25,
+      trialStartDate: trialStart.toISOString(),
+      trialEndDate: trialEnd.toISOString(),
+      label: "Prueba Pro (45 días restantes)",
+      badgeText: "✨ 45 días de prueba",
+      badgeVariant: "primary"
+    };
+  }
+  store.subscription = updated;
+  saveDemoStore(store);
+  return updated;
+}
+

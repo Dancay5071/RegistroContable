@@ -648,3 +648,128 @@ export async function getAllUserTransacciones(userId) {
     return [];
   }
 }
+
+export function calculateSubscription(data = {}, userCreationTime = null) {
+  const TOTAL_TRIAL_DAYS = 60;
+  const TOTAL_TRIAL_MS = TOTAL_TRIAL_DAYS * 24 * 60 * 60 * 1000;
+
+  if (data?.status === "active") {
+    return {
+      status: "active",
+      plan: data.plan || "pro_monthly",
+      isPro: true,
+      isTrialActive: false,
+      isExpired: false,
+      daysLeft: null,
+      percentUsed: 100,
+      trialStartDate: data.trialStartDate || null,
+      trialEndDate: data.trialEndDate || null,
+      label: "Plan Pro Activo",
+      badgeText: "👑 Pro Activo",
+      badgeVariant: "success"
+    };
+  }
+
+  const now = new Date();
+  const trialStart = data?.trialStartDate 
+    ? new Date(data.trialStartDate) 
+    : (userCreationTime ? new Date(userCreationTime) : now);
+    
+  const trialEnd = data?.trialEndDate 
+    ? new Date(data.trialEndDate) 
+    : new Date(trialStart.getTime() + TOTAL_TRIAL_MS);
+
+  const diffMs = trialEnd.getTime() - now.getTime();
+  const daysLeft = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+  const elapsedMs = Math.max(0, TOTAL_TRIAL_MS - diffMs);
+  const percentUsed = Math.min(100, Math.max(0, Math.round((elapsedMs / TOTAL_TRIAL_MS) * 100)));
+
+  const isExpired = diffMs <= 0 || data?.status === "expired";
+  const isTrialActive = !isExpired;
+  const isPro = isTrialActive;
+
+  let badgeText = `✨ ${daysLeft} días de prueba`;
+  let badgeVariant = "primary";
+
+  if (isExpired) {
+    badgeText = "⚠️ Prueba Vencida";
+    badgeVariant = "danger";
+  } else if (daysLeft === 1) {
+    badgeText = "⏳ 1 día de prueba";
+    badgeVariant = "warning";
+  } else if (daysLeft <= 7) {
+    badgeText = `⏳ ${daysLeft} días de prueba`;
+    badgeVariant = "warning";
+  }
+
+  return {
+    status: isExpired ? "expired" : "trial",
+    plan: data?.plan || "free_trial",
+    isPro,
+    isTrialActive,
+    isExpired,
+    daysLeft,
+    percentUsed,
+    trialStartDate: trialStart.toISOString(),
+    trialEndDate: trialEnd.toISOString(),
+    label: isExpired 
+      ? "Periodo de prueba finalizado" 
+      : (daysLeft === 1 ? "Último día de prueba" : `Prueba Pro (${daysLeft} días restantes)`),
+    badgeText,
+    badgeVariant
+  };
+}
+
+export function listenSubscriptionStatusUser(userId, userCreationTime, callback) {
+  if (!userId) return () => {};
+  const subDocRef = doc(db, "users", userId, "config", "subscription");
+
+  return onSnapshot(subDocRef, (docSnap) => {
+    if (docSnap.exists()) {
+      const sub = calculateSubscription(docSnap.data(), userCreationTime);
+      callback(sub);
+    } else {
+      const now = new Date();
+      const trialStart = userCreationTime ? new Date(userCreationTime) : now;
+      const trialEnd = new Date(trialStart.getTime() + 60 * 24 * 60 * 60 * 1000);
+      const initialData = {
+        status: "trial",
+        trialStartDate: trialStart.toISOString(),
+        trialEndDate: trialEnd.toISOString(),
+        plan: "free_trial",
+        createdAt: serverTimestamp()
+      };
+      setDoc(subDocRef, initialData, { merge: true }).catch(() => {});
+      callback(calculateSubscription(initialData, userCreationTime));
+    }
+  }, (err) => {
+    console.error("Error al escuchar suscripción:", err);
+    callback(calculateSubscription({}, userCreationTime));
+  });
+}
+
+export async function getSubscriptionStatusUser(userId, userCreationTime) {
+  if (!userId) return calculateSubscription({}, userCreationTime);
+  try {
+    const subDocRef = doc(db, "users", userId, "config", "subscription");
+    const docSnap = await getDoc(subDocRef);
+    if (docSnap.exists()) {
+      return calculateSubscription(docSnap.data(), userCreationTime);
+    }
+    const now = new Date();
+    const trialStart = userCreationTime ? new Date(userCreationTime) : now;
+    const trialEnd = new Date(trialStart.getTime() + 60 * 24 * 60 * 60 * 1000);
+    const initialData = {
+      status: "trial",
+      trialStartDate: trialStart.toISOString(),
+      trialEndDate: trialEnd.toISOString(),
+      plan: "free_trial",
+      createdAt: serverTimestamp()
+    };
+    await setDoc(subDocRef, initialData, { merge: true });
+    return calculateSubscription(initialData, userCreationTime);
+  } catch (err) {
+    console.error("Error al obtener suscripción:", err);
+    return calculateSubscription({}, userCreationTime);
+  }
+}
