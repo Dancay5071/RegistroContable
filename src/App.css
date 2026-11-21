@@ -1008,6 +1008,27 @@ body {
   color: #1e293b;
 }
 
+.user-menu-item {
+  color: #334155 !important;
+  font-weight: 500 !important;
+  font-size: 0.88rem !important;
+  transition: all 0.15s ease;
+}
+
+.user-menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  color: #0f172a !important;
+}
+
+[data-theme="dark"] .user-menu-item {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .user-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
 [data-theme="mint"] .btn-user-profile {
   background: #d8ece0 !important;
   border-color: #c0ded0 !important;

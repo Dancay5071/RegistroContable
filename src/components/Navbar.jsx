@@ -227,7 +227,7 @@ export default function Navbar() {
                       <div>
                         <div className="fw-bold small dropdown-user-name">{nombreUsuario}</div>
                         <div className="text-muted" style={{ fontSize: "0.75rem" }}>
-                          {isDemo ? "Modo Demo Activo" : (user?.email || "Cuenta personal")}
+                          {isDemo ? "Modo Demo Activo" : (user?.email || user?.providerData?.[0]?.email || "daniela.cabrera5071@gmail.com")}
                         </div>
                       </div>
                     </div>
@@ -235,13 +235,13 @@ export default function Navbar() {
                       <div className="mt-2 pt-2 border-top">
                         <div className="d-flex align-items-center justify-content-between mb-1">
                           <span className="text-muted fw-semibold" style={{ fontSize: "0.7rem" }}>
-                            {subscription.status === "active" ? "PLAN PRO" : "PRUEBA 60 DÍAS"}
+                            {subscription.isAdmin ? "CUENTA ADMIN" : (subscription.status === "active" ? "PLAN PRO" : "PRUEBA 60 DÍAS")}
                           </span>
                           <span className={`badge rounded-pill ${subscription.isExpired ? 'bg-danger text-white' : (subscription.status === 'active' ? 'bg-success text-white' : (subscription.daysLeft <= 7 ? 'bg-warning text-dark' : 'bg-primary text-white'))}`} style={{ fontSize: "0.68rem" }}>
                             {subscription.badgeText}
                           </span>
                         </div>
-                        {subscription.status === "trial" && (
+                        {subscription.status === "trial" && !subscription.isAdmin && (
                           <div className="progress my-1" style={{ height: "4px" }}>
                             <div 
                               className={`progress-bar ${subscription.daysLeft <= 7 ? 'bg-warning' : 'bg-primary'}`} 
@@ -255,7 +255,7 @@ export default function Navbar() {
                           onClick={() => { setUserMenuOpen(false); openSubscriptionModal(); }}
                         >
                           <i className="bi bi-shield-check"></i>
-                          <span>{subscription.status === "active" ? "Gestionar Plan" : "Ver Planes Pro"}</span>
+                          <span>{subscription.isAdmin ? "Gestionar Cuenta Admin" : (subscription.status === "active" ? "Gestionar Plan" : "Ver Planes Pro")}</span>
                         </button>
                       </div>
                     )}
@@ -263,7 +263,7 @@ export default function Navbar() {
 
                   <li>
                     <button 
-                      className="dropdown-item d-flex align-items-center justify-content-between py-2 rounded-3"
+                      className="dropdown-item d-flex align-items-center justify-content-between py-2 rounded-3 user-menu-item"
                       onClick={() => { togglePrivacy(); setUserMenuOpen(false); }}
                     >
                       <div className="d-flex align-items-center gap-2">
@@ -278,7 +278,7 @@ export default function Navbar() {
 
                   <li>
                     <button 
-                      className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3"
+                      className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 user-menu-item"
                       onClick={() => { setUserMenuOpen(false); openCustomizeModal(); }}
                     >
                       <i className="bi bi-palette2 text-primary"></i>
@@ -288,7 +288,7 @@ export default function Navbar() {
 
                   <li>
                     <button 
-                      className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 text-secondary"
+                      className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 user-menu-item"
                       onClick={() => { setUserMenuOpen(false); lockScreen(); }}
                       title="Bloquear pantalla temporalmente"
                     >
@@ -299,7 +299,7 @@ export default function Navbar() {
 
                   <li>
                     <button 
-                      className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 text-secondary"
+                      className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 user-menu-item"
                       onClick={() => { setUserMenuOpen(false); openAuditModal(); }}
                       title="Copias de seguridad y bitácora de auditoría"
                     >
@@ -310,7 +310,7 @@ export default function Navbar() {
 
                   <li>
                     <button 
-                      className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 text-dark fw-semibold"
+                      className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 user-menu-item"
                       onClick={() => { setUserMenuOpen(false); openPowerBiExport(); }}
                       title="Exportar dataset y fórmulas DAX para Microsoft Power BI y Excel"
                     >

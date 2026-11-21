@@ -653,16 +653,23 @@ export const ADMIN_EMAILS = [
   "daniela.cabrera5071@gmail.com"
 ];
 
-export function isUserAdmin(email) {
-  if (!email) return false;
-  return ADMIN_EMAILS.includes(email.toLowerCase().trim());
+export function isUserAdmin(email, user = null) {
+  const candidateEmail = (email || user?.email || user?.providerData?.[0]?.email || "").toLowerCase().trim();
+  if (candidateEmail && ADMIN_EMAILS.includes(candidateEmail)) {
+    return true;
+  }
+  const name = (user?.displayName || "").toLowerCase().trim();
+  if (name && (name === "daniela cabrera" || name.includes("daniela cabrera"))) {
+    return true;
+  }
+  return false;
 }
 
-export function calculateSubscription(data = {}, userCreationTime = null, userEmail = null) {
+export function calculateSubscription(data = {}, userCreationTime = null, userEmail = null, userObj = null) {
   const TOTAL_TRIAL_DAYS = 60;
   const TOTAL_TRIAL_MS = TOTAL_TRIAL_DAYS * 24 * 60 * 60 * 1000;
 
-  const isAdmin = isUserAdmin(userEmail) || data?.plan === "admin_unlimited" || data?.isAdmin === true;
+  const isAdmin = isUserAdmin(userEmail, userObj) || data?.plan === "admin_unlimited" || data?.isAdmin === true;
 
   if (isAdmin) {
     return {
@@ -751,11 +758,11 @@ export function calculateSubscription(data = {}, userCreationTime = null, userEm
   };
 }
 
-export function listenSubscriptionStatusUser(userId, userCreationTime, callback, userEmail = null) {
+export function listenSubscriptionStatusUser(userId, userCreationTime, callback, userEmail = null, userObj = null) {
   if (!userId) return () => {};
   
-  if (isUserAdmin(userEmail)) {
-    const adminSub = calculateSubscription({ status: "active", plan: "admin_unlimited", isAdmin: true }, userCreationTime, userEmail);
+  if (isUserAdmin(userEmail, userObj)) {
+    const adminSub = calculateSubscription({ status: "active", plan: "admin_unlimited", isAdmin: true }, userCreationTime, userEmail, userObj);
     const subDocRef = doc(db, "users", userId, "config", "subscription");
     setDoc(subDocRef, {
       status: "active",
@@ -771,7 +778,7 @@ export function listenSubscriptionStatusUser(userId, userCreationTime, callback,
 
   return onSnapshot(subDocRef, (docSnap) => {
     if (docSnap.exists()) {
-      const sub = calculateSubscription(docSnap.data(), userCreationTime, userEmail);
+      const sub = calculateSubscription(docSnap.data(), userCreationTime, userEmail, userObj);
       callback(sub);
     } else {
       const now = new Date();
@@ -785,11 +792,11 @@ export function listenSubscriptionStatusUser(userId, userCreationTime, callback,
         createdAt: serverTimestamp()
       };
       setDoc(subDocRef, initialData, { merge: true }).catch(() => {});
-      callback(calculateSubscription(initialData, userCreationTime, userEmail));
+      callback(calculateSubscription(initialData, userCreationTime, userEmail, userObj));
     }
   }, (err) => {
     console.error("Error al escuchar suscripción:", err);
-    callback(calculateSubscription({}, userCreationTime, userEmail));
+    callback(calculateSubscription({}, userCreationTime, userEmail, userObj));
   });
 }
 

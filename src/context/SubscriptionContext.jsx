@@ -28,10 +28,11 @@ export function SubscriptionProvider({ children }) {
     }
 
     const creationTime = user.metadata?.creationTime || null;
+    const emailToUse = user.email || user.providerData?.[0]?.email || null;
     const unsubscribe = listenSubscriptionStatusUser(user.uid, creationTime, (subData) => {
       setSubscription(subData);
       setLoadingSubscription(false);
-    }, user.email);
+    }, emailToUse, user);
 
     return () => unsubscribe();
   }, [user, isDemo]);

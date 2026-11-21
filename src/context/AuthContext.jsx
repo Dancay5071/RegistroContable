@@ -18,6 +18,12 @@ const DEMO_USER = {
   isDemo: true
 };
 
+const normalizeUser = (fbUser) => {
+  if (!fbUser) return null;
+  fbUser.isDemo = false;
+  return fbUser;
+};
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +39,7 @@ export function AuthProvider({ children }) {
 
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (localStorage.getItem("registro_contable_demo_active") !== "true") {
-        setUser(currentUser ? { ...currentUser, isDemo: false } : null);
+        setUser(normalizeUser(currentUser));
       }
       setLoading(false);
     });
@@ -44,21 +50,21 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     localStorage.removeItem("registro_contable_demo_active");
     const cred = await signInWithEmailAndPassword(auth, email, password);
-    setUser({ ...cred.user, isDemo: false });
+    setUser(normalizeUser(cred.user));
     return cred;
   };
 
   const register = async (email, password) => {
     localStorage.removeItem("registro_contable_demo_active");
     const cred = await createUserWithEmailAndPassword(auth, email, password);
-    setUser({ ...cred.user, isDemo: false });
+    setUser(normalizeUser(cred.user));
     return cred;
   };
 
   const loginWithGoogle = async () => {
     localStorage.removeItem("registro_contable_demo_active");
     const cred = await signInWithPopup(auth, googleProvider);
-    setUser({ ...cred.user, isDemo: false });
+    setUser(normalizeUser(cred.user));
     return cred;
   };
 
