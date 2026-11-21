@@ -1,10 +1,10 @@
-# FinTrack — Finanzas Personales & Ahorro Inteligente
+# FinTrack — Finanzas personales
 
 Aplicación web progresiva (PWA) de gestión financiera personal desarrollada en **React 19** con **Vite**, **Bootstrap 5**, **Chart.js** y **Firebase** (Firestore en tiempo real y Authentication).
 
 ---
 
-## Tecnologías Utilizadas
+## Tecnologías utilizadas
 
 - **React 19** (SPA con `React.lazy` y `Suspense` para carga ultrarrápida)
 - **Vite** (Bundler optimizado con división de código en chunks)
@@ -69,7 +69,7 @@ RegistroContable/
 
 ---
 
-## Comandos Disponibles
+## Comandos disponibles
 
 ```bash
 # Iniciar servidor de desarrollo local
@@ -84,10 +84,10 @@ npm run preview
 
 ---
 
-## Funcionalidades Principales
+## Funcionalidades principales
 
-1. **Dashboard Financiero Completo**: KPIs de saldos disponibles y ahorros, gráfico de dona por categoría de gastos y evolución mensual.
-2. **Modal Rápido Universal (`+ Movimiento`)**: Registro ágil en un solo clic de gastos, ingresos o ahorros con atajos numéricos y vista previa de importes.
-3. **Ahorros Multimoneda & Categorizados**: Soporte para ARS ($), USD (US$), EUR (€) y USDT (₮) con metas de ahorro (Emergencia, Vacaciones, Vehículo, Vivienda, etc.).
-4. **Exportación Profesional a Excel y PDF**: Descarga directa de archivos `.csv` compatibles con Microsoft Excel y modo de impresión limpio para reportes en PDF.
-5. **Modo Demo Interactivo**: Permite probar todas las funcionalidades con datos simulados y persistencia local sin registrarse.
+1. **Dashboard financiero completo**: KPIs de saldos disponibles y ahorros, gráfico de dona por categoría de gastos y evolución mensual.
+2. **Modal rápido universal (`+ Movimiento`)**: Registro ágil en un solo clic de gastos, ingresos o ahorros con atajos numéricos y vista previa de importes.
+3. **Ahorros multimoneda & Categorizados**: Soporte para ARS ($), USD (US$), EUR (€) y USDT (₮) con metas de ahorro (Emergencia, Vacaciones, Vehículo, Vivienda, etc.).
+4. **Exportación profesional a Excel y PDF**: Descarga directa de archivos `.csv` compatibles con Microsoft Excel y modo de impresión limpio para reportes en PDF.
+5. **Modo demo interactivo**: Permite probar todas las funcionalidades con datos simulados y persistencia local sin registrarse.
