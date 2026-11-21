@@ -31,3 +31,32 @@ export async function createSubscriptionCheckout({ userId, userEmail, planType =
     throw error;
   }
 }
+
+export async function cancelSubscriptionAutoRenew(userId) {
+  if (!userId) {
+    throw new Error("Se requiere identificación de usuario");
+  }
+
+  const cancelFunctionUrl = import.meta.env.VITE_CANCEL_FUNCTION_URL 
+    || "https://us-central1-registrocontable32.cloudfunctions.net/cancelSubscription";
+
+  try {
+    const response = await fetch(cancelFunctionUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ userId })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Error al cancelar renovación (${response.status})`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error al cancelar suscripción:", error);
+    throw error;
+  }
+}

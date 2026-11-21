@@ -137,3 +137,43 @@ exports.mercadopagoWebhook = onRequest({ region: "us-central1" }, async (req, re
     return res.status(200).send("OK");
   }
 });
+
+exports.cancelSubscription = onRequest({ cors: true, region: "us-central1" }, async (req, res) => {
+  return cors(req, res, async () => {
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method Not Allowed" });
+    }
+
+    try {
+      const { userId } = req.body;
+      if (!userId) {
+        return res.status(400).json({ error: "Falta parámetro userId" });
+      }
+
+      const db = admin.firestore();
+      const subDocRef = db.doc(`users/${userId}/config/subscription`);
+      const auditRef = db.collection(`users/${userId}/auditLog`);
+
+      await subDocRef.set({
+        autoRenew: false,
+        cancelAtPeriodEnd: true,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      await auditRef.add({
+        action: "CANCELAR_RENOVACION",
+        category: "PAGOS",
+        details: "El usuario solicitó la no renovación de su suscripción Pro",
+        timestamp: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Renovación automática cancelada. Tu acceso Pro continuará hasta el fin de tu ciclo."
+      });
+    } catch (error) {
+      console.error("Error al cancelar renovación:", error);
+      return res.status(500).json({ error: "Error interno al cancelar", details: error.message });
+    }
+  });
+});

@@ -65,6 +65,25 @@ function ProtectedRoute({ children }) {
 }
 
 function MainLayout() {
+  const { showToast } = useToast();
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get("payment");
+    const plan = params.get("plan");
+
+    if (payment === "success") {
+      showToast(`¡Pago procesado con éxito! Tu suscripción FinTrack Pro (${plan === "annual" ? "Plan Anual" : "Plan Mensual"}) ya está activa.`, "success");
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (payment === "failure") {
+      showToast("El pago no pudo procesarse. Puedes intentar con otro medio de pago.", "warning");
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (payment === "pending") {
+      showToast("Tu pago se encuentra en proceso de acreditación por Mercado Pago.", "info");
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [showToast]);
+
   return (
     <div className="app-wrapper">
       <div className="fondo"></div>

@@ -144,6 +144,26 @@ export default function Home() {
             </div>
           )}
 
+          {subscription?.status === "trial" && subscription?.daysLeft <= 7 && subscription?.daysLeft > 0 && (
+            <div className="alert alert-warning border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2 p-3">
+              <div className="d-flex align-items-center gap-2">
+                <i className="bi bi-hourglass-split text-warning fs-3"></i>
+                <div>
+                  <div className="fw-bold small text-dark">Tu prueba gratuita finaliza pronto</div>
+                  <div className="small text-muted">
+                    Te quedan {subscription.daysLeft} {subscription.daysLeft === 1 ? "día" : "días"} de tus 60 días de prueba. Elige tu plan para continuar sin interrupciones.
+                  </div>
+                </div>
+              </div>
+              <button 
+                className="btn btn-warning text-dark btn-sm rounded-pill px-3 fw-bold shadow-sm"
+                onClick={openSubscriptionModal}
+              >
+                <i className="bi bi-stars me-1"></i> Ver Planes Pro
+              </button>
+            </div>
+          )}
+
           <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
             <div>
               <h1 className="h4 fw-bold text-dark mb-1">
