@@ -612,7 +612,7 @@ export default function Ahorro() {
                         style={{ width: "32px", height: "32px" }}
                         onClick={() => handleOpenEdit(h)}
                         title="Editar movimiento de ahorro"
-                        aria-label="Editar ahorro"
+                        aria-label={`Editar ahorro ${h.descripcion || h.categoria || 'Ahorro'} por ${formatoMoneda(h.monto, moneda)}`}
                       >
                         <i className="bi bi-pencil" style={{ fontSize: "0.82rem" }}></i>
                       </button>

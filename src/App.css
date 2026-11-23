@@ -2222,7 +2222,9 @@ footer {
   box-shadow: 0 0 0 4px rgba(43, 87, 126, 0.2) !important;
 }
 
-main:focus {
+main:focus,
+.modal:focus,
+.modal-backdrop-custom:focus {
   outline: none !important;
 }
 

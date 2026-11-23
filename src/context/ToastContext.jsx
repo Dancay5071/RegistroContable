@@ -21,12 +21,12 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={{ showToast, removeToast }}>
       {children}
-      <div className="toast-container-custom">
+      <div className="toast-container-custom" aria-live="polite" aria-atomic="true">
         {toasts.map((t) => (
           <div 
             key={t.id} 
             className={`toast-custom toast-${t.type} fade-in`}
-            role="alert"
+            role="status"
           >
             <div className="d-flex align-items-center gap-2">
               {t.type === "success" && <i className="bi bi-check-circle-fill text-success fs-5"></i>}
@@ -39,7 +39,7 @@ export function ToastProvider({ children }) {
               type="button" 
               className="btn-close btn-close-white ms-auto"
               onClick={() => removeToast(t.id)}
-              aria-label="Cerrar"
+              aria-label="Cerrar notificación"
             ></button>
           </div>
         ))}

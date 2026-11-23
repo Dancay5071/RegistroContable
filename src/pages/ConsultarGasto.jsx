@@ -478,6 +478,7 @@ export default function ConsultarGasto() {
                                   type="button"
                                   className="btn btn-sm btn-success rounded-pill px-2 py-0 me-2 shadow-sm"
                                   title="Marcar este gasto como pagado"
+                                  aria-label={`Pagar gasto ${gasto.descripcion} por ${formatoMoneda(gasto.monto)}`}
                                   onClick={() => handlePagarItem(gasto)}
                                 >
                                   <i className="bi bi-check2-circle me-1"></i> Pagar
@@ -487,6 +488,7 @@ export default function ConsultarGasto() {
                                 type="button" 
                                 className="btn btn-outline-secondary btn-sm me-2" 
                                 title="Editar" 
+                                aria-label={`Editar gasto ${gasto.descripcion} por ${formatoMoneda(gasto.monto)}`}
                                 onClick={() => handleOpenEdit(gasto)}
                               >
                                 <i className="bi bi-pencil-fill text-warning"></i>
@@ -495,6 +497,7 @@ export default function ConsultarGasto() {
                                 type="button" 
                                 className="btn btn-outline-secondary btn-sm" 
                                 title="Eliminar" 
+                                aria-label={`Eliminar gasto ${gasto.descripcion} por ${formatoMoneda(gasto.monto)}`}
                                 onClick={() => handleEliminarGasto(gasto)}
                               >
                                 <i className="bi bi-trash3-fill text-danger"></i>
@@ -529,12 +532,13 @@ export default function ConsultarGasto() {
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content rounded-4 border-0 shadow-lg">
               <div className="modal-header border-bottom">
-                <h5 className="modal-title fw-bold">Editar Gasto</h5>
+                <h5 className="modal-title fw-bold" id="edit-gasto-modal-title">Editar Gasto</h5>
                 <button 
                   type="button" 
                   className="btn-close" 
                   onClick={() => setEditModalOpen(false)}
                   disabled={editLoading}
+                  aria-label="Cerrar modal de edición"
                 ></button>
               </div>
               <form onSubmit={handleSaveEdit}>

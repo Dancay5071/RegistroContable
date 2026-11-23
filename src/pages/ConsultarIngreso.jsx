@@ -373,6 +373,7 @@ export default function ConsultarIngreso() {
                                 type="button" 
                                 className="btn btn-outline-secondary btn-sm me-2" 
                                 title="Editar" 
+                                aria-label={`Editar ingreso ${ingreso.descripcion} por ${formatoMoneda(ingreso.monto)}`}
                                 onClick={() => handleOpenEdit(ingreso)}
                               >
                                 <i className="bi bi-pencil-fill text-warning"></i>
@@ -381,6 +382,7 @@ export default function ConsultarIngreso() {
                                 type="button" 
                                 className="btn btn-outline-secondary btn-sm" 
                                 title="Eliminar" 
+                                aria-label={`Eliminar ingreso ${ingreso.descripcion} por ${formatoMoneda(ingreso.monto)}`}
                                 onClick={() => handleEliminarIngreso(ingreso)}
                               >
                                 <i className="bi bi-trash3-fill text-danger"></i>
@@ -415,12 +417,13 @@ export default function ConsultarIngreso() {
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content rounded-4 border-0 shadow-lg">
               <div className="modal-header border-bottom">
-                <h5 className="modal-title fw-bold">Editar Ingreso</h5>
+                <h5 className="modal-title fw-bold" id="edit-ingreso-modal-title">Editar Ingreso</h5>
                 <button 
                   type="button" 
                   className="btn-close" 
                   onClick={() => setEditModalOpen(false)}
                   disabled={editLoading}
+                  aria-label="Cerrar modal de edición"
                 ></button>
               </div>
               <form onSubmit={handleSaveEdit}>

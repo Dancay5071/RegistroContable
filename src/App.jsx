@@ -98,7 +98,18 @@ function MainLayout() {
         return;
       }
 
-      if (e.altKey && !e.ctrlKey && !e.metaKey) {
+      const anyModalOpen = Boolean(
+        confirmModalConfig ||
+        isQuickOpen ||
+        isVencimientosModalOpen ||
+        isSubscriptionModalOpen ||
+        isCustomizeModalOpen ||
+        isAuditModalOpen ||
+        isExportOpen ||
+        isLoginModalOpen
+      );
+
+      if (e.altKey && !e.ctrlKey && !e.metaKey && !anyModalOpen) {
         const key = e.key.toLowerCase();
         if (key === "n" && user) {
           e.preventDefault();

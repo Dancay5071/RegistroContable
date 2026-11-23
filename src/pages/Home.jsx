@@ -214,6 +214,7 @@ export default function Home() {
                     className="btn btn-sm btn-link text-muted p-0 text-decoration-none"
                     onClick={togglePrivacy}
                     title={isPrivate ? "Mostrar saldos" : "Ocultar saldos"}
+                    aria-label={isPrivate ? "Mostrar saldos (Modo Privacidad activo)" : "Ocultar saldos (Modo Privacidad desactivado)"}
                   >
                     <i className={`bi ${isPrivate ? "bi-eye-slash-fill text-warning" : "bi-eye"}`}></i>
                   </button>
@@ -237,6 +238,7 @@ export default function Home() {
                     className="btn btn-sm btn-link text-muted p-0 text-decoration-none"
                     onClick={togglePrivacy}
                     title={isPrivate ? "Mostrar saldos" : "Ocultar saldos"}
+                    aria-label={isPrivate ? "Mostrar saldos (Modo Privacidad activo)" : "Ocultar saldos (Modo Privacidad desactivado)"}
                   >
                     <i className={`bi ${isPrivate ? "bi-eye-slash-fill text-warning" : "bi-eye"}`}></i>
                   </button>
