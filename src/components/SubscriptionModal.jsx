@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSubscription } from "../context/SubscriptionContext";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 import { createSubscriptionCheckout, cancelSubscriptionAutoRenew } from "../services/subscriptionService";
 import FinTrackLogo from "./FinTrackLogo";
 
@@ -18,6 +19,7 @@ export default function SubscriptionModal() {
   const [billingCycle, setBillingCycle] = useState("annual");
   const [selectedPlan, setSelectedPlan] = useState("annual");
   const [isProcessing, setIsProcessing] = useState(false);
+  const modalRef = useFocusTrap(isSubscriptionModalOpen);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -98,10 +100,12 @@ export default function SubscriptionModal() {
 
   return (
     <div 
+      ref={modalRef}
       className="modal fade show d-block" 
       tabIndex="-1" 
       role="dialog" 
       aria-modal="true"
+      aria-labelledby="subscription-modal-title"
       style={{ 
         position: "fixed", 
         top: 0, 
@@ -145,7 +149,7 @@ export default function SubscriptionModal() {
               PLANES Y SUSCRIPCIÓN
             </span>
           </div>
-          <h2 className="fw-bold mb-2">Tu tranquilidad financiera comienza aquí</h2>
+          <h2 className="fw-bold mb-2" id="subscription-modal-title">Tu tranquilidad financiera comienza aquí</h2>
           <p className="text-muted small mx-auto" style={{ maxWidth: "540px" }}>
             Controla cada peso, anticipa vencimientos y visualiza tu patrimonio con análisis inteligentes.
           </p>

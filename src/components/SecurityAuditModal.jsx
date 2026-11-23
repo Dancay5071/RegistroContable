@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useSecurity } from "../context/SecurityContext";
 import { useToast } from "../context/ToastContext";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 import { formatoMoneda } from "../utils/formatters";
 import { getAuditLogs, clearAuditLogs, exportAuditLogsCSV } from "../services/auditService";
 import { createFullBackup, downloadBackupFile, parseAndValidateBackup, restoreFullBackup } from "../services/backupService";
@@ -18,6 +19,7 @@ export default function SecurityAuditModal() {
     setTabShieldEnabled
   } = useSecurity();
   const { showToast } = useToast();
+  const modalRef = useFocusTrap(isAuditModalOpen);
 
   const [activeTab, setActiveTab] = useState("backup");
   const [logs, setLogs] = useState([]);
@@ -270,9 +272,12 @@ export default function SecurityAuditModal() {
 
   return (
     <div
+      ref={modalRef}
       className="modal fade show d-block"
       tabIndex="-1"
       role="dialog"
+      aria-modal="true"
+      aria-labelledby="audit-modal-title"
       style={{ backgroundColor: "rgba(15, 23, 42, 0.75)", zIndex: 1080 }}
     >
       <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
@@ -287,7 +292,7 @@ export default function SecurityAuditModal() {
                 <i className="bi bi-shield-lock-fill fs-5"></i>
               </div>
               <div>
-                <h5 className="modal-title fw-bold fs-6 mb-0">Auditoría, Cifrado y Respaldos</h5>
+                <h5 className="modal-title fw-bold fs-6 mb-0" id="audit-modal-title">Auditoría, Cifrado y Respaldos</h5>
                 <span className="text-muted small">Capa 5 de Seguridad: Protección AES-256, Escudo de Pestaña y Diagnóstico de Salud</span>
               </div>
             </div>

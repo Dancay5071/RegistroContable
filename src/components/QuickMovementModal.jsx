@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useToast } from "../context/ToastContext";
 import { useSubscription } from "../context/SubscriptionContext";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 import { MESES, MONEDAS, formatoMoneda, sanitizeTextInput, getFechaHoyISO, formatoFechaVencimiento } from "../utils/formatters";
 import { CATEGORIAS_GASTO, CATEGORIAS_INGRESO, CATEGORIAS_AHORRO } from "../utils/categories";
 import { 
@@ -25,6 +26,7 @@ export default function QuickMovementModal() {
   const { isOpen, activeTab, setActiveTab, closeQuickModal, notifyMovementSaved } = useQuickMovement();
   const { showToast } = useToast();
   const { subscription, openSubscriptionModal } = useSubscription();
+  const modalRef = useFocusTrap(isOpen);
 
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
@@ -240,9 +242,12 @@ export default function QuickMovementModal() {
 
   return (
     <div 
+      ref={modalRef}
       className="modal fade show d-block" 
       tabIndex="-1" 
       role="dialog"
+      aria-modal="true"
+      aria-labelledby="quick-movement-title"
       style={{ backgroundColor: "rgba(0, 0, 0, 0.6)", zIndex: 1055 }}
     >
       <div className="modal-dialog modal-dialog-centered">
@@ -250,7 +255,7 @@ export default function QuickMovementModal() {
           
           <div className="modal-header border-bottom pb-2 pt-3 flex-column align-items-stretch">
             <div className="d-flex justify-content-between align-items-center w-100 mb-2">
-              <h5 className="modal-title fw-bold text-dark d-flex align-items-center gap-2">
+              <h5 className="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="quick-movement-title">
                 <i className="bi bi-plus-circle text-success"></i>
                 Nuevo Movimiento
               </h5>
@@ -259,6 +264,7 @@ export default function QuickMovementModal() {
                 className="btn-close" 
                 onClick={handleClose} 
                 disabled={loading}
+                aria-label="Cerrar ventana de nuevo movimiento"
               ></button>
             </div>
 

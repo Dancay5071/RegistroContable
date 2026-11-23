@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 import { logActivity } from "../services/auditService";
 import FinTrackLogo from "./FinTrackLogo";
 
@@ -24,6 +25,7 @@ export default function LoginModal() {
   const [loading, setLoading] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [lockoutSeconds, setLockoutSeconds] = useState(0);
+  const modalRef = useFocusTrap(isLoginModalOpen);
 
   useEffect(() => {
     if (lockoutSeconds <= 0) return;
@@ -168,6 +170,7 @@ export default function LoginModal() {
 
   return (
     <div 
+      ref={modalRef}
       className="modal fade show d-block" 
       tabIndex="-1" 
       role="dialog" 

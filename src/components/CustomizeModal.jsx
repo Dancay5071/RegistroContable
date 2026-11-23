@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useTheme, THEMES, BACKGROUNDS } from "../context/ThemeContext";
 import { useToast } from "../context/ToastContext";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 
 export default function CustomizeModal() {
   const {
@@ -18,6 +19,7 @@ export default function CustomizeModal() {
   const { showToast } = useToast();
   const fileInputRef = useRef(null);
   const [processingImage, setProcessingImage] = useState(false);
+  const modalRef = useFocusTrap(isCustomizeModalOpen);
 
   if (!isCustomizeModalOpen) return null;
 
@@ -85,10 +87,12 @@ export default function CustomizeModal() {
 
   return (
     <div 
+      ref={modalRef}
       className="modal fade show d-block" 
       tabIndex="-1" 
       role="dialog" 
       aria-modal="true"
+      aria-labelledby="customize-modal-title"
       style={{ backgroundColor: "rgba(0, 0, 0, 0.65)", zIndex: 1060 }}
     >
       <div className="modal-dialog modal-dialog-centered modal-lg">
@@ -99,7 +103,7 @@ export default function CustomizeModal() {
                 <i className="bi bi-palette2 fs-5"></i>
               </div>
               <div>
-                <h5 className="modal-title fw-bold mb-0 text-dark">Personalizar apariencia</h5>
+                <h5 className="modal-title fw-bold mb-0 text-dark" id="customize-modal-title">Personalizar apariencia</h5>
                 <span className="text-muted small">Elige tu paleta favorita y el fondo que más te inspire</span>
               </div>
             </div>

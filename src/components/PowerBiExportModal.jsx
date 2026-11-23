@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { usePowerBiExport } from "../context/PowerBiExportContext";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 import { useDolar } from "../hooks/useDolar";
 import { getAllUserTransacciones } from "../services/dbService";
 import { getDemoAllTransacciones } from "../services/demoData";
@@ -20,6 +21,7 @@ export default function PowerBiExportModal() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
   const { blue } = useDolar();
+  const modalRef = useFocusTrap(isExportOpen);
 
   const [activeTab, setActiveTab] = useState("datasets");
   const [delimiter, setDelimiter] = useState(";");
@@ -158,6 +160,11 @@ export default function PowerBiExportModal() {
 
   return (
     <div 
+      ref={modalRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="powerbi-modal-title"
+      tabIndex="-1"
       className="modal-backdrop-custom d-flex align-items-center justify-content-center p-2 p-md-3" 
       style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 1060, backgroundColor: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(6px)" }}
       onClick={(e) => { if (e.target === e.currentTarget) closePowerBiExport(); }}
@@ -176,7 +183,7 @@ export default function PowerBiExportModal() {
             </div>
             <div>
               <div className="d-flex align-items-center gap-2">
-                <h5 className="fw-bold text-dark mb-0 fs-6 fs-md-5">Power BI y Excel Analytics Hub</h5>
+                <h5 className="fw-bold text-dark mb-0 fs-6 fs-md-5" id="powerbi-modal-title">Power BI y Excel Analytics Hub</h5>
                 <span className="badge rounded-pill bg-warning text-dark border border-warning-subtle px-2 py-0" style={{ fontSize: "0.68rem" }}>
                   PRO
                 </span>

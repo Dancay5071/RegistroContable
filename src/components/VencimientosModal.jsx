@@ -3,6 +3,7 @@ import { useVencimientos } from "../context/VencimientosContext";
 import { usePrivacy } from "../context/PrivacyContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useSecurity } from "../context/SecurityContext";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 import { formatoMoneda, formatoFechaVencimiento, getDiasRestantes } from "../utils/formatters";
 import { getCategoriaGasto } from "../utils/categories";
 
@@ -22,6 +23,7 @@ export default function VencimientosModal() {
   const { isPrivate, maskAmount } = usePrivacy();
   const { openQuickModal } = useQuickMovement();
   const { requestConfirmation } = useSecurity();
+  const modalRef = useFocusTrap(isVencimientosModalOpen);
 
   const [filtro, setFiltro] = useState("todos");
   const [pagandoId, setPagandoId] = useState(null);
@@ -60,9 +62,12 @@ export default function VencimientosModal() {
 
   return (
     <div 
+      ref={modalRef}
       className="modal fade show d-block" 
       tabIndex="-1" 
       role="dialog"
+      aria-modal="true"
+      aria-labelledby="vencimientos-modal-title"
       style={{ backgroundColor: "rgba(15, 23, 42, 0.72)", zIndex: 1060 }}
     >
       <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
@@ -77,7 +82,7 @@ export default function VencimientosModal() {
                 <i className="bi bi-bell-fill fs-5"></i>
               </div>
               <div>
-                <h5 className="modal-title fw-bold text-dark mb-0 fs-6">
+                <h5 className="modal-title fw-bold text-dark mb-0 fs-6" id="vencimientos-modal-title">
                   Vencimientos y Pagos Pendientes
                 </h5>
                 <span className="text-muted small">

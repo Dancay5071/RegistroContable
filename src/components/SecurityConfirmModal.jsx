@@ -1,8 +1,10 @@
 import React from "react";
 import { useSecurity } from "../context/SecurityContext";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 
 export default function SecurityConfirmModal() {
   const { confirmModalConfig, closeConfirmation } = useSecurity();
+  const modalRef = useFocusTrap(Boolean(confirmModalConfig));
 
   if (!confirmModalConfig) return null;
 
@@ -18,15 +20,18 @@ export default function SecurityConfirmModal() {
 
   return (
     <div 
+      ref={modalRef}
       className="modal fade show d-block" 
       tabIndex="-1" 
       role="dialog" 
+      aria-modal="true"
+      aria-labelledby="confirm-modal-title"
       style={{ backgroundColor: "rgba(0, 0, 0, 0.7)", zIndex: 1090 }}
     >
       <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: "440px" }}>
         <div className="modal-content border-0 rounded-4 shadow-lg p-2">
           <div className="modal-header border-bottom-0 pb-1">
-            <h5 className="modal-title fw-bold fs-6 d-flex align-items-center gap-2">
+            <h5 className="modal-title fw-bold fs-6 d-flex align-items-center gap-2" id="confirm-modal-title">
               <i className={`bi ${danger ? "bi-shield-exclamation text-danger" : "bi-shield-check text-success"} fs-5`}></i>
               <span>{title || "Confirmación Requerida"}</span>
             </h5>
