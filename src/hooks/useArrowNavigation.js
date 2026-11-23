@@ -42,6 +42,99 @@ export function useArrowNavigation(enabled = true) {
         if (e.key === "ArrowUp" || e.key === "ArrowDown") return;
       }
 
+      if (activeEl?.closest("#navbar")) {
+        const isDolarPill = activeEl?.classList?.contains("navbar-dolar-pill") || activeEl?.closest(".navbar-dolar-pill");
+        const isGastosLink = (activeEl?.getAttribute?.("href")?.includes("/gastos") || activeEl?.closest("a[href*='/gastos']"));
+
+        if (isDolarPill && e.key === "ArrowRight") {
+          const gastosLink = document.querySelector("#navbar a[href*='/gastos']");
+          if (gastosLink) {
+            e.preventDefault();
+            gastosLink.focus();
+            return;
+          }
+        }
+
+        if (isGastosLink && e.key === "ArrowLeft") {
+          const dolarPill = document.querySelector(".navbar-dolar-pill");
+          if (dolarPill) {
+            e.preventDefault();
+            dolarPill.focus();
+            return;
+          }
+        }
+
+        if (isDolarPill && e.key === "ArrowLeft") {
+          const brandLink = document.querySelector("#navbar .navbar-brand");
+          if (brandLink) {
+            e.preventDefault();
+            brandLink.focus();
+            return;
+          }
+        }
+
+        if (activeEl?.closest(".navbar-brand") && e.key === "ArrowRight") {
+          const dolarPill = document.querySelector(".navbar-dolar-pill");
+          const gastosLink = document.querySelector("#navbar a[href*='/gastos']");
+          const target = dolarPill || gastosLink;
+          if (target) {
+            e.preventDefault();
+            target.focus();
+            return;
+          }
+        }
+
+        if (e.key === "ArrowDown") {
+          const mainEl = document.getElementById("main-content");
+          if (mainEl) {
+            const firstInMain = Array.from(mainEl.querySelectorAll(focusableSelector)).filter(isVisible)[0];
+            if (firstInMain) {
+              e.preventDefault();
+              firstInMain.focus();
+              return;
+            }
+          }
+        }
+
+        if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+          const navItems = Array.from(document.querySelectorAll("#navbar " + focusableSelector)).filter(isVisible);
+          const currentItem = activeEl.closest(focusableSelector) || activeEl;
+          const idx = navItems.indexOf(currentItem);
+          if (idx !== -1) {
+            e.preventDefault();
+            const nextIdx = e.key === "ArrowRight"
+              ? (idx < navItems.length - 1 ? idx + 1 : 0)
+              : (idx > 0 ? idx - 1 : navItems.length - 1);
+            navItems[nextIdx].focus();
+            return;
+          }
+        }
+      }
+
+      if (e.key === "ArrowUp") {
+        const isCalendarCell = activeEl?.closest(".calendar-cell") || activeEl?.classList?.contains("calendar-cell");
+        if (isCalendarCell) return;
+
+        const inMainContent = activeEl?.closest("#main-content");
+        const mainEl = document.getElementById("main-content");
+        const mainFocusables = mainEl ? Array.from(mainEl.querySelectorAll(focusableSelector)).filter(isVisible) : [];
+        const currentIndexInMain = activeEl ? mainFocusables.indexOf(activeEl) : -1;
+
+        if (currentIndexInMain <= 2 || !inMainContent) {
+          const navTarget = (
+            document.querySelector("#navbar a.nav-link.active") ||
+            document.querySelector("#navbar a[href*='/calendario']") ||
+            document.querySelector("#navbar a[href*='/gastos']") ||
+            document.querySelector(".navbar-dolar-pill")
+          );
+          if (navTarget && activeEl !== navTarget && inMainContent) {
+            e.preventDefault();
+            navTarget.focus();
+            return;
+          }
+        }
+      }
+
       const activeTableTr = activeEl?.closest("tbody tr");
       if (activeTableTr) {
         if (e.key === "ArrowDown") {
@@ -81,8 +174,8 @@ export function useArrowNavigation(enabled = true) {
         }
       }
 
-      const mainContainer = document.getElementById("main-content") || document.body;
-      const allFocusable = Array.from(mainContainer.querySelectorAll(focusableSelector)).filter(isVisible);
+      const root = document.querySelector(".app-wrapper") || document.body;
+      const allFocusable = Array.from(root.querySelectorAll(focusableSelector)).filter(isVisible);
 
       if (allFocusable.length === 0) return;
 

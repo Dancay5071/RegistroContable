@@ -4,11 +4,11 @@
 
 > **FinTrack** es una Progressive Web App (PWA) de nivel empresarial diseñada para el control patrimonial, proyección de ahorros, seguimiento de vencimientos y analítica financiera personal en tiempo real. Construida con arquitectura moderna sobre **React 19**, **Vite**, **Bootstrap 5**, **Chart.js**, **Firebase** (Firestore, Authentication & Cloud Functions) e integración de pagos recurrentes con **Mercado Pago Checkout Pro**.
 
-🌐 **Aplicación en producción:** [https://fintrack-finanzas.web.app](https://fintrack-finanzas.web.app)
+**Aplicación en producción:** [https://fintrack-finanzas.web.app](https://fintrack-finanzas.web.app)
 
 ---
 
-## 🚀 Tecnologías principales
+## Tecnologías principales
 
 - **Frontend core:** React 19 (SPA con `React.lazy` y `Suspense` para carga optimizada)
 - **Bundler y build tool:** Vite 8 (segmentación de chunks con `vendor-react`, `firebase` y `charts`)
@@ -21,7 +21,7 @@
 
 ---
 
-## 🌟 Módulos y funcionalidades
+## Módulos y funcionalidades
 
 ### 1. Sistema SaaS y monetización con Mercado Pago
 - **Prueba gratuita de 60 Días:** Todo nuevo usuario accede automáticamente a 60 días completos de FinTrack Pro sin ingresar tarjeta de crédito.
@@ -59,7 +59,36 @@
 - **Modo oscuro nativo:** Tema oscuro (`[data-theme="dark"]`) con grises azulados (`#131b2e` y `#0f172a`) diseñados para reducir la fatiga visual.
 - **Fondos personalizables:** Selección de degradados Mesh o carga de imagen propia con compresión en tiempo real vía HTML5 Canvas.
 
-### 7. Modo demo interactivo
+### 7. Accesibilidad universal e inclusión (WCAG 2.1 AA & Navegación 100% sin mouse)
+- **Navegación 100% por Teclado:**
+  - Enlace de salto al contenido principal (*Skip Navigation Link*) para acceder directamente a `#main-content`.
+  - Anillo de foco de alto contraste (`:focus-visible` de 3px) reactivo al color del tema seleccionado.
+  - Suite de atajos de teclado globales:
+    - `Alt + N`: Apertura instantánea de Nuevo Movimiento.
+    - `Alt + V`: Monitor de Vencimientos y compromisos pendientes.
+    - `Alt + C`: Calendario financiero.
+    - `Alt + R`: Resumen anual y métricas comparativas.
+    - `Alt + H`: Retorno al Dashboard / Inicio.
+    - `Alt + G` / `Alt + I` / `Alt + A`: Vistas de Gastos, Ingresos y Ahorros.
+    - `Alt + P`: Alternancia de Modo Privacidad.
+    - `Escape`: Cierre unificado de cualquier modal o menú desplegable.
+- **Navegación direccional con flechas (`↑`, `↓`, `←`, `→`):**
+  - **Barra de navegación (*Navbar*):** Desplazamiento fluido horizontal entre el logo, la píldora de cotización en tiempo real del dólar y los accesos directos; salto directo de la píldora de dólar a **Gastos** con `→` y regreso con `←`, y descenso directo al contenido principal con `↓`.
+  - **Modales:** Alternancia y activación inmediata de pestañas (*Tabs*) con `←` y `→`; avance y retroceso entre campos con `↓` y `↑`.
+  - **Tablas de gastos e ingresos:** Desplazamiento entre filas con `↓`/`↑` y entre botones de acción (*Pagar*, *Editar*, *Eliminar*) con `←`/`→`.
+  - **Calendario financiero:** Recorrido día a día con `←`/`→`, salto de semanas completas con `↑`/`↓`, selección con `Enter` o `Espacio`, y ascenso automático a la barra de navegación (*Navbar*) al presionar `↑` desde la primera semana del mes o desde los controles superiores.
+  - **Protección de texto:** Desplazamiento natural del cursor al escribir en campos de texto sin saltos no deseados.
+- **Ciclo y atrapamiento de Foco (*Focus Trap*):**
+  - Hook accesible [useFocusTrap.js](file:///c:/Users/dani_/Desktop/Registro%20contable/RegistroContable/src/hooks/useFocusTrap.js) que mantiene la tabulación dentro del modal y devuelve el foco al botón de origen al cerrarlo.
+- **Compatibilidad con lectores de pantalla (NVDA, VoiceOver, JAWS):**
+  - Regiones en vivo `aria-live="polite"` y `role="status"` en notificaciones toast.
+  - Etiquetas contextuales `aria-label` en tablas financieras informando nombre y monto de cada transacción.
+  - Diálogos WAI-ARIA completos con `role="dialog"`, `aria-modal="true"` y títulos asociados por `id`.
+- **Adaptaciones visuales y sensoriales:**
+  - Soporte para `@media (prefers-reduced-motion: reduce)` para usuarios sensibles a animaciones.
+  - Estados comunicados con texto e íconos redundantes para daltonismo (protanopía y deuteranopía).
+
+### 8. Modo demo interactivo
 - Acceso inmediato con un clic sin registro previo con datos precargados, simulador de estados de suscripción (45 días, 5 días, vencido, Pro activo) y persistencia en `localStorage`.
 
 ---
@@ -108,7 +137,9 @@ RegistroContable/
 │   │   ├── ToastContext.jsx           # Notificaciones toast flotantes no intrusivas
 │   │   └── VencimientosContext.jsx    # Listener en tiempo real de facturas y servicios
 │   ├── hooks/
-│   │   └── useDolar.js                # Hook reactivo de cotizaciones del dólar argentino
+│   │   ├── useArrowNavigation.js      # Hook para navegación espacial y direccional por flechas
+│   │   ├── useDolar.js                # Hook reactivo de cotizaciones del dólar argentino
+│   │   └── useFocusTrap.js            # Hook de ciclo de foco, navegación y retorno en modales
 │   ├── pages/                         # Vistas con carga perezosa (React.lazy)
 │   │   ├── Ahorro.jsx                 # Gestión de metas y monedas de ahorro
 │   │   ├── Calendario.jsx             # Calendario mensual y distribución de compromisos

@@ -221,25 +221,59 @@ export default function Calendario() {
       const isInput = activeEl && (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA" || activeEl.tagName === "SELECT");
       if (isInput) return;
       if (document.querySelector(".modal.show, [role='dialog']")) return;
+      if (activeEl?.closest("#navbar")) return;
 
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        setDiaSeleccionado((prev) => (prev < totalDiasMes ? prev + 1 : 1));
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        setDiaSeleccionado((prev) => (prev > 1 ? prev - 1 : totalDiasMes));
+      const isCalendarCell = activeEl?.closest(".calendar-cell") || activeEl?.classList?.contains("calendar-cell");
+
+      if (e.key === "ArrowUp") {
+        if (!isCalendarCell || diaSeleccionado <= 7) {
+          e.preventDefault();
+          const navTarget = (
+            document.querySelector("#navbar a.nav-link.active") ||
+            document.querySelector("#navbar a[href*='/calendario']") ||
+            document.querySelector("#navbar a[href*='/gastos']") ||
+            document.querySelector(".navbar-dolar-pill")
+          );
+          if (navTarget) {
+            navTarget.focus();
+            return;
+          }
+        } else {
+          e.preventDefault();
+          const nuevoDia = Math.max(1, diaSeleccionado - 7);
+          setDiaSeleccionado(nuevoDia);
+          const cell = document.querySelector(`[data-day="${nuevoDia}"]`);
+          cell?.focus();
+          return;
+        }
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
-        setDiaSeleccionado((prev) => Math.min(totalDiasMes, prev + 7));
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setDiaSeleccionado((prev) => Math.max(1, prev - 7));
+        const nuevoDia = Math.min(totalDiasMes, diaSeleccionado + 7);
+        setDiaSeleccionado(nuevoDia);
+        const cell = document.querySelector(`[data-day="${nuevoDia}"]`);
+        cell?.focus();
+      } else if (e.key === "ArrowRight") {
+        if (isCalendarCell) {
+          e.preventDefault();
+          const nuevoDia = diaSeleccionado < totalDiasMes ? diaSeleccionado + 1 : 1;
+          setDiaSeleccionado(nuevoDia);
+          const cell = document.querySelector(`[data-day="${nuevoDia}"]`);
+          cell?.focus();
+        }
+      } else if (e.key === "ArrowLeft") {
+        if (isCalendarCell) {
+          e.preventDefault();
+          const nuevoDia = diaSeleccionado > 1 ? diaSeleccionado - 1 : totalDiasMes;
+          setDiaSeleccionado(nuevoDia);
+          const cell = document.querySelector(`[data-day="${nuevoDia}"]`);
+          cell?.focus();
+        }
       }
     };
 
     window.addEventListener("keydown", handleCalendarKeys);
     return () => window.removeEventListener("keydown", handleCalendarKeys);
-  }, [totalDiasMes]);
+  }, [totalDiasMes, diaSeleccionado]);
 
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
@@ -459,6 +493,7 @@ export default function Calendario() {
                         <div
                           role="button"
                           tabIndex={0}
+                          data-day={diaNum}
                           aria-label={`Día ${diaNum} de ${mesNombre} de ${anio}. ${eventos.length} eventos.`}
                           aria-pressed={esSeleccionado}
                           className={`p-1 p-md-2 rounded-3 border calendar-cell cursor-pointer transition-all d-flex flex-column justify-content-between ${esHoy ? 'calendar-cell-today' : ''} ${esSeleccionado ? 'calendar-cell-selected shadow-sm' : ''}`}
