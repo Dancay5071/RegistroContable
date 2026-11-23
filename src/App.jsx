@@ -86,9 +86,12 @@ function MainLayout() {
 
   return (
     <div className="app-wrapper">
+      <a href="#main-content" className="skip-link">
+        Saltar al contenido principal
+      </a>
       <div className="fondo"></div>
       <Navbar />
-      <main className="d-flex flex-column flex-grow-1">
+      <main id="main-content" tabIndex="-1" className="d-flex flex-column flex-grow-1">
         <Suspense fallback={<Loader message="Cargando módulo..." />}>
           <Routes>
             <Route path="/" element={<Home />} />
