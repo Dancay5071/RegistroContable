@@ -58,12 +58,14 @@ export function useFocusTrap(active = true) {
     });
 
     const handleKeyDown = (e) => {
-      if (e.key !== "Tab" || !modalRef.current) return;
+      if (!modalRef.current) return;
+      const isTab = e.key === "Tab";
+      const isArrow = ["ArrowDown", "ArrowUp", "ArrowRight", "ArrowLeft"].includes(e.key);
+
+      if (!isTab && !isArrow) return;
 
       const elements = getFocusableElements();
-      if (elements.length === 0) {
-        return;
-      }
+      if (elements.length === 0) return;
 
       const firstElement = elements[0];
       const lastElement = elements[elements.length - 1];
@@ -75,15 +77,59 @@ export function useFocusTrap(active = true) {
         return;
       }
 
-      if (e.shiftKey) {
-        if (activeEl === firstElement) {
-          e.preventDefault();
-          lastElement.focus();
+      if (isTab) {
+        if (e.shiftKey) {
+          if (activeEl === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (activeEl === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
         }
-      } else {
-        if (activeEl === lastElement) {
+        return;
+      }
+
+      if (isArrow) {
+        const isTextInput = activeEl && (
+          activeEl.tagName === "TEXTAREA" ||
+          (activeEl.tagName === "INPUT" && !["button", "submit", "reset", "checkbox", "radio", "range"].includes(activeEl.type))
+        );
+
+        if (isTextInput) {
+          if (e.key === "ArrowLeft" || e.key === "ArrowRight") return;
+          if (activeEl.type === "number" && (e.key === "ArrowUp" || e.key === "ArrowDown")) return;
+        }
+
+        if (activeEl && activeEl.tagName === "SELECT") {
+          if (e.key === "ArrowUp" || e.key === "ArrowDown") return;
+        }
+
+        const currentIndex = elements.indexOf(activeEl);
+        if (currentIndex === -1) {
           e.preventDefault();
           firstElement.focus();
+          return;
+        }
+
+        if (e.key === "ArrowDown" || (e.key === "ArrowRight" && !isTextInput)) {
+          e.preventDefault();
+          const nextIndex = (currentIndex + 1) % elements.length;
+          const nextEl = elements[nextIndex];
+          nextEl.focus();
+          if (nextEl.classList.contains("quick-tab-btn") || nextEl.getAttribute("role") === "tab") {
+            nextEl.click();
+          }
+        } else if (e.key === "ArrowUp" || (e.key === "ArrowLeft" && !isTextInput)) {
+          e.preventDefault();
+          const prevIndex = (currentIndex - 1 + elements.length) % elements.length;
+          const prevEl = elements[prevIndex];
+          prevEl.focus();
+          if (prevEl.classList.contains("quick-tab-btn") || prevEl.getAttribute("role") === "tab") {
+            prevEl.click();
+          }
         }
       }
     };

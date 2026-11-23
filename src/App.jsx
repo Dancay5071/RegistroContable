@@ -10,6 +10,7 @@ import { VencimientosProvider, useVencimientos } from "./context/VencimientosCon
 import { PowerBiExportProvider, usePowerBiExport } from "./context/PowerBiExportContext";
 import { SubscriptionProvider, useSubscription } from "./context/SubscriptionContext";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
+import { useArrowNavigation } from "./hooks/useArrowNavigation";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LoginModal from "./components/LoginModal";
@@ -74,6 +75,19 @@ function MainLayout() {
   const { isCustomizeModalOpen, closeCustomizeModal } = useTheme();
   const { confirmModalConfig, closeConfirmation, isAuditModalOpen, closeAuditModal } = useSecurity();
   const { isExportOpen, closePowerBiExport } = usePowerBiExport();
+
+  const anyModalActive = Boolean(
+    confirmModalConfig ||
+    isQuickOpen ||
+    isVencimientosModalOpen ||
+    isSubscriptionModalOpen ||
+    isCustomizeModalOpen ||
+    isAuditModalOpen ||
+    isExportOpen ||
+    isLoginModalOpen
+  );
+
+  useArrowNavigation(!anyModalActive);
 
   React.useEffect(() => {
     const handleKeyDown = (e) => {

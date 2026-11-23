@@ -215,6 +215,32 @@ export default function Calendario() {
     return `${anio}-${mStr}-${dStr}`;
   }, [anio, mesIdx, diaSeleccionado]);
 
+  useEffect(() => {
+    const handleCalendarKeys = (e) => {
+      const activeEl = document.activeElement;
+      const isInput = activeEl && (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA" || activeEl.tagName === "SELECT");
+      if (isInput) return;
+      if (document.querySelector(".modal.show, [role='dialog']")) return;
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        setDiaSeleccionado((prev) => (prev < totalDiasMes ? prev + 1 : 1));
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        setDiaSeleccionado((prev) => (prev > 1 ? prev - 1 : totalDiasMes));
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setDiaSeleccionado((prev) => Math.min(totalDiasMes, prev + 7));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setDiaSeleccionado((prev) => Math.max(1, prev - 7));
+      }
+    };
+
+    window.addEventListener("keydown", handleCalendarKeys);
+    return () => window.removeEventListener("keydown", handleCalendarKeys);
+  }, [totalDiasMes]);
+
   return (
     <div className="fade-in d-flex flex-column align-items-center flex-grow-1 p-3">
       <div className="container d-flex flex-column align-items-center" style={{ maxWidth: "1120px" }}>
@@ -431,6 +457,10 @@ export default function Calendario() {
                         style={{ width: "14.285%" }}
                       >
                         <div
+                          role="button"
+                          tabIndex={0}
+                          aria-label={`Día ${diaNum} de ${mesNombre} de ${anio}. ${eventos.length} eventos.`}
+                          aria-pressed={esSeleccionado}
                           className={`p-1 p-md-2 rounded-3 border calendar-cell cursor-pointer transition-all d-flex flex-column justify-content-between ${esHoy ? 'calendar-cell-today' : ''} ${esSeleccionado ? 'calendar-cell-selected shadow-sm' : ''}`}
                           style={{
                             minHeight: "84px",
@@ -438,6 +468,12 @@ export default function Calendario() {
                             borderColor: esSeleccionado ? "var(--border-focus)" : "var(--border-subtle)"
                           }}
                           onClick={() => setDiaSeleccionado(diaNum)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              setDiaSeleccionado(diaNum);
+                            }
+                          }}
                         >
                           <div className="d-flex align-items-center justify-content-between mb-1">
                             <span
