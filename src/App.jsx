@@ -1,15 +1,15 @@
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { BalanceProvider } from "./context/BalanceContext";
 import { PrivacyProvider } from "./context/PrivacyContext";
-import { SecurityProvider } from "./context/SecurityContext";
+import { SecurityProvider, useSecurity } from "./context/SecurityContext";
 import { ToastProvider, useToast } from "./context/ToastContext";
-import { QuickMovementProvider } from "./context/QuickMovementContext";
-import { VencimientosProvider } from "./context/VencimientosContext";
-import { PowerBiExportProvider } from "./context/PowerBiExportContext";
-import { SubscriptionProvider } from "./context/SubscriptionContext";
-import { ThemeProvider } from "./context/ThemeContext";
+import { QuickMovementProvider, useQuickMovement } from "./context/QuickMovementContext";
+import { VencimientosProvider, useVencimientos } from "./context/VencimientosContext";
+import { PowerBiExportProvider, usePowerBiExport } from "./context/PowerBiExportContext";
+import { SubscriptionProvider, useSubscription } from "./context/SubscriptionContext";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LoginModal from "./components/LoginModal";
@@ -65,7 +65,93 @@ function ProtectedRoute({ children }) {
 }
 
 function MainLayout() {
+  const navigate = useNavigate();
+  const { user, isLoginModalOpen, closeLoginModal } = useAuth();
   const { showToast } = useToast();
+  const { isOpen: isQuickOpen, openQuickModal, closeQuickModal } = useQuickMovement();
+  const { isVencimientosModalOpen, openVencimientosModal, closeVencimientosModal } = useVencimientos();
+  const { isSubscriptionModalOpen, closeSubscriptionModal } = useSubscription();
+  const { isCustomizeModalOpen, closeCustomizeModal } = useTheme();
+  const { confirmModalConfig, closeConfirmation, isAuditModalOpen, closeAuditModal } = useSecurity();
+  const { isExportOpen, closePowerBiExport } = usePowerBiExport();
+
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        if (confirmModalConfig) {
+          closeConfirmation();
+        } else if (isQuickOpen) {
+          closeQuickModal();
+        } else if (isVencimientosModalOpen) {
+          closeVencimientosModal();
+        } else if (isSubscriptionModalOpen) {
+          closeSubscriptionModal();
+        } else if (isCustomizeModalOpen) {
+          closeCustomizeModal();
+        } else if (isAuditModalOpen) {
+          closeAuditModal();
+        } else if (isExportOpen) {
+          closePowerBiExport();
+        } else if (isLoginModalOpen) {
+          closeLoginModal();
+        }
+        return;
+      }
+
+      if (e.altKey && !e.ctrlKey && !e.metaKey) {
+        const key = e.key.toLowerCase();
+        if (key === "n" && user) {
+          e.preventDefault();
+          openQuickModal("gasto");
+        } else if (key === "v" && user) {
+          e.preventDefault();
+          openVencimientosModal();
+        } else if (key === "c" && user) {
+          e.preventDefault();
+          navigate("/calendario");
+        } else if (key === "r" && user) {
+          e.preventDefault();
+          navigate("/resumen");
+        } else if (key === "h" && user) {
+          e.preventDefault();
+          navigate("/");
+        } else if (key === "g" && user) {
+          e.preventDefault();
+          navigate("/gastos/consultar");
+        } else if (key === "i" && user) {
+          e.preventDefault();
+          navigate("/ingresos/consultar");
+        } else if (key === "a" && user) {
+          e.preventDefault();
+          navigate("/ahorros");
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    user,
+    navigate,
+    confirmModalConfig,
+    closeConfirmation,
+    isQuickOpen,
+    openQuickModal,
+    closeQuickModal,
+    isVencimientosModalOpen,
+    openVencimientosModal,
+    closeVencimientosModal,
+    isSubscriptionModalOpen,
+    closeSubscriptionModal,
+    isCustomizeModalOpen,
+    closeCustomizeModal,
+    isAuditModalOpen,
+    closeAuditModal,
+    isExportOpen,
+    closePowerBiExport,
+    isLoginModalOpen,
+    closeLoginModal
+  ]);
 
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);

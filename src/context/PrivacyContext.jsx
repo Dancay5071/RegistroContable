@@ -31,7 +31,7 @@ export function PrivacyProvider({ children }) {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.altKey && (e.key === "p" || e.key === "P")) {
+      if (e.altKey && !e.ctrlKey && !e.metaKey && (e.key === "p" || e.key === "P")) {
         e.preventDefault();
         togglePrivacy();
       }

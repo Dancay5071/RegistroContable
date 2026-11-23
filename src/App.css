@@ -895,6 +895,8 @@ body {
   border-radius: 20px;
   padding: 0.35rem 0.85rem;
   font-size: 0.85rem;
+  font-family: inherit;
+  color: inherit;
   transition: all 0.2s ease;
   cursor: pointer;
   user-select: none;

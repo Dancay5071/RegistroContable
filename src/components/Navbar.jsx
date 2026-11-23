@@ -32,8 +32,18 @@ export default function Navbar() {
         setUserMenuOpen(false);
       }
     };
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setUserMenuOpen(false);
+        setIsOpen(false);
+      }
+    };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   if (!user) return null;
@@ -73,15 +83,17 @@ export default function Navbar() {
           </Link>
 
           {blue?.venta > 0 && (
-            <div 
+            <button 
+              type="button"
               className="navbar-dolar-pill d-flex align-items-center gap-2"
               title={`Cotizaciones en tiempo real:\n• Dólar Blue: Compra $${blue.compra.toLocaleString('es-AR')} | Venta $${blue.venta.toLocaleString('es-AR')}\n• Dólar Oficial: Compra $${oficial.compra.toLocaleString('es-AR')} | Venta $${oficial.venta.toLocaleString('es-AR')}\n• MEP: $${mep.venta.toLocaleString('es-AR')}\n\nHaz clic para actualizar`}
+              aria-label={`Cotización Dólar Blue: venta $${blue.venta.toLocaleString('es-AR')}. Presiona Enter para actualizar cotizaciones.`}
               onClick={() => refreshDolar()}
             >
               <span className="dot dot-dolar-pulse"></span>
               <span className="small fw-semibold text-muted">USD</span>
               <strong className="text-dolar-value">${blue.venta.toLocaleString("es-AR")}</strong>
-            </div>
+            </button>
           )}
         </div>
 
@@ -90,8 +102,8 @@ export default function Navbar() {
             className="btn btn-notification-bell d-flex align-items-center justify-content-center rounded-circle shadow-sm position-relative"
             type="button"
             onClick={openVencimientosModal}
-            aria-label="Vencimientos pendientes"
-            title={alertasCount > 0 ? `${alertasCount} vencimientos pendientes` : "Sin vencimientos"}
+            aria-label={alertasCount > 0 ? `${alertasCount} vencimientos pendientes` : "Sin vencimientos pendientes"}
+            title={alertasCount > 0 ? `${alertasCount} vencimientos pendientes (Alt + V)` : "Sin vencimientos (Alt + V)"}
           >
             <i className={`bi ${alertasCount > 0 ? "bi-bell-fill" : "bi-bell"} ${hasVencidos ? "text-danger" : (alertasCount > 0 ? "text-warning" : "text-muted")}`}></i>
             {alertasCount > 0 && (
@@ -163,8 +175,8 @@ export default function Navbar() {
               className="btn btn-notification-bell d-flex align-items-center justify-content-center rounded-circle shadow-sm position-relative"
               type="button"
               onClick={openVencimientosModal}
-              title={alertasCount > 0 ? `${alertasCount} vencimientos pendientes (clic para ver)` : "Sin vencimientos pendientes"}
-              aria-label="Alertas de vencimientos y pagos pendientes"
+              title={alertasCount > 0 ? `${alertasCount} vencimientos pendientes (Alt + V)` : "Sin vencimientos pendientes (Alt + V)"}
+              aria-label={alertasCount > 0 ? `${alertasCount} vencimientos pendientes` : "Sin vencimientos pendientes"}
             >
               <i className={`bi ${alertasCount > 0 ? "bi-bell-fill" : "bi-bell"} ${hasVencidos ? "text-danger" : (alertasCount > 0 ? "text-warning" : "text-muted")}`}></i>
               {alertasCount > 0 && (
@@ -190,6 +202,9 @@ export default function Navbar() {
                 type="button"
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 title="Opciones de cuenta y personalización"
+                aria-expanded={userMenuOpen}
+                aria-haspopup="true"
+                aria-label="Menú de opciones de cuenta y personalización"
               >
                 {userPhoto && !imgError ? (
                   <img 

@@ -13,8 +13,8 @@ export default function FloatingActionButton() {
       type="button"
       className="btn btn-success btn-fab shadow-lg rounded-circle d-flex align-items-center justify-content-center"
       onClick={() => openQuickModal("gasto")}
-      title="Nuevo movimiento rápido"
-      aria-label="Nuevo movimiento"
+      title="Nuevo movimiento rápido (Alt + N)"
+      aria-label="Nuevo movimiento rápido (Alt + N)"
     >
       <i className="bi bi-plus-lg fs-4"></i>
     </button>
