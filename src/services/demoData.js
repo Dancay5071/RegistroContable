@@ -1,14 +1,14 @@
 import { MESES } from "../utils/formatters";
 
-const STORAGE_KEY = "fintrack_demo_data_v1";
-const LEGACY_STORAGE_KEY = "registro_contable_demo_data_v1";
+const STORAGE_KEY = "fintrack_demo_data_v2";
+const LEGACY_STORAGE_KEY = "fintrack_demo_data_v1";
 
 function generarDatosIniciales() {
   const currentYear = new Date().getFullYear();
   const currentMonthIdx = new Date().getMonth();
-  const currentMonthName = MESES[currentMonthIdx];
-  const prevMonthName = MESES[(currentMonthIdx - 1 + 12) % 12];
   const now = new Date();
+  const todayDay = now.getDate();
+
   const formatOffsetDate = (days) => {
     const target = new Date(now);
     target.setDate(target.getDate() + days);
@@ -17,61 +17,198 @@ function generarDatosIniciales() {
     const d = String(target.getDate()).padStart(2, "0");
     return `${y}-${m}-${d}`;
   };
-  const formatDayISO = (d) => `${currentYear}-${String(currentMonthIdx + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+
+  const pad = (n) => String(n).padStart(2, "0");
+  const dateStr = (y, mIdx, day) => `${y}-${pad(mIdx + 1)}-${pad(day)}`;
+
+  const gastosPorMes = {};
+  const ingresosPorMes = {};
+  const ahorrosPorMes = {};
+  const extraccionPorMes = {};
+
+  const monthlyBaseProfiles = [
+    { inflationFactor: 0.82, extraFreelance: false, bonus: false },
+    { inflationFactor: 0.84, extraFreelance: true, freelanceAmount: 180000, bonus: false },
+    { inflationFactor: 0.86, extraFreelance: false, bonus: false },
+    { inflationFactor: 0.89, extraFreelance: true, freelanceAmount: 220000, bonus: false },
+    { inflationFactor: 0.92, extraFreelance: false, bonus: false },
+    { inflationFactor: 0.95, extraFreelance: true, freelanceAmount: 240000, bonus: true, bonusDesc: "Aguinaldo SAC 1ra cuota", bonusMonto: 580000 },
+    { inflationFactor: 0.97, extraFreelance: false, bonus: false },
+    { inflationFactor: 1.00, extraFreelance: true, freelanceAmount: 260000, bonus: false },
+    { inflationFactor: 1.03, extraFreelance: false, bonus: false },
+    { inflationFactor: 1.06, extraFreelance: true, freelanceAmount: 290000, bonus: false },
+    { inflationFactor: 1.10, extraFreelance: true, freelanceAmount: 220000, bonus: false },
+    { inflationFactor: 1.14, extraFreelance: false, bonus: true, bonusDesc: "Aguinaldo SAC 2da cuota", bonusMonto: 660000 }
+  ];
+
+  [currentYear - 1, currentYear].forEach((y) => {
+    const isPrevYear = y < currentYear;
+    const yearInflation = isPrevYear ? 0.75 : 1.0;
+
+    for (let m = 0; m < 12; m++) {
+      const mesNombre = MESES[m];
+      const clave = `${mesNombre}_${y}`;
+      const profile = monthlyBaseProfiles[m];
+      const f = profile.inflationFactor * yearInflation;
+
+      const baseSalaryGross = Math.round(1150000 * f);
+      const baseSalarySavings = Math.round(baseSalaryGross * 0.12);
+      const baseSalaryNet = baseSalaryGross - baseSalarySavings;
+
+      const mIngresos = [
+        {
+          id: `demo_ing_${y}_${m}_1`,
+          descripcion: "Sueldo mensual principal",
+          monto: baseSalaryNet,
+          montoBruto: baseSalaryGross,
+          ahorro: baseSalarySavings,
+          porcentajeAhorro: 12,
+          categoria: "Sueldo",
+          mes: mesNombre,
+          anio: y,
+          fecha: dateStr(y, m, 1)
+        }
+      ];
+
+      let totalMesAhorros = baseSalarySavings;
+
+      if (profile.extraFreelance) {
+        const freeGross = Math.round(profile.freelanceAmount * yearInflation);
+        const freeSavings = Math.round(freeGross * 0.10);
+        const freeNet = freeGross - freeSavings;
+        totalMesAhorros += freeSavings;
+        mIngresos.push({
+          id: `demo_ing_${y}_${m}_2`,
+          descripcion: "Proyecto consultoría digital",
+          monto: freeNet,
+          montoBruto: freeGross,
+          ahorro: freeSavings,
+          porcentajeAhorro: 10,
+          categoria: "Freelance",
+          mes: mesNombre,
+          anio: y,
+          fecha: dateStr(y, m, 14)
+        });
+      }
+
+      if (profile.bonus) {
+        const bGross = Math.round(profile.bonusMonto * yearInflation);
+        const bSavings = Math.round(bGross * 0.15);
+        const bNet = bGross - bSavings;
+        totalMesAhorros += bSavings;
+        mIngresos.push({
+          id: `demo_ing_${y}_${m}_bonus`,
+          descripcion: profile.bonusDesc,
+          monto: bNet,
+          montoBruto: bGross,
+          ahorro: bSavings,
+          porcentajeAhorro: 15,
+          categoria: "Sueldo",
+          mes: mesNombre,
+          anio: y,
+          fecha: dateStr(y, m, 18)
+        });
+      }
+
+      ingresosPorMes[clave] = mIngresos;
+      ahorrosPorMes[clave] = { totalAhorros: totalMesAhorros };
+
+      const mGastos = [];
+      const isPastMonth = isPrevYear || m < currentMonthIdx;
+      const isCurrentMonth = !isPrevYear && m === currentMonthIdx;
+
+      const addGasto = ({ id, desc, monto, cat, day, dueOffset, forcePending = false }) => {
+        const roundedMonto = Math.round(monto * f);
+        const fechaGasto = dateStr(y, m, day);
+        let estado = "pagado";
+        let fechaVenc = null;
+
+        if (isPastMonth) {
+          estado = "pagado";
+          if (dueOffset !== undefined) fechaVenc = dateStr(y, m, Math.max(1, day + dueOffset));
+        } else if (isCurrentMonth) {
+          if (forcePending || day >= todayDay || dueOffset !== undefined) {
+            estado = (forcePending || day >= todayDay) ? "pendiente" : "pagado";
+            fechaVenc = dueOffset !== undefined ? formatOffsetDate(dueOffset) : dateStr(y, m, day);
+          }
+        } else {
+          estado = "pendiente";
+          fechaVenc = dateStr(y, m, day);
+        }
+
+        mGastos.push({
+          id: `demo_g_${y}_${m}_${id}`,
+          descripcion: desc,
+          monto: roundedMonto,
+          categoria: cat,
+          estadoPago: estado,
+          fecha: fechaGasto,
+          mes: mesNombre,
+          anio: y,
+          ...(fechaVenc ? { fechaVencimiento: fechaVenc } : {})
+        });
+      };
+
+      addGasto({ id: "alquiler", desc: "Alquiler departamento", monto: 290000, cat: "Vivienda", day: 5 });
+      addGasto({ id: "super_1", desc: "Supermercado primera quincena", monto: 85000, cat: "Supermercado", day: 4 });
+      addGasto({ id: "super_2", desc: "Supermercado segunda quincena", monto: 92000, cat: "Supermercado", day: 19 });
+      addGasto({ id: "luz", desc: "Factura de Luz (Edenor)", monto: 23500, cat: "Servicios", day: 15, dueOffset: isCurrentMonth ? 3 : 5 });
+      addGasto({ id: "internet", desc: "Internet Fibra 500MB", monto: 26800, cat: "Servicios", day: 18, dueOffset: isCurrentMonth ? 6 : 7 });
+      addGasto({ id: "combustible", desc: "Combustible YPF Infinia", monto: 38000, cat: "Transporte", day: 8 });
+      addGasto({ id: "seguro", desc: "Seguro Automotor La Caja", monto: 19500, cat: "Transporte", day: 10, dueOffset: isCurrentMonth ? -2 : 3, forcePending: isCurrentMonth });
+      addGasto({ id: "prepaga", desc: "Medicina Prepaga", monto: 54000, cat: "Salud", day: 12, dueOffset: isCurrentMonth ? -1 : 4, forcePending: isCurrentMonth });
+      addGasto({ id: "salida", desc: "Salida restaurante / cena", monto: 36000, cat: "Comida", day: 21 });
+      addGasto({ id: "servicios_stream", desc: "Suscripciones streaming", monto: 14500, cat: "Ocio", day: 11 });
+
+      if (m % 3 === 0) {
+        addGasto({ id: "farmacia", desc: "Farmacia y cuidado personal", monto: 21000, cat: "Salud", day: 16 });
+      }
+      if (m % 4 === 1) {
+        addGasto({ id: "ropa", desc: "Indumentaria y calzado", monto: 45000, cat: "Compras", day: 23 });
+      }
+      if (m % 6 === 2) {
+        addGasto({ id: "curso", desc: "Curso desarrollo profesional", monto: 35000, cat: "Educacion", day: 25 });
+      }
+
+      gastosPorMes[clave] = mGastos;
+    }
+  });
+
+  extraccionPorMes[`${MESES[3]}_${currentYear}`] = [
+    { monto: -60000.00, fecha: dateStr(currentYear, 3, 20) }
+  ];
+  extraccionPorMes[`${MESES[8]}_${currentYear}`] = [
+    { monto: -45000.00, fecha: dateStr(currentYear, 8, 15) }
+  ];
 
   return {
     balances: {
-      montoActual: 154800.50,
-      totalAhorros: 85000.00,
-      totalAhorrosUSD: 350.00,
-      totalAhorrosEUR: 0.00
+      montoActual: 485600.50,
+      totalAhorros: 1280000.00,
+      totalAhorrosUSD: 1850.00,
+      totalAhorrosEUR: 650.00
     },
-    gastosPorMes: {
-      [`${currentMonthName}_${currentYear}`]: [
-        { id: "demo_gasto_1", descripcion: "Supermercado mensual", monto: 48500.00, categoria: "Supermercado", estadoPago: "pagado", fecha: formatDayISO(3) },
-        { id: "demo_gasto_2", descripcion: "Factura de Luz (Edenor)", monto: 14200.00, categoria: "Servicios", fechaVencimiento: formatOffsetDate(3), estadoPago: "pendiente", fecha: formatDayISO(15) },
-        { id: "demo_gasto_3", descripcion: "Internet y cable fibra", monto: 18900.00, categoria: "Servicios", fechaVencimiento: formatOffsetDate(6), estadoPago: "pendiente", fecha: formatDayISO(18) },
-        { id: "demo_gasto_4", descripcion: "Seguro Automotor", monto: 12500.00, categoria: "Transporte", fechaVencimiento: formatOffsetDate(-2), estadoPago: "pendiente", fecha: formatDayISO(10) },
-        { id: "demo_gasto_5", descripcion: "Combustible vehículo", monto: 25000.00, categoria: "Transporte", estadoPago: "pagado", fecha: formatDayISO(8) },
-        { id: "demo_gasto_6", descripcion: "Farmacia y medicamentos", monto: 8600.00, categoria: "Salud", estadoPago: "pagado", fecha: formatDayISO(12) }
-      ],
-      [`${prevMonthName}_${currentYear}`]: [
-        { id: "demo_gasto_prev_1", descripcion: "Supermercado", monto: 52000.00, categoria: "Supermercado", estadoPago: "pagado", fecha: new Date().toISOString() },
-        { id: "demo_gasto_prev_2", descripcion: "Servicios varios", monto: 22000.00, categoria: "Servicios", estadoPago: "pagado", fecha: new Date().toISOString() },
-        { id: "demo_gasto_prev_3", descripcion: "Salida restaurante", monto: 19500.00, categoria: "Comida", estadoPago: "pagado", fecha: new Date().toISOString() }
-      ]
-    },
-    ingresosPorMes: {
-      [`${currentMonthName}_${currentYear}`]: [
-        { id: "demo_ing_1", descripcion: "Sueldo mensual principal", monto: 243000.00, ahorro: 27000.00, categoria: "Sueldo", fecha: formatDayISO(1) },
-        { id: "demo_ing_2", descripcion: "Proyecto freelance diseño", monto: 58500.00, ahorro: 6500.00, categoria: "Freelance", fecha: formatDayISO(14) }
-      ],
-      [`${prevMonthName}_${currentYear}`]: [
-        { descripcion: "Sueldo mensual principal", monto: 243000.00, ahorro: 27000.00, categoria: "Sueldo", fecha: new Date().toISOString() }
-      ]
-    },
-    ahorrosPorMes: {
-      [`${currentMonthName}_${currentYear}`]: { totalAhorros: 33500.00 },
-      [`${prevMonthName}_${currentYear}`]: { totalAhorros: 27000.00 },
-      [`Enero_${currentYear}`]: { totalAhorros: 25000.00 },
-      [`Febrero_${currentYear}`]: { totalAhorros: 20000.00 }
-    },
-    extraccionPorMes: {
-      [`${prevMonthName}_${currentYear}`]: [
-        { monto: -15000.00, fecha: new Date().toISOString() }
-      ]
-    },
+    gastosPorMes,
+    ingresosPorMes,
+    ahorrosPorMes,
+    extraccionPorMes,
     ahorrosDetallados: [
-      { id: "aho_1", tipo: "ahorro", monto: 50000.00, moneda: "ARS", categoria: "Emergencia", descripcion: "Reserva de seguridad", mes: currentMonthName, anio: currentYear, fecha: new Date().toISOString() },
-      { id: "aho_2", tipo: "ahorro", monto: 35000.00, moneda: "ARS", categoria: "Vacaciones", descripcion: "Fondo vacaciones verano", mes: currentMonthName, anio: currentYear, fecha: new Date().toISOString() },
-      { id: "aho_3", tipo: "ahorro", monto: 350.00, moneda: "USD", categoria: "Vacaciones", descripcion: "Billetes dólar para viaje", mes: currentMonthName, anio: currentYear, fecha: new Date().toISOString() }
+      { id: "aho_1", tipo: "ahorro", monto: 450000.00, moneda: "ARS", categoria: "Emergencia", descripcion: "Fondo de emergencia en Plazo Fijo UVA", mes: MESES[currentMonthIdx], anio: currentYear, fecha: new Date().toISOString() },
+      { id: "aho_2", tipo: "ahorro", monto: 380000.00, moneda: "ARS", categoria: "Vehiculo", descripcion: "Ahorro cambio de vehículo", mes: MESES[currentMonthIdx], anio: currentYear, fecha: new Date().toISOString() },
+      { id: "aho_3", tipo: "ahorro", monto: 270000.00, moneda: "ARS", categoria: "Vacaciones", descripcion: "Fondo vacaciones verano Brasil", mes: MESES[currentMonthIdx], anio: currentYear, fecha: new Date().toISOString() },
+      { id: "aho_4", tipo: "ahorro", monto: 180000.00, moneda: "ARS", categoria: "Tecnologia", descripcion: "Renovación equipo portátil MacBook", mes: MESES[currentMonthIdx], anio: currentYear, fecha: new Date().toISOString() },
+      { id: "aho_5", tipo: "ahorro", monto: 1250.00, moneda: "USD", categoria: "Inversiones", descripcion: "Dólar billete físico resguardo de valor", mes: MESES[currentMonthIdx], anio: currentYear, fecha: new Date().toISOString() },
+      { id: "aho_6", tipo: "ahorro", monto: 600.00, moneda: "USD", categoria: "Inversiones", descripcion: "Dólar MEP en cuenta comitente (CEDEARs)", mes: MESES[currentMonthIdx], anio: currentYear, fecha: new Date().toISOString() },
+      { id: "aho_7", tipo: "ahorro", monto: 650.00, moneda: "EUR", categoria: "Vacaciones", descripcion: "Fondo billetes euros viaje a Europa", mes: MESES[currentMonthIdx], anio: currentYear, fecha: new Date().toISOString() },
+      { id: "aho_ext_1", tipo: "extraccion", monto: 60000.00, moneda: "ARS", categoria: "Vehiculo", descripcion: "Service integral 50.000 km y cubiertas", mes: MESES[3], anio: currentYear, fecha: dateStr(currentYear, 3, 20) },
+      { id: "aho_ext_2", tipo: "extraccion", monto: 45000.00, moneda: "ARS", categoria: "Tecnologia", descripcion: "Compra de monitor externo 27 pulgadas", mes: MESES[8], anio: currentYear, fecha: dateStr(currentYear, 8, 15) }
     ]
   };
 }
 
 export function getDemoStore() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
       const initial = generarDatosIniciales();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
