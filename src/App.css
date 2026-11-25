@@ -2251,5 +2251,77 @@ main:focus,
   border: 0 !important;
 }
 
+html, body, .app-wrapper {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    max-height: calc(100vh - 75px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2rem;
+  }
+}
+
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive table thead th:first-child,
+.table-responsive table tbody th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background-color: var(--bg-card) !important;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 768px) {
+  .home-page {
+    padding: 1rem 0.5rem !important;
+  }
+  .principal {
+    padding: 1rem !important;
+    border-radius: 14px !important;
+  }
+  .kpi-amount {
+    font-size: 1.65rem;
+  }
+  .hero-balance-card {
+    padding: 1.15rem;
+    border-radius: 16px;
+  }
+  .tarjeta-gasto,
+  .tarjeta-ingreso,
+  .tarjeta-ahorro {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .home-page {
+    padding: 0.75rem 0.25rem !important;
+  }
+  .principal {
+    padding: 0.85rem !important;
+  }
+  .kpi-amount {
+    font-size: 1.45rem;
+  }
+  .resumen-chart-container {
+    padding: 0.5rem !important;
+    height: 250px !important;
+  }
+  .table th, .table td {
+    padding: 0.5rem 0.35rem !important;
+    font-size: 0.78rem !important;
+  }
+  .calendar-cell {
+    min-height: 64px !important;
+  }
+}
+
 
 

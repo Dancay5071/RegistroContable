@@ -421,37 +421,44 @@ export default function Navbar() {
                 )}
               </button>
 
-              <button
-                className="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill py-2"
-                onClick={() => { closeMenu(); openCustomizeModal(); }}
-              >
-                <i className="bi bi-palette2"></i>
-                <span>Personalizar Tema</span>
-              </button>
-
-              <button
-                className="btn btn-outline-warning text-dark btn-sm w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill py-2"
-                onClick={() => { closeMenu(); lockScreen(); }}
-              >
-                <i className="bi bi-shield-lock"></i>
-                <span>Bloquear Pantalla</span>
-              </button>
-
-              <button
-                className="btn btn-outline-success btn-sm w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill py-2"
-                onClick={() => { closeMenu(); openAuditModal(); }}
-              >
-                <i className="bi bi-shield-shaded"></i>
-                <span>Auditoría y Respaldos</span>
-              </button>
-
-              <button
-                className="btn btn-outline-warning text-dark btn-sm w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill py-2 fw-semibold"
-                onClick={() => { closeMenu(); openPowerBiExport(); }}
-              >
-                <i className="bi bi-file-earmark-bar-graph-fill text-warning"></i>
-                <span>Power BI y Excel Hub</span>
-              </button>
+              <div className="row g-2">
+                <div className="col-6">
+                  <button
+                    className="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center gap-1 rounded-3 py-2"
+                    onClick={() => { closeMenu(); openCustomizeModal(); }}
+                  >
+                    <i className="bi bi-palette2 text-primary"></i>
+                    <span className="small">Tema</span>
+                  </button>
+                </div>
+                <div className="col-6">
+                  <button
+                    className="btn btn-outline-warning text-dark btn-sm w-100 d-flex align-items-center justify-content-center gap-1 rounded-3 py-2"
+                    onClick={() => { closeMenu(); lockScreen(); }}
+                  >
+                    <i className="bi bi-shield-lock text-warning"></i>
+                    <span className="small">Bloquear</span>
+                  </button>
+                </div>
+                <div className="col-6">
+                  <button
+                    className="btn btn-outline-success btn-sm w-100 d-flex align-items-center justify-content-center gap-1 rounded-3 py-2"
+                    onClick={() => { closeMenu(); openAuditModal(); }}
+                  >
+                    <i className="bi bi-shield-shaded text-success"></i>
+                    <span className="small">Auditoría</span>
+                  </button>
+                </div>
+                <div className="col-6">
+                  <button
+                    className="btn btn-outline-warning text-dark btn-sm w-100 d-flex align-items-center justify-content-center gap-1 rounded-3 py-2 fw-semibold"
+                    onClick={() => { closeMenu(); openPowerBiExport(); }}
+                  >
+                    <i className="bi bi-file-earmark-bar-graph-fill text-warning"></i>
+                    <span className="small">Power BI</span>
+                  </button>
+                </div>
+              </div>
 
               <button 
                 className="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill py-2" 

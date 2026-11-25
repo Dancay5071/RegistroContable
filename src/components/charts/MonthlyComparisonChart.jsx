@@ -8,7 +8,7 @@ import {
   Legend,
   BarController
 } from "chart.js";
-import { MESES, formatoMoneda, formatoNumber } from "../../utils/formatters";
+import { MESES, formatoMoneda, formatoNumber, formatoCompacto } from "../../utils/formatters";
 import { useTheme } from "../../context/ThemeContext";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, BarController);
@@ -73,6 +73,8 @@ export default function MonthlyComparisonChart({
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        categoryPercentage: 0.85,
+        barPercentage: 0.9,
         plugins: {
           legend: {
             position: "top",
@@ -120,7 +122,7 @@ export default function MonthlyComparisonChart({
             ticks: {
               color: tickColor,
               font: { family: "'Plus Jakarta Sans', sans-serif", size: 10, weight: "600" },
-              callback: (value) => `$${formatoNumber(value)}`
+              callback: (value) => formatoCompacto(value)
             }
           }
         }

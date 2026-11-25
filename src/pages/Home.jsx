@@ -92,7 +92,7 @@ export default function Home() {
   };
 
   return (
-    <div className="home-page fade-in d-flex flex-column align-items-center justify-content-center flex-grow-1 p-3">
+    <div className="home-page fade-in d-flex flex-column align-items-center justify-content-center flex-grow-1 p-2 p-sm-3">
       {!user ? (
         <div className="principal text-center p-4 p-md-5 rounded-4 shadow-sm border" style={{ maxWidth: "560px", width: "100%" }}>
           <div className="d-flex justify-content-center mb-3">

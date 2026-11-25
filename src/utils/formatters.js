@@ -26,6 +26,25 @@ export function formatoMoneda(number, moneda = "ARS") {
   return `${m.simbolo}${formatoNumber(number)}`;
 }
 
+export function formatoCompacto(number) {
+  if (number === undefined || number === null || isNaN(number)) return "$0";
+  const num = Number(number);
+  if (num === 0) return "$0";
+  const abs = Math.abs(num);
+  const sign = num < 0 ? "-" : "";
+  if (abs >= 1000000) {
+    const val = abs / 1000000;
+    const formatted = val % 1 === 0 ? val.toFixed(0) : val.toFixed(1).replace(".", ",");
+    return `${sign}$${formatted}M`;
+  }
+  if (abs >= 1000) {
+    const val = abs / 1000;
+    const formatted = val % 1 === 0 ? val.toFixed(0) : val.toFixed(1).replace(".", ",");
+    return `${sign}$${formatted}k`;
+  }
+  return `${sign}$${Math.round(abs)}`;
+}
+
 export function getFechaHoy(esCorto = false) {
   const d = new Date();
   if (esCorto) {
