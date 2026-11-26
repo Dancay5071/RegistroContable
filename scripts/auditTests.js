@@ -37,6 +37,10 @@ import {
   CATEGORIAS_INGRESO, 
   CATEGORIAS_AHORRO 
 } from "../src/utils/categories.js";
+import {
+  getRateForCurrency,
+  DEFAULT_RATES_LATAM
+} from "../src/services/dolarService.js";
 import { 
   normalizeTransactions, 
   generatePowerBiFlatCSV, 
@@ -95,6 +99,13 @@ try {
   assert(getMonedaInfo("CLP").flag === "🇨🇱", "getMonedaInfo: bandera de Chile");
   assert(getMonedaInfo("MXN").pais === "México", "getMonedaInfo: país México");
   assert(getMonedaInfo("BRL").pais === "Brasil", "getMonedaInfo: país Brasil");
+  assert(DEFAULT_RATES_LATAM.BRL > 0, "DEFAULT_RATES_LATAM: tasa BRL");
+  assert(DEFAULT_RATES_LATAM.MXN > 0, "DEFAULT_RATES_LATAM: tasa MXN");
+  assert(DEFAULT_RATES_LATAM.CLP > 0, "DEFAULT_RATES_LATAM: tasa CLP");
+  assert(DEFAULT_RATES_LATAM.COP > 0, "DEFAULT_RATES_LATAM: tasa COP");
+  assert(getRateForCurrency("USD") === 1, "getRateForCurrency: USD retorna 1");
+  assert(getRateForCurrency("BRL", {}, { BRL: 5.88 }) === 5.88, "getRateForCurrency: cálculo BRL");
+  assert(getRateForCurrency("ARS", { blue: { venta: 1550 } }) === 1550, "getRateForCurrency: cálculo ARS al Blue");
 
   assert(formatoCompacto(0) === "$0", "formatoCompacto: 0 retorna $0");
   assert(formatoCompacto(500) === "$500", "formatoCompacto: 500 retorna $500");

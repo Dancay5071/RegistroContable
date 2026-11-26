@@ -17,11 +17,17 @@ export default function Navbar() {
   const { openCustomizeModal } = useTheme();
   const { isPrivate, togglePrivacy } = usePrivacy();
   const { lockScreen, openAuditModal } = useSecurity();
-  const { blue, oficial, mep, refresh: refreshDolar } = useDolar();
+  const { blue, oficial, mep, getRate, refresh: refreshDolar } = useDolar();
   const { vencidos, porVencer, openVencimientosModal } = useVencimientos();
   const { openPowerBiExport } = usePowerBiExport();
   const { subscription, openSubscriptionModal } = useSubscription();
-  const { monedaPrincipal, monedaInfo, openCurrencyModal } = useCurrency();
+  const { 
+    monedaPrincipal, 
+    monedaInfo, 
+    activeComparisonCurrency, 
+    comparisonCurrencyInfo, 
+    openCurrencyModal 
+  } = useCurrency();
   const [isOpen, setIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -84,26 +90,35 @@ export default function Navbar() {
             <FinTrackLogo size={30} showText={true} />
           </Link>
 
-          {blue?.venta > 0 && (
-            <button 
-              type="button"
-              className="navbar-dolar-pill d-flex align-items-center gap-1 gap-sm-2 text-nowrap"
-              title={`Cotizaciones en tiempo real:\n• Dólar Blue: Compra $${blue.compra.toLocaleString('es-AR')} | Venta $${blue.venta.toLocaleString('es-AR')}\n• Dólar Oficial: Compra $${oficial.compra.toLocaleString('es-AR')} | Venta $${oficial.venta.toLocaleString('es-AR')}\n• MEP: $${mep.venta.toLocaleString('es-AR')}\n\nHaz clic para actualizar`}
-              aria-label={`Cotización Dólar Blue: venta $${blue.venta.toLocaleString('es-AR')}. Presiona Enter para actualizar cotizaciones.`}
-              onClick={() => refreshDolar()}
-            >
-              <span className="dot dot-dolar-pulse"></span>
-              <span className="small fw-semibold text-muted d-none d-sm-inline">USD</span>
-              <strong className="text-dolar-value">${blue.venta.toLocaleString("es-AR")}</strong>
-            </button>
-          )}
+          {(() => {
+            const rateComp = getRate ? getRate(activeComparisonCurrency) : (blue?.venta || 1550);
+            const isARS = activeComparisonCurrency === "ARS";
+            return (
+              <button 
+                type="button"
+                className="navbar-dolar-pill d-flex align-items-center gap-1 gap-sm-2 text-nowrap"
+                title={isARS 
+                  ? `Cotizaciones Dólar en Argentina:\n• Dólar Blue: $${blue.venta.toLocaleString('es-AR')}\n• Oficial: $${oficial.venta.toLocaleString('es-AR')}\n• MEP: $${mep.venta.toLocaleString('es-AR')}\n\nHaz clic para ver comparativa o cambiar divisa`
+                  : `Cotización en tiempo real:\n• 1 USD = ${formatoMoneda(rateComp, activeComparisonCurrency)} (${comparisonCurrencyInfo?.nombre})\n\nHaz clic para cambiar moneda o ver comparativa`
+                }
+                aria-label={isARS ? `Dólar Blue: $${blue.venta.toLocaleString('es-AR')}` : `1 USD = ${formatoMoneda(rateComp, activeComparisonCurrency)}`}
+                onClick={() => openCurrencyModal("comparativa")}
+              >
+                <span className="dot dot-dolar-pulse"></span>
+                <span className="small fw-semibold text-muted d-none d-sm-inline">USD</span>
+                <strong className="text-dolar-value">
+                  {isARS ? `$${blue.venta.toLocaleString("es-AR")}` : formatoMoneda(rateComp, activeComparisonCurrency)}
+                </strong>
+              </button>
+            );
+          })()}
 
           <button
             type="button"
             className="navbar-dolar-pill d-none d-sm-flex align-items-center gap-1 border-0 shadow-sm text-nowrap"
             style={{ cursor: "pointer", background: "var(--bg-card)" }}
-            onClick={openCurrencyModal}
-            title={`Moneda principal: ${monedaInfo?.nombre}. Clic para cambiar divisas.`}
+            onClick={() => openCurrencyModal("principal")}
+            title={`Moneda principal de cuenta: ${monedaInfo?.nombre}. Clic para cambiar.`}
             aria-label={`Moneda principal: ${monedaInfo?.nombre}`}
           >
             <span>{monedaInfo?.flag}</span>

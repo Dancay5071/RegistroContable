@@ -4,6 +4,7 @@ import { MONEDAS, MONEDAS_LATAM, MONEDAS_GLOBAL, getMonedaInfo, formatoMoneda, f
 const CurrencyContext = createContext(null);
 
 const STORAGE_KEY = "fintrack_currency";
+const STORAGE_COMPARISON_KEY = "fintrack_currency_comparison";
 
 export function CurrencyProvider({ children }) {
   const [monedaPrincipal, setMonedaState] = useState(() => {
@@ -18,7 +19,20 @@ export function CurrencyProvider({ children }) {
     return "ARS";
   });
 
+  const [monedaComparativa, setMonedaComparativaState] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_COMPARISON_KEY);
+      if (saved && (saved === "AUTO" || MONEDAS.some((m) => m.id === saved))) {
+        return saved;
+      }
+    } catch (e) {
+      console.warn("No se pudo leer la preferencia de comparación:", e);
+    }
+    return "AUTO";
+  });
+
   const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(false);
+  const [activeModalTab, setActiveModalTab] = useState("principal");
 
   const setMonedaPrincipal = (monedaId) => {
     if (!monedaId || !MONEDAS.some((m) => m.id === monedaId)) return;
@@ -31,10 +45,28 @@ export function CurrencyProvider({ children }) {
     window.dispatchEvent(new CustomEvent("fintrack-currency-changed", { detail: { moneda: monedaId } }));
   };
 
-  const openCurrencyModal = () => setIsCurrencyModalOpen(true);
+  const setMonedaComparativa = (monedaId) => {
+    if (!monedaId || (monedaId !== "AUTO" && !MONEDAS.some((m) => m.id === monedaId))) return;
+    setMonedaComparativaState(monedaId);
+    try {
+      localStorage.setItem(STORAGE_COMPARISON_KEY, monedaId);
+    } catch (e) {
+      console.warn("No se pudo guardar la preferencia de comparación:", e);
+    }
+    window.dispatchEvent(new CustomEvent("fintrack-comparison-currency-changed", { detail: { moneda: monedaId } }));
+  };
+
+  const openCurrencyModal = (tab = "principal") => {
+    setActiveModalTab(tab);
+    setIsCurrencyModalOpen(true);
+  };
+
   const closeCurrencyModal = () => setIsCurrencyModalOpen(false);
 
   const monedaInfo = getMonedaInfo(monedaPrincipal);
+
+  const activeComparisonCurrency = monedaComparativa === "AUTO" ? monedaPrincipal : monedaComparativa;
+  const comparisonCurrencyInfo = getMonedaInfo(activeComparisonCurrency);
 
   const formatearMonto = (amount, monedaOverride) => {
     return formatoMoneda(amount, monedaOverride || monedaPrincipal);
@@ -46,7 +78,13 @@ export function CurrencyProvider({ children }) {
         monedaPrincipal,
         monedaInfo,
         setMonedaPrincipal,
+        monedaComparativa,
+        setMonedaComparativa,
+        activeComparisonCurrency,
+        comparisonCurrencyInfo,
         isCurrencyModalOpen,
+        activeModalTab,
+        setActiveModalTab,
         openCurrencyModal,
         closeCurrencyModal,
         formatearMonto,
@@ -67,7 +105,13 @@ export function useCurrency() {
       monedaPrincipal: "ARS",
       monedaInfo: getMonedaInfo("ARS"),
       setMonedaPrincipal: () => {},
+      monedaComparativa: "AUTO",
+      setMonedaComparativa: () => {},
+      activeComparisonCurrency: "ARS",
+      comparisonCurrencyInfo: getMonedaInfo("ARS"),
       isCurrencyModalOpen: false,
+      activeModalTab: "principal",
+      setActiveModalTab: () => {},
       openCurrencyModal: () => {},
       closeCurrencyModal: () => {},
       formatearMonto: (val) => formatoMoneda(val, "ARS"),

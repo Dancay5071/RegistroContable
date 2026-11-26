@@ -24,6 +24,7 @@ import Loader from "../components/Loader";
 import { exportAhorrosToCSV } from "../utils/exportUtils";
 import { useDolar } from "../hooks/useDolar";
 import { useSubscription } from "../context/SubscriptionContext";
+import { useCurrency } from "../context/CurrencyContext";
 
 export default function Ahorro() {
   const { user, isDemo } = useAuth();
@@ -33,7 +34,8 @@ export default function Ahorro() {
   const { openQuickModal, movementCounter, notifyMovementSaved } = useQuickMovement();
   const { showToast } = useToast();
   const { subscription, openSubscriptionModal } = useSubscription();
-  const { blue } = useDolar();
+  const { blue, getRate } = useDolar();
+  const { monedaPrincipal } = useCurrency();
   const currentYear = new Date().getFullYear();
   const yearOptions = [currentYear - 3, currentYear - 2, currentYear - 1, currentYear, currentYear + 1];
 
@@ -375,14 +377,19 @@ export default function Ahorro() {
                 <div className={`h3 fw-bold mb-0 text-success ${isPrivate ? "privacy-masked" : ""}`}>
                   {maskAmount(formatoMoneda(totalAhorrosUSD, "USD"))}
                 </div>
-                {blue?.venta > 0 && totalAhorrosUSD > 0 ? (
-                  <div className="small mt-1 d-flex align-items-center gap-1 text-muted" title={`Valuación estimada en pesos: ${totalAhorrosUSD} USD × $${blue.venta.toLocaleString('es-AR')}`}>
-                    <span>≈ <strong className={`text-dark ${isPrivate ? "privacy-masked" : ""}`}>{maskAmount(formatoMoneda(totalAhorrosUSD * blue.venta, "ARS"))}</strong></span>
-                    <span className="badge bg-light text-secondary border px-1" style={{ fontSize: "0.68rem" }}>al Blue</span>
-                  </div>
-                ) : (
-                  <span className="text-muted small">Reserva en moneda fuerte</span>
-                )}
+                {(() => {
+                  const rateValuacion = getRate ? getRate(monedaPrincipal) : (blue?.venta || 1550);
+                  return rateValuacion > 0 && totalAhorrosUSD > 0 ? (
+                    <div className="small mt-1 d-flex align-items-center gap-1 text-muted" title={`Valuación estimada en ${monedaPrincipal}: ${totalAhorrosUSD} USD × ${formatoMoneda(rateValuacion, monedaPrincipal)}`}>
+                      <span>≈ <strong className={`text-dark ${isPrivate ? "privacy-masked" : ""}`}>{maskAmount(formatoMoneda(totalAhorrosUSD * rateValuacion, monedaPrincipal))}</strong></span>
+                      <span className="badge bg-light text-secondary border px-1" style={{ fontSize: "0.68rem" }}>
+                        {monedaPrincipal === "ARS" ? "al Blue" : "al cambio"}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-muted small">Reserva en moneda fuerte</span>
+                  );
+                })()}
               </div>
             </div>
           )}
