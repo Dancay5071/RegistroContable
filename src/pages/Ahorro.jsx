@@ -18,7 +18,7 @@ import {
   deleteAhorroUser
 } from "../services/dbService";
 import { logActivity } from "../services/auditService";
-import { MONEDAS, formatoMoneda, formatoNumber } from "../utils/formatters";
+import { MONEDAS, formatoMoneda, formatoNumber, getMonedaInfo } from "../utils/formatters";
 import { CATEGORIAS_AHORRO, getCategoriaAhorro } from "../utils/categories";
 import Loader from "../components/Loader";
 import { exportAhorrosToCSV } from "../utils/exportUtils";
@@ -219,10 +219,17 @@ export default function Ahorro() {
   const categoriasConMovimientos = categoriasDisponibles.filter((cat) => {
     const datos = ahorrosPorCategoria[cat.id];
     if (!datos) return false;
-    if (monedaFiltro === "ARS") return (datos.ARS || 0) > 0;
-    if (monedaFiltro === "USD") return (datos.USD || 0) > 0;
-    if (monedaFiltro === "EUR") return (datos.EUR || 0) > 0;
-    return (datos.ARS || 0) > 0 || (datos.USD || 0) > 0 || (datos.EUR || 0) > 0;
+    if (monedaFiltro === "TODAS") {
+      return Object.entries(datos).some(([k, v]) => k !== "count" && v > 0);
+    }
+    return (datos[monedaFiltro] || 0) > 0;
+  });
+
+  const totalPorMoneda = {};
+  (historialAhorros || []).forEach((item) => {
+    const m = item.moneda || "ARS";
+    const delta = item.tipo === "extraccion" ? -Number(item.monto || 0) : Number(item.monto || 0);
+    totalPorMoneda[m] = (totalPorMoneda[m] || 0) + delta;
   });
 
   const getAhorroTime = (item) => {
@@ -286,51 +293,37 @@ export default function Ahorro() {
             <span className="small fw-bold text-muted text-uppercase tracking-wider px-1">
               <i className="bi bi-funnel me-1"></i> Moneda:
             </span>
-            <div className="btn-group p-1 rounded-pill" style={{ backgroundColor: "var(--bg-card-alt)", border: "1px solid var(--border-subtle)" }}>
+            <div className="d-flex align-items-center gap-1 flex-wrap p-1 rounded-4" style={{ backgroundColor: "var(--bg-card-alt)", border: "1px solid var(--border-subtle)" }}>
               <button
                 type="button"
-                className="btn btn-sm rounded-pill px-3 fw-semibold border-0 transition-all"
+                className="btn btn-sm rounded-pill px-2 py-1 fw-semibold border-0 transition-all"
                 style={{
                   backgroundColor: monedaFiltro === "TODAS" ? "var(--accent-primary)" : "transparent",
-                  color: monedaFiltro === "TODAS" ? "#ffffff" : "var(--text-muted)"
+                  color: monedaFiltro === "TODAS" ? "#ffffff" : "var(--text-muted)",
+                  fontSize: "0.8rem"
                 }}
                 onClick={() => setMonedaFiltro("TODAS")}
               >
                 🌐 Todas
               </button>
-              <button
-                type="button"
-                className="btn btn-sm rounded-pill px-3 fw-semibold border-0 transition-all"
-                style={{
-                  backgroundColor: monedaFiltro === "ARS" ? "#d97706" : "transparent",
-                  color: monedaFiltro === "ARS" ? "#ffffff" : "var(--text-muted)"
-                }}
-                onClick={() => setMonedaFiltro("ARS")}
-              >
-                🇦🇷 ARS
-              </button>
-              <button
-                type="button"
-                className="btn btn-sm rounded-pill px-3 fw-semibold border-0 transition-all"
-                style={{
-                  backgroundColor: monedaFiltro === "USD" ? "#16a34a" : "transparent",
-                  color: monedaFiltro === "USD" ? "#ffffff" : "var(--text-muted)"
-                }}
-                onClick={() => setMonedaFiltro("USD")}
-              >
-                🇺🇸 USD
-              </button>
-              <button
-                type="button"
-                className="btn btn-sm rounded-pill px-3 fw-semibold border-0 transition-all"
-                style={{
-                  backgroundColor: monedaFiltro === "EUR" ? "#2563eb" : "transparent",
-                  color: monedaFiltro === "EUR" ? "#ffffff" : "var(--text-muted)"
-                }}
-                onClick={() => setMonedaFiltro("EUR")}
-              >
-                🇪🇺 EUR
-              </button>
+              {MONEDAS.map((m) => {
+                const isActive = monedaFiltro === m.id;
+                return (
+                  <button
+                    key={m.id}
+                    type="button"
+                    className="btn btn-sm rounded-pill px-2 py-1 fw-semibold border-0 transition-all"
+                    style={{
+                      backgroundColor: isActive ? "var(--accent-primary)" : "transparent",
+                      color: isActive ? "#ffffff" : "var(--text-muted)",
+                      fontSize: "0.8rem"
+                    }}
+                    onClick={() => setMonedaFiltro(m.id)}
+                  >
+                    <span>{m.flag}</span> {m.id}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -410,6 +403,40 @@ export default function Ahorro() {
               </div>
             </div>
           )}
+
+          {monedaFiltro !== "TODAS" && monedaFiltro !== "ARS" && monedaFiltro !== "USD" && monedaFiltro !== "EUR" && (
+            <div className="col-12">
+              <div className="hero-balance-card p-3 rounded-4 shadow-sm h-100" style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}>
+                <div className="d-flex align-items-center justify-content-between mb-1">
+                  <span className="badge px-2 py-1 rounded-pill small fw-semibold bg-success bg-opacity-10 text-success border border-success border-opacity-25">
+                    {getMonedaInfo(monedaFiltro).flag} {getMonedaInfo(monedaFiltro).nombre}
+                  </span>
+                  <i className="bi bi-cash-coin text-success fs-4"></i>
+                </div>
+                <div className={`h3 fw-bold mb-0 text-dark ${isPrivate ? "privacy-masked" : ""}`}>
+                  {maskAmount(formatoMoneda(totalPorMoneda[monedaFiltro] || 0, monedaFiltro))}
+                </div>
+                <span className="text-muted small">Total acumulado en {getMonedaInfo(monedaFiltro).nombre}</span>
+              </div>
+            </div>
+          )}
+
+          {monedaFiltro === "TODAS" && Object.entries(totalPorMoneda).filter(([curr, val]) => !["ARS", "USD", "EUR"].includes(curr) && val > 0).map(([curr, val]) => (
+            <div className="col-12 col-md-4" key={curr}>
+              <div className="hero-balance-card p-3 rounded-4 shadow-sm h-100" style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}>
+                <div className="d-flex align-items-center justify-content-between mb-1">
+                  <span className="badge px-2 py-1 rounded-pill small fw-semibold bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
+                    {getMonedaInfo(curr).flag} {getMonedaInfo(curr).nombre}
+                  </span>
+                  <i className="bi bi-cash-coin text-primary fs-4"></i>
+                </div>
+                <div className={`h3 fw-bold mb-0 text-dark ${isPrivate ? "privacy-masked" : ""}`}>
+                  {maskAmount(formatoMoneda(val, curr))}
+                </div>
+                <span className="text-muted small">Fondo en moneda extranjera</span>
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="principal p-4 rounded-4 shadow-sm border w-100 mb-4">
@@ -480,21 +507,17 @@ export default function Ahorro() {
 
                       <div>
                         <div className={`small ${isPrivate ? "privacy-masked" : ""}`}>
-                          {(monedaFiltro === "TODAS" || monedaFiltro === "ARS") && datos.ARS > 0 && (
-                            <div className="fw-bold" style={{ color: cat.color }}>
-                              {maskAmount(formatoMoneda(datos.ARS, "ARS"))}
-                            </div>
-                          )}
-                          {(monedaFiltro === "TODAS" || monedaFiltro === "USD") && datos.USD > 0 && (
-                            <div className="fw-bold text-success">
-                              {maskAmount(formatoMoneda(datos.USD, "USD"))}
-                            </div>
-                          )}
-                          {(monedaFiltro === "TODAS" || monedaFiltro === "EUR") && datos.EUR > 0 && (
-                            <div className="fw-bold text-primary">
-                              {maskAmount(formatoMoneda(datos.EUR, "EUR"))}
-                            </div>
-                          )}
+                          {Object.entries(datos)
+                            .filter(([curr, val]) => curr !== "count" && val > 0 && (monedaFiltro === "TODAS" || monedaFiltro === curr))
+                            .map(([curr, val]) => {
+                              const info = getMonedaInfo(curr);
+                              return (
+                                <div key={curr} className="fw-bold d-flex align-items-center gap-1">
+                                  <span className="small">{info.flag}</span>
+                                  <span>{maskAmount(formatoMoneda(val, curr))}</span>
+                                </div>
+                              );
+                            })}
                         </div>
                       </div>
                     </div>
@@ -665,12 +688,13 @@ export default function Ahorro() {
                     <label className="form-label small fw-bold text-muted mb-1 d-block">
                       Moneda
                     </label>
-                    <div className="d-flex gap-2">
+                    <div className="d-flex flex-wrap gap-2">
                       {MONEDAS.map((m) => (
                         <button
                           key={m.id}
                           type="button"
-                          className={`btn btn-sm px-3 py-1 rounded-pill fw-semibold ${editMoneda === m.id ? 'btn-primary shadow-sm' : 'btn-outline-secondary'}`}
+                          className={`btn btn-sm px-2 py-1 rounded-pill fw-semibold ${editMoneda === m.id ? 'btn-primary shadow-sm' : 'btn-outline-secondary'}`}
+                          style={{ fontSize: "0.82rem" }}
                           onClick={() => setEditMoneda(m.id)}
                           disabled={editLoading}
                         >

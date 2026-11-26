@@ -10,6 +10,7 @@ import { VencimientosProvider, useVencimientos } from "./context/VencimientosCon
 import { PowerBiExportProvider, usePowerBiExport } from "./context/PowerBiExportContext";
 import { SubscriptionProvider, useSubscription } from "./context/SubscriptionContext";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
+import { CurrencyProvider } from "./context/CurrencyContext";
 import { useArrowNavigation } from "./hooks/useArrowNavigation";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -17,6 +18,7 @@ import LoginModal from "./components/LoginModal";
 import QuickMovementModal from "./components/QuickMovementModal";
 import VencimientosModal from "./components/VencimientosModal";
 import CustomizeModal from "./components/CustomizeModal";
+import CurrencyModal from "./components/CurrencyModal";
 import SecurityConfirmModal from "./components/SecurityConfirmModal";
 import ScreenLockModal from "./components/ScreenLockModal";
 import SecurityAuditModal from "./components/SecurityAuditModal";
@@ -271,6 +273,7 @@ function MainLayout() {
       <QuickMovementModal />
       <VencimientosModal />
       <CustomizeModal />
+      <CurrencyModal />
       <SecurityConfirmModal />
       <ScreenLockModal />
       <SecurityAuditModal />
@@ -285,25 +288,27 @@ export default function App() {
   return (
     <Router>
       <ThemeProvider>
-        <AuthProvider>
-          <SubscriptionProvider>
-            <BalanceProvider>
-              <PrivacyProvider>
-                <SecurityProvider>
-                  <ToastProvider>
-                    <QuickMovementProvider>
-                      <VencimientosProvider>
-                        <PowerBiExportProvider>
-                          <MainLayout />
-                        </PowerBiExportProvider>
-                      </VencimientosProvider>
-                    </QuickMovementProvider>
-                  </ToastProvider>
-                </SecurityProvider>
-              </PrivacyProvider>
-            </BalanceProvider>
-          </SubscriptionProvider>
-        </AuthProvider>
+        <CurrencyProvider>
+          <AuthProvider>
+            <SubscriptionProvider>
+              <BalanceProvider>
+                <PrivacyProvider>
+                  <SecurityProvider>
+                    <ToastProvider>
+                      <QuickMovementProvider>
+                        <VencimientosProvider>
+                          <PowerBiExportProvider>
+                            <MainLayout />
+                          </PowerBiExportProvider>
+                        </VencimientosProvider>
+                      </QuickMovementProvider>
+                    </ToastProvider>
+                  </SecurityProvider>
+                </PrivacyProvider>
+              </BalanceProvider>
+            </SubscriptionProvider>
+          </AuthProvider>
+        </CurrencyProvider>
       </ThemeProvider>
     </Router>
   );

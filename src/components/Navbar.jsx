@@ -7,6 +7,7 @@ import { useSecurity } from "../context/SecurityContext";
 import { useVencimientos } from "../context/VencimientosContext";
 import { usePowerBiExport } from "../context/PowerBiExportContext";
 import { useSubscription } from "../context/SubscriptionContext";
+import { useCurrency } from "../context/CurrencyContext";
 import { useDolar } from "../hooks/useDolar";
 import { logActivity } from "../services/auditService";
 import FinTrackLogo from "./FinTrackLogo";
@@ -20,6 +21,7 @@ export default function Navbar() {
   const { vencidos, porVencer, openVencimientosModal } = useVencimientos();
   const { openPowerBiExport } = usePowerBiExport();
   const { subscription, openSubscriptionModal } = useSubscription();
+  const { monedaPrincipal, monedaInfo, openCurrencyModal } = useCurrency();
   const [isOpen, setIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -95,6 +97,18 @@ export default function Navbar() {
               <strong className="text-dolar-value">${blue.venta.toLocaleString("es-AR")}</strong>
             </button>
           )}
+
+          <button
+            type="button"
+            className="navbar-dolar-pill d-flex align-items-center gap-1 border-0 shadow-sm"
+            style={{ cursor: "pointer", background: "var(--bg-card)" }}
+            onClick={openCurrencyModal}
+            title={`Moneda principal: ${monedaInfo?.nombre}. Clic para cambiar divisas.`}
+            aria-label={`Moneda principal: ${monedaInfo?.nombre}`}
+          >
+            <span>{monedaInfo?.flag}</span>
+            <span className="small fw-bold text-dark">{monedaPrincipal}</span>
+          </button>
         </div>
 
         <div className="d-flex align-items-center gap-2 ms-auto d-lg-none">
@@ -293,6 +307,22 @@ export default function Navbar() {
 
                   <li>
                     <button 
+                      className="dropdown-item d-flex align-items-center justify-content-between py-2 rounded-3 user-menu-item"
+                      onClick={() => { setUserMenuOpen(false); openCurrencyModal(); }}
+                      title="Configurar moneda principal y divisas de Latinoamérica"
+                    >
+                      <div className="d-flex align-items-center gap-2">
+                        <i className="bi bi-cash-coin text-success"></i>
+                        <span>Moneda y Divisas</span>
+                      </div>
+                      <span className="badge bg-light text-secondary border small">
+                        {monedaInfo?.flag} {monedaPrincipal}
+                      </span>
+                    </button>
+                  </li>
+
+                  <li>
+                    <button 
                       className="dropdown-item d-flex align-items-center gap-2 py-2 rounded-3 user-menu-item"
                       onClick={() => { setUserMenuOpen(false); openCustomizeModal(); }}
                     >
@@ -404,6 +434,19 @@ export default function Navbar() {
               >
                 <i className={`bi ${isPrivate ? "bi-eye-slash-fill" : "bi-eye"}`}></i>
                 <span>{isPrivate ? "Saldos Ocultos (Toca para ver)" : "Modo Privacidad (Ocultar saldos)"}</span>
+              </button>
+
+              <button
+                className="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-between rounded-pill py-2 px-3"
+                onClick={() => { closeMenu(); openCurrencyModal(); }}
+              >
+                <span className="d-flex align-items-center gap-2">
+                  <i className="bi bi-cash-coin text-success"></i>
+                  <span>Moneda y Divisas</span>
+                </span>
+                <span className="badge bg-light text-secondary border small">
+                  {monedaInfo?.flag} {monedaPrincipal}
+                </span>
               </button>
 
               <button

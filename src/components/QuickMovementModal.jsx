@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useQuickMovement } from "../context/QuickMovementContext";
 import { useToast } from "../context/ToastContext";
 import { useSubscription } from "../context/SubscriptionContext";
+import { useCurrency } from "../context/CurrencyContext";
 import { useFocusTrap } from "../hooks/useFocusTrap";
 import { MESES, MONEDAS, formatoMoneda, sanitizeTextInput, getFechaHoyISO, formatoFechaVencimiento } from "../utils/formatters";
 import { CATEGORIAS_GASTO, CATEGORIAS_INGRESO, CATEGORIAS_AHORRO } from "../utils/categories";
@@ -26,6 +27,7 @@ export default function QuickMovementModal() {
   const { isOpen, activeTab, setActiveTab, closeQuickModal, notifyMovementSaved } = useQuickMovement();
   const { showToast } = useToast();
   const { subscription, openSubscriptionModal } = useSubscription();
+  const { monedaPrincipal } = useCurrency();
   const modalRef = useFocusTrap(isOpen);
 
   const currentDate = new Date();
@@ -37,7 +39,13 @@ export default function QuickMovementModal() {
   const [categoriaGasto, setCategoriaGasto] = useState("Supermercado");
   const [categoriaIngreso, setCategoriaIngreso] = useState("Sueldo");
   const [categoriaAhorro, setCategoriaAhorro] = useState("Emergencia");
-  const [monedaAhorro, setMonedaAhorro] = useState("ARS");
+  const [monedaAhorro, setMonedaAhorro] = useState(monedaPrincipal || "ARS");
+
+  useEffect(() => {
+    if (isOpen) {
+      setMonedaAhorro(monedaPrincipal || "ARS");
+    }
+  }, [isOpen, monedaPrincipal]);
   const [modoAhorroIngreso, setModoAhorroIngreso] = useState("porcentaje");
   const [porcentajeAhorro, setPorcentajeAhorro] = useState(0);
   const [montoAhorroFijoIngreso, setMontoAhorroFijoIngreso] = useState("");
@@ -627,12 +635,13 @@ export default function QuickMovementModal() {
                     <label className="form-label small fw-bold text-muted mb-1 d-block">
                       Tipo de Moneda
                     </label>
-                    <div className="d-flex gap-2">
+                    <div className="d-flex flex-wrap gap-2">
                       {MONEDAS.map((m) => (
                         <button
                           key={m.id}
                           type="button"
-                          className={`btn btn-sm px-3 py-1 rounded-pill fw-semibold ${monedaAhorro === m.id ? 'btn-primary shadow-sm' : 'btn-outline-secondary'}`}
+                          className={`btn btn-sm px-2 py-1 rounded-pill fw-semibold ${monedaAhorro === m.id ? 'btn-primary shadow-sm' : 'btn-outline-secondary'}`}
+                          style={{ fontSize: "0.82rem" }}
                           onClick={() => setMonedaAhorro(m.id)}
                           disabled={loading}
                         >
@@ -689,7 +698,7 @@ export default function QuickMovementModal() {
                         Monto {tipoAhorro === "agregar" ? "a Ahorrar" : "a Extraer"}
                       </label>
                       <div className="d-flex gap-1">
-                        {monedaAhorro === "ARS" ? (
+                        {["ARS", "CLP", "COP"].includes(monedaAhorro) ? (
                           <>
                             <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(1000)}>+1k</button>
                             <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(5000)}>+5k</button>

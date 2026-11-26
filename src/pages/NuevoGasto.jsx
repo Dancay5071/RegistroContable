@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { useSubscription } from "../context/SubscriptionContext";
+import { useCurrency } from "../context/CurrencyContext";
 import { addDemoGasto } from "../services/demoData";
 import { addGastoUser } from "../services/dbService";
 import { logActivity } from "../services/auditService";
-import { MESES, formatoMoneda, sanitizeTextInput, getFechaHoyISO, formatoFechaVencimiento } from "../utils/formatters";
+import { MESES, MONEDAS, formatoMoneda, sanitizeTextInput, getFechaHoyISO, formatoFechaVencimiento } from "../utils/formatters";
 import { CATEGORIAS_GASTO } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
 import Loader from "../components/Loader";
@@ -15,16 +16,22 @@ export default function NuevoGasto() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
   const { subscription, openSubscriptionModal } = useSubscription();
+  const { monedaPrincipal } = useCurrency();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
   const [categoria, setCategoria] = useState("Supermercado");
   const [descripcion, setDescripcion] = useState("");
   const [monto, setMonto] = useState("");
+  const [moneda, setMoneda] = useState(monedaPrincipal || "ARS");
   const [tieneVencimiento, setTieneVencimiento] = useState(false);
   const [fechaVencimiento, setFechaVencimiento] = useState(getFechaHoyISO());
   const [estadoPago, setEstadoPago] = useState("pendiente");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setMoneda(monedaPrincipal || "ARS");
+  }, [monedaPrincipal]);
 
   if (subscription?.isExpired) {
     return (
@@ -71,6 +78,7 @@ export default function NuevoGasto() {
       const payloadGasto = {
         descripcion: descFinal,
         monto: montoNum,
+        moneda,
         categoria
       };
 
@@ -98,7 +106,7 @@ export default function NuevoGasto() {
           ? `Vencimiento programado: ${descFinal} (${categoria}) para ${formatoFechaVencimiento(fechaVencimiento)}`
           : `Gasto registrado: ${descFinal} (${categoria})`,
         amount: montoNum,
-        currency: "ARS"
+        currency: moneda
       });
 
       if (tieneVencimiento && estadoPago === "pendiente") {
@@ -177,14 +185,38 @@ export default function NuevoGasto() {
             <div className="d-flex justify-content-between align-items-center mb-1">
               <label className="form-label text-muted small fw-semibold mb-0">Monto</label>
               <div className="d-flex gap-1">
-                <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(1000)}>+1k</button>
-                <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(5000)}>+5k</button>
-                <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(10000)}>+10k</button>
-                <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(50000)}>+50k</button>
+                {["ARS", "CLP", "COP"].includes(moneda) ? (
+                  <>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(1000)}>+1k</button>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(5000)}>+5k</button>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(10000)}>+10k</button>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(50000)}>+50k</button>
+                  </>
+                ) : (
+                  <>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(10)}>+10</button>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(50)}>+50</button>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(100)}>+100</button>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(500)}>+500</button>
+                  </>
+                )}
               </div>
             </div>
             <div className="input-group">
-              <span className="input-group-text">$</span>
+              <select
+                className="form-select fw-semibold"
+                style={{ maxWidth: "120px", backgroundColor: "var(--bg-card-alt)", fontSize: "0.85rem" }}
+                value={moneda}
+                onChange={(e) => setMoneda(e.target.value)}
+                disabled={loading}
+                aria-label="Moneda del gasto"
+              >
+                {MONEDAS.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.flag} {m.id}
+                  </option>
+                ))}
+              </select>
               <input 
                 type="number" 
                 step="0.01" 
@@ -200,7 +232,7 @@ export default function NuevoGasto() {
             {Number(monto) > 0 && (
               <div className="amount-preview-badge">
                 <i className="bi bi-tag text-danger"></i>
-                Vista previa: {formatoMoneda(Number(monto))}
+                Vista previa: {formatoMoneda(Number(monto), moneda)}
               </div>
             )}
           </div>

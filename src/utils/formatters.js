@@ -8,11 +8,24 @@ export const DIAS_SEMANA = [
 ];
 
 export const MONEDAS = [
-  { id: "ARS", simbolo: "$", nombre: "Pesos Argentinos (ARS)", flag: "🇦🇷" },
-  { id: "USD", simbolo: "US$", nombre: "Dólares Estadounidenses (USD)", flag: "🇺🇸" },
-  { id: "EUR", simbolo: "€", nombre: "Euros (EUR)", flag: "🇪🇺" },
-  { id: "USDT", simbolo: "₮", nombre: "Tether / Crypto (USDT)", flag: "🪙" }
+  { id: "ARS", simbolo: "$", nombre: "Pesos Argentinos (ARS)", flag: "🇦🇷", pais: "Argentina", region: "LATAM" },
+  { id: "USD", simbolo: "US$", nombre: "Dólares Estadounidenses (USD)", flag: "🇺🇸", pais: "Estados Unidos", region: "GLOBAL" },
+  { id: "EUR", simbolo: "€", nombre: "Euros (EUR)", flag: "🇪🇺", pais: "Unión Europea", region: "GLOBAL" },
+  { id: "BRL", simbolo: "R$", nombre: "Reales Brasileños (BRL)", flag: "🇧🇷", pais: "Brasil", region: "LATAM" },
+  { id: "MXN", simbolo: "Mex$", nombre: "Pesos Mexicanos (MXN)", flag: "🇲🇽", pais: "México", region: "LATAM" },
+  { id: "CLP", simbolo: "CLP$", nombre: "Pesos Chilenos (CLP)", flag: "🇨🇱", pais: "Chile", region: "LATAM" },
+  { id: "COP", simbolo: "COL$", nombre: "Pesos Colombianos (COP)", flag: "🇨🇴", pais: "Colombia", region: "LATAM" },
+  { id: "PEN", simbolo: "S/", nombre: "Soles Peruanos (PEN)", flag: "🇵🇪", pais: "Perú", region: "LATAM" },
+  { id: "UYU", simbolo: "$U", nombre: "Pesos Uruguayos (UYU)", flag: "🇺🇾", pais: "Uruguay", region: "LATAM" },
+  { id: "USDT", simbolo: "₮", nombre: "Tether / Crypto (USDT)", flag: "🪙", pais: "Cripto", region: "CRYPTO" }
 ];
+
+export const MONEDAS_LATAM = MONEDAS.filter((m) => m.region === "LATAM");
+export const MONEDAS_GLOBAL = MONEDAS.filter((m) => m.region === "GLOBAL" || m.region === "CRYPTO");
+
+export function getMonedaInfo(moneda = "ARS") {
+  return MONEDAS.find((item) => item.id === moneda) || MONEDAS[0];
+}
 
 export function formatoNumber(number) {
   if (number === undefined || number === null || isNaN(number)) return "0,00";
@@ -22,27 +35,29 @@ export function formatoNumber(number) {
 }
 
 export function formatoMoneda(number, moneda = "ARS") {
-  const m = MONEDAS.find((item) => item.id === moneda) || MONEDAS[0];
+  const m = getMonedaInfo(moneda);
   return `${m.simbolo}${formatoNumber(number)}`;
 }
 
-export function formatoCompacto(number) {
+export function formatoCompacto(number, moneda = "ARS") {
   if (number === undefined || number === null || isNaN(number)) return "$0";
   const num = Number(number);
-  if (num === 0) return "$0";
+  const m = getMonedaInfo(moneda);
+  const symb = m.simbolo;
+  if (num === 0) return `${symb}0`;
   const abs = Math.abs(num);
   const sign = num < 0 ? "-" : "";
   if (abs >= 1000000) {
     const val = abs / 1000000;
     const formatted = val % 1 === 0 ? val.toFixed(0) : val.toFixed(1).replace(".", ",");
-    return `${sign}$${formatted}M`;
+    return `${sign}${symb}${formatted}M`;
   }
   if (abs >= 1000) {
     const val = abs / 1000;
     const formatted = val % 1 === 0 ? val.toFixed(0) : val.toFixed(1).replace(".", ",");
-    return `${sign}$${formatted}k`;
+    return `${sign}${symb}${formatted}k`;
   }
-  return `${sign}$${Math.round(abs)}`;
+  return `${sign}${symb}${Math.round(abs)}`;
 }
 
 export function getFechaHoy(esCorto = false) {

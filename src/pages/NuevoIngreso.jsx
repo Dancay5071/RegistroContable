@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { useSubscription } from "../context/SubscriptionContext";
+import { useCurrency } from "../context/CurrencyContext";
 import { addDemoIngreso } from "../services/demoData";
 import { addIngresoUser } from "../services/dbService";
 import { logActivity } from "../services/auditService";
-import { MESES, formatoMoneda, sanitizeTextInput } from "../utils/formatters";
+import { MESES, MONEDAS, formatoMoneda, sanitizeTextInput } from "../utils/formatters";
 import { CATEGORIAS_INGRESO } from "../utils/categories";
 import MonthYearSelect from "../components/MonthYearSelect";
 import Loader from "../components/Loader";
@@ -15,16 +16,22 @@ export default function NuevoIngreso() {
   const { user, isDemo } = useAuth();
   const { showToast } = useToast();
   const { subscription, openSubscriptionModal } = useSubscription();
+  const { monedaPrincipal } = useCurrency();
   const currentDate = new Date();
   const [mes, setMes] = useState(MESES[currentDate.getMonth()]);
   const [anio, setAnio] = useState(currentDate.getFullYear());
   const [categoria, setCategoria] = useState("Sueldo");
   const [descripcion, setDescripcion] = useState("");
   const [monto, setMonto] = useState("");
+  const [moneda, setMoneda] = useState(monedaPrincipal || "ARS");
   const [modoAhorro, setModoAhorro] = useState("porcentaje");
   const [porcentaje, setPorcentaje] = useState(0);
   const [montoAhorroFijo, setMontoAhorroFijo] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setMoneda(monedaPrincipal || "ARS");
+  }, [monedaPrincipal]);
 
   if (subscription?.isExpired) {
     return (
@@ -91,6 +98,7 @@ export default function NuevoIngreso() {
         addDemoIngreso(mes, anio, {
           descripcion: descFinal,
           montoBruto: montoNum,
+          moneda,
           ahorro: ahorroFinal,
           montoAhorro: ahorroFinal,
           porcentajeAhorro: porcentajeFinal,
@@ -102,6 +110,7 @@ export default function NuevoIngreso() {
           anio,
           descripcion: descFinal,
           montoBruto: montoNum,
+          moneda,
           montoAhorro: ahorroFinal,
           porcentajeAhorro: porcentajeFinal,
           categoria
@@ -113,7 +122,7 @@ export default function NuevoIngreso() {
         category: "INGRESOS",
         details: `Ingreso registrado: ${descFinal} (${categoria})`,
         amount: montoNum,
-        currency: "ARS"
+        currency: moneda
       });
 
       showToast("Ingreso registrado y saldos actualizados con éxito.", "success");
@@ -187,13 +196,36 @@ export default function NuevoIngreso() {
             <div className="d-flex justify-content-between align-items-center mb-1">
               <label className="form-label text-muted small fw-semibold mb-0">Monto Bruto</label>
               <div className="d-flex gap-1">
-                <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(10000)}>+10k</button>
-                <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(50000)}>+50k</button>
-                <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(100000)}>+100k</button>
+                {["ARS", "CLP", "COP"].includes(moneda) ? (
+                  <>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(10000)}>+10k</button>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(50000)}>+50k</button>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(100000)}>+100k</button>
+                  </>
+                ) : (
+                  <>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(50)}>+50</button>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(100)}>+100</button>
+                    <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(500)}>+500</button>
+                  </>
+                )}
               </div>
             </div>
             <div className="input-group">
-              <span className="input-group-text">$</span>
+              <select
+                className="form-select fw-semibold"
+                style={{ maxWidth: "120px", backgroundColor: "var(--bg-card-alt)", fontSize: "0.85rem" }}
+                value={moneda}
+                onChange={(e) => setMoneda(e.target.value)}
+                disabled={loading}
+                aria-label="Moneda del ingreso"
+              >
+                {MONEDAS.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.flag} {m.id}
+                  </option>
+                ))}
+              </select>
               <input 
                 type="number" 
                 step="0.01" 
@@ -209,7 +241,7 @@ export default function NuevoIngreso() {
             {Number(monto) > 0 && (
               <div className="amount-preview-badge">
                 <i className="bi bi-tag text-success"></i>
-                Vista previa: {formatoMoneda(Number(monto))}
+                Vista previa: {formatoMoneda(Number(monto), moneda)}
               </div>
             )}
           </div>
