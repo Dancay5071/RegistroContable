@@ -78,8 +78,8 @@ export default function Navbar() {
 
   return (
     <nav className="navbar navbar-expand-lg" id="navbar">
-      <div className="container-fluid flex-nowrap align-items-center">
-        <div className="d-flex align-items-center gap-1 gap-sm-2 flex-shrink-1 overflow-hidden">
+      <div className="container-fluid">
+        <div className="d-flex align-items-center gap-1 gap-sm-2">
           <Link className="navbar-brand d-flex align-items-center me-1" to="/" onClick={closeMenu}>
             <FinTrackLogo size={30} showText={true} />
           </Link>
@@ -100,7 +100,7 @@ export default function Navbar() {
 
           <button
             type="button"
-            className="navbar-dolar-pill d-flex align-items-center gap-1 border-0 shadow-sm text-nowrap"
+            className="navbar-dolar-pill d-none d-sm-flex align-items-center gap-1 border-0 shadow-sm text-nowrap"
             style={{ cursor: "pointer", background: "var(--bg-card)" }}
             onClick={openCurrencyModal}
             title={`Moneda principal: ${monedaInfo?.nombre}. Clic para cambiar divisas.`}
@@ -111,7 +111,19 @@ export default function Navbar() {
           </button>
         </div>
 
-        <div className="d-flex align-items-center gap-1 gap-sm-2 ms-auto d-lg-none flex-shrink-0">
+        <div className="d-flex align-items-center gap-1 gap-sm-2 ms-auto d-lg-none">
+          <button
+            type="button"
+            className="navbar-dolar-pill d-flex d-sm-none align-items-center gap-1 border-0 shadow-sm text-nowrap py-1 px-2"
+            style={{ cursor: "pointer", background: "var(--bg-card)", fontSize: "0.75rem" }}
+            onClick={openCurrencyModal}
+            title={`Moneda: ${monedaInfo?.nombre}`}
+            aria-label={`Moneda: ${monedaInfo?.nombre}`}
+          >
+            <span>{monedaInfo?.flag}</span>
+            <span className="fw-bold text-dark">{monedaPrincipal}</span>
+          </button>
+
           <button
             className="btn btn-notification-bell d-flex align-items-center justify-content-center rounded-circle shadow-sm position-relative"
             type="button"
@@ -135,7 +147,7 @@ export default function Navbar() {
             aria-expanded={isOpen} 
             aria-label="Toggle navigation"
           >
-            <i className="bi bi-list fs-2"></i>
+            <i className={`bi ${isOpen ? "bi-x-lg" : "bi-list"} fs-2`}></i>
           </button>
         </div>
 
