@@ -942,6 +942,30 @@ body {
   border-color: #d4c5ee !important;
 }
 
+@media (max-width: 575.98px) {
+  #navbar .container-fluid {
+    flex-wrap: nowrap !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  .navbar-dolar-pill {
+    padding: 0.22rem 0.45rem !important;
+    font-size: 0.78rem !important;
+    border-radius: 14px !important;
+  }
+  .navbar-dolar-pill .text-dolar-value {
+    font-size: 0.8rem !important;
+  }
+  .fintrack-brand-text {
+    font-size: 1.05rem !important;
+  }
+  .btn-notification-bell {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 0.95rem !important;
+  }
+}
+
 /* ==========================================================================
    User Profile Pill & Menu Dropdown (Senior UI/UX FinTech Style)
    ========================================================================== */

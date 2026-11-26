@@ -78,29 +78,29 @@ export default function Navbar() {
 
   return (
     <nav className="navbar navbar-expand-lg" id="navbar">
-      <div className="container-fluid">
-        <div className="d-flex align-items-center gap-2">
+      <div className="container-fluid flex-nowrap align-items-center">
+        <div className="d-flex align-items-center gap-1 gap-sm-2 flex-shrink-1 overflow-hidden">
           <Link className="navbar-brand d-flex align-items-center me-1" to="/" onClick={closeMenu}>
-            <FinTrackLogo size={32} showText={true} />
+            <FinTrackLogo size={30} showText={true} />
           </Link>
 
           {blue?.venta > 0 && (
             <button 
               type="button"
-              className="navbar-dolar-pill d-flex align-items-center gap-2"
+              className="navbar-dolar-pill d-flex align-items-center gap-1 gap-sm-2 text-nowrap"
               title={`Cotizaciones en tiempo real:\n• Dólar Blue: Compra $${blue.compra.toLocaleString('es-AR')} | Venta $${blue.venta.toLocaleString('es-AR')}\n• Dólar Oficial: Compra $${oficial.compra.toLocaleString('es-AR')} | Venta $${oficial.venta.toLocaleString('es-AR')}\n• MEP: $${mep.venta.toLocaleString('es-AR')}\n\nHaz clic para actualizar`}
               aria-label={`Cotización Dólar Blue: venta $${blue.venta.toLocaleString('es-AR')}. Presiona Enter para actualizar cotizaciones.`}
               onClick={() => refreshDolar()}
             >
               <span className="dot dot-dolar-pulse"></span>
-              <span className="small fw-semibold text-muted">USD</span>
+              <span className="small fw-semibold text-muted d-none d-sm-inline">USD</span>
               <strong className="text-dolar-value">${blue.venta.toLocaleString("es-AR")}</strong>
             </button>
           )}
 
           <button
             type="button"
-            className="navbar-dolar-pill d-flex align-items-center gap-1 border-0 shadow-sm"
+            className="navbar-dolar-pill d-flex align-items-center gap-1 border-0 shadow-sm text-nowrap"
             style={{ cursor: "pointer", background: "var(--bg-card)" }}
             onClick={openCurrencyModal}
             title={`Moneda principal: ${monedaInfo?.nombre}. Clic para cambiar divisas.`}
@@ -111,7 +111,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        <div className="d-flex align-items-center gap-2 ms-auto d-lg-none">
+        <div className="d-flex align-items-center gap-1 gap-sm-2 ms-auto d-lg-none flex-shrink-0">
           <button
             className="btn btn-notification-bell d-flex align-items-center justify-content-center rounded-circle shadow-sm position-relative"
             type="button"
