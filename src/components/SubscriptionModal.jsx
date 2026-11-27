@@ -237,7 +237,7 @@ export default function SubscriptionModal() {
                     <i className="bi bi-patch-check-fill me-1"></i> {subscription?.isAdmin ? "CUENTA ADMINISTRADOR PRO" : "FINTRACK PRO ACTIVO"}
                   </span>
                   <h4 className="fw-bold mb-0 text-dark">
-                    {subscription?.isAdmin ? "Acceso Vitalicio Ilimitado" : (subscription?.plan === "pro_annual" ? "Plan Anual Pro" : "Plan Mensual Pro")}
+                    {subscription?.isAdmin ? "Acceso vitalicio ilimitado" : (subscription?.plan === "pro_annual" ? "Plan anual Pro" : "Plan mensual Pro")}
                   </h4>
                 </div>
                 <div className="text-sm-end">
@@ -245,7 +245,7 @@ export default function SubscriptionModal() {
                     {subscription?.isAdmin ? "Gratis de por vida" : (subscription?.plan === "pro_annual" ? "$32.000 ARS" : "$3.900 ARS")}
                   </div>
                   <span className="small text-muted">
-                    {subscription?.isAdmin ? "Permisos de Propietario / Admin" : (subscription?.plan === "pro_annual" ? "Facturación anual (-32% OFF)" : "Facturación mensual")}
+                    {subscription?.isAdmin ? "Permisos de propietario / Admin" : (subscription?.plan === "pro_annual" ? "Facturación anual (-32% OFF)" : "Facturación mensual")}
                   </span>
                 </div>
               </div>
@@ -297,7 +297,7 @@ export default function SubscriptionModal() {
             {!subscription?.isAdmin && subscription?.plan !== "pro_annual" && (
               <div className="p-3 rounded-4 border border-warning bg-card mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div>
-                  <strong className="small d-block text-dark">¿Deseas ahorrar con el Plan Anual?</strong>
+                  <strong className="small d-block text-dark">¿Deseas ahorrar con el plan anual?</strong>
                   <span className="small text-muted">Paga $32.000 al año (equivale a $2.666/mes) y obtén 2 meses gratis.</span>
                 </div>
                 <button
@@ -305,7 +305,7 @@ export default function SubscriptionModal() {
                   onClick={() => handleCheckout("annual")}
                   disabled={isProcessing}
                 >
-                  Mejorar a Plan Anual
+                  Mejorar a plan anual
                 </button>
               </div>
             )}
@@ -408,7 +408,7 @@ export default function SubscriptionModal() {
                         <span>Procesando...</span>
                       </>
                     ) : (
-                      <span>Elegir Plan mensual</span>
+                      <span>Elegir plan mensual</span>
                     )}
                   </button>
                 </div>

@@ -33,7 +33,7 @@ export default function SecurityConfirmModal() {
           <div className="modal-header border-bottom-0 pb-1">
             <h5 className="modal-title fw-bold fs-6 d-flex align-items-center gap-2" id="confirm-modal-title">
               <i className={`bi ${danger ? "bi-shield-exclamation text-danger" : "bi-shield-check text-success"} fs-5`}></i>
-              <span>{title || "Confirmación Requerida"}</span>
+              <span>{title || "Confirmación requerida"}</span>
             </h5>
             <button 
               type="button" 

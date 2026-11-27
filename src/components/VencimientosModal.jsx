@@ -141,7 +141,7 @@ export default function VencimientosModal() {
                   }}
                 >
                   <span className="small d-block mb-1 text-warning fw-semibold">
-                    <i className="bi bi-clock me-1"></i> Próx. 7 Días
+                    <i className="bi bi-clock me-1"></i> Próx. 7 días
                   </span>
                   <div className={`h5 fw-bold mb-0 text-warning ${isPrivate ? "privacy-masked" : ""}`}>
                     {maskAmount(formatoMoneda(totalPorVencer))}
@@ -230,11 +230,11 @@ export default function VencimientosModal() {
                     cardBorderClass = "border-danger border-start-4";
                   } else if (esHoy) {
                     badgeClass = "bg-warning text-dark fw-bold";
-                    badgeText = "¡Vence Hoy!";
+                    badgeText = "¡Vence hoy!";
                     cardBorderClass = "border-warning border-start-4";
                   } else if (esManana) {
                     badgeClass = "bg-warning bg-opacity-75 text-dark";
-                    badgeText = "Vence Mañana";
+                    badgeText = "Vence mañana";
                     cardBorderClass = "border-warning border-start-4";
                   } else if (esProximo) {
                     badgeClass = "bg-warning bg-opacity-25 text-warning-emphasis border border-warning";

@@ -65,7 +65,7 @@ export default function LoginModal() {
 
     if (score <= 1) return { score: 25, label: "Débil (mín 6 caracteres)", color: "bg-danger" };
     if (score <= 3) return { score: 65, label: "Moderada (añade números o mayúsculas)", color: "bg-warning" };
-    return { score: 100, label: "Fuerte y Segura", color: "bg-success" };
+    return { score: 100, label: "Fuerte y segura", color: "bg-success" };
   };
 
   const handleSubmit = async (e) => {

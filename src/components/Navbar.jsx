@@ -232,7 +232,7 @@ export default function Navbar() {
               className={`btn btn-privacy-toggle d-flex align-items-center justify-content-center rounded-circle shadow-sm ${isPrivate ? 'active' : ''}`}
               type="button"
               onClick={togglePrivacy}
-              title={isPrivate ? "Mostrar saldos (Alt + P)" : "Ocultar saldos (Modo Privacidad - Alt + P)"}
+              title={isPrivate ? "Mostrar saldos (Alt + P)" : "Ocultar saldos (Modo privacidad - Alt + P)"}
               aria-label="Alternar privacidad de saldos"
             >
               <i className={`bi ${isPrivate ? "bi-eye-slash-fill text-warning" : "bi-eye"}`}></i>
@@ -284,7 +284,7 @@ export default function Navbar() {
                       <div>
                         <div className="fw-bold small dropdown-user-name">{nombreUsuario}</div>
                         <div className="text-muted" style={{ fontSize: "0.75rem" }}>
-                          {isDemo ? "Modo Demo Activo" : (user?.email || user?.providerData?.[0]?.email || "daniela.cabrera5071@gmail.com")}
+                          {isDemo ? "Modo Demo activo" : (user?.email || user?.providerData?.[0]?.email || "daniela.cabrera5071@gmail.com")}
                         </div>
                       </div>
                     </div>
@@ -312,7 +312,7 @@ export default function Navbar() {
                           onClick={() => { setUserMenuOpen(false); openSubscriptionModal(); }}
                         >
                           <i className="bi bi-shield-check"></i>
-                          <span>{subscription.isAdmin ? "Gestionar Cuenta Admin" : (subscription.status === "active" ? "Gestionar Plan" : "Ver Planes Pro")}</span>
+                          <span>{subscription.isAdmin ? "Gestionar cuenta Admin" : (subscription.status === "active" ? "Gestionar plan" : "Ver planes Pro")}</span>
                         </button>
                       </div>
                     )}
@@ -325,7 +325,7 @@ export default function Navbar() {
                     >
                       <div className="d-flex align-items-center gap-2">
                         <i className={`bi ${isPrivate ? "bi-eye-slash-fill text-warning" : "bi-eye text-primary"}`}></i>
-                        <span>Modo Privacidad</span>
+                        <span>Modo privacidad</span>
                       </div>
                       <span className={`badge rounded-pill ${isPrivate ? 'bg-warning text-dark' : 'bg-secondary bg-opacity-25 text-secondary'}`} style={{ fontSize: "0.68rem" }}>
                         {isPrivate ? "Activo" : "Off"}
@@ -341,7 +341,7 @@ export default function Navbar() {
                     >
                       <div className="d-flex align-items-center gap-2">
                         <i className="bi bi-cash-coin text-success"></i>
-                        <span>Moneda y Divisas</span>
+                        <span>Moneda y divisas</span>
                       </div>
                       <span className="badge bg-light text-secondary border small">
                         {monedaInfo?.flag} {monedaPrincipal}
@@ -355,7 +355,7 @@ export default function Navbar() {
                       onClick={() => { setUserMenuOpen(false); openCustomizeModal(); }}
                     >
                       <i className="bi bi-palette2 text-primary"></i>
-                      <span>Personalizar Tema</span>
+                      <span>Personalizar tema</span>
                     </button>
                   </li>
 
@@ -366,7 +366,7 @@ export default function Navbar() {
                       title="Bloquear pantalla temporalmente"
                     >
                       <i className="bi bi-shield-lock text-warning"></i>
-                      <span>Bloquear Pantalla</span>
+                      <span>Bloquear pantalla</span>
                     </button>
                   </li>
 
@@ -377,7 +377,7 @@ export default function Navbar() {
                       title="Copias de seguridad y bitácora de auditoría"
                     >
                       <i className="bi bi-shield-shaded text-success"></i>
-                      <span>Auditoría y Respaldos</span>
+                      <span>Auditoría y respaldos</span>
                     </button>
                   </li>
 
@@ -450,7 +450,7 @@ export default function Navbar() {
                   onClick={() => { closeMenu(); openSubscriptionModal(); }}
                 >
                   <i className="bi bi-shield-check"></i>
-                  <span>Ver Planes y Suscripción</span>
+                  <span>Ver planes y suscripción</span>
                 </button>
               </div>
             )}

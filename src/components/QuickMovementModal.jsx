@@ -265,7 +265,7 @@ export default function QuickMovementModal() {
             <div className="d-flex justify-content-between align-items-center w-100 mb-2">
               <h5 className="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="quick-movement-title">
                 <i className="bi bi-plus-circle text-success"></i>
-                Nuevo Movimiento
+                Nuevo movimiento
               </h5>
               <button 
                 type="button" 
@@ -352,7 +352,7 @@ export default function QuickMovementModal() {
                   <div className="mb-3">
                     <div className="d-flex justify-content-between align-items-center mb-1">
                       <label className="form-label small fw-bold text-muted mb-0">
-                        Monto del Gasto
+                        Monto del gasto
                       </label>
                       <div className="d-flex gap-1">
                         <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(1000)}>+1k</button>
@@ -603,7 +603,7 @@ export default function QuickMovementModal() {
               {activeTab === "ahorro" && (
                 <>
                   <div className="mb-3">
-                    <label className="form-label small fw-bold text-muted mb-1">Tipo de Operación</label>
+                    <label className="form-label small fw-bold text-muted mb-1">Tipo de operación</label>
                     <div className="btn-group w-100" role="group">
                       <input 
                         type="radio" 
@@ -695,7 +695,7 @@ export default function QuickMovementModal() {
                   <div className="mb-3">
                     <div className="d-flex justify-content-between align-items-center mb-1">
                       <label className="form-label small fw-bold text-muted mb-0">
-                        Monto {tipoAhorro === "agregar" ? "a Ahorrar" : "a Extraer"}
+                        Monto {tipoAhorro === "agregar" ? "a ahorrar" : "a extraer"}
                       </label>
                       <div className="d-flex gap-1">
                         {["ARS", "CLP", "COP"].includes(monedaAhorro) ? (
@@ -767,9 +767,9 @@ export default function QuickMovementModal() {
                 ) : (
                   <>
                     <i className="bi bi-check2-circle me-1"></i>
-                    {activeTab === 'gasto' && "Guardar Gasto"}
-                    {activeTab === 'ingreso' && "Guardar Ingreso"}
-                    {activeTab === 'ahorro' && (tipoAhorro === 'agregar' ? "Guardar Ahorro" : "Confirmar Extracción")}
+                    {activeTab === 'gasto' && "Guardar gasto"}
+                    {activeTab === 'ingreso' && "Guardar ingreso"}
+                    {activeTab === 'ahorro' && (tipoAhorro === 'agregar' ? "Guardar ahorro" : "Confirmar extracción")}
                   </>
                 )}
               </button>

@@ -240,9 +240,9 @@ export default function SecurityAuditModal() {
   if (isCloudAccount) securityScore += 15;
 
   const getScoreTheme = () => {
-    if (securityScore >= 80) return { color: "success", label: "Nivel de Protección Excelente", icon: "bi-shield-fill-check" };
-    if (securityScore >= 50) return { color: "warning", label: "Nivel de Protección Moderado", icon: "bi-shield-check" };
-    return { color: "danger", label: "Requiere Fortalecimiento", icon: "bi-shield-exclamation" };
+    if (securityScore >= 80) return { color: "success", label: "Nivel de protección Excelente", icon: "bi-shield-fill-check" };
+    if (securityScore >= 50) return { color: "warning", label: "Nivel de protección Moderado", icon: "bi-shield-check" };
+    return { color: "danger", label: "Requiere fortalecimiento", icon: "bi-shield-exclamation" };
   };
 
   const scoreTheme = getScoreTheme();
@@ -374,7 +374,7 @@ export default function SecurityAuditModal() {
                       ) : (
                         <>
                           <i className="bi bi-download"></i>
-                          <span>{enableEncryption ? "Descargar Respaldo Cifrado" : "Descargar Copia de Seguridad"}</span>
+                          <span>{enableEncryption ? "Descargar respaldo cifrado" : "Descargar copia de seguridad"}</span>
                         </>
                       )}
                     </button>
@@ -730,12 +730,12 @@ export default function SecurityAuditModal() {
                       <div>
                         <strong className="d-block text-dark small">Autenticación y almacenamiento cifrado</strong>
                         <span className="text-muted small">
-                          {isCloudAccount ? `Sesión autenticada (${user?.email}) con reglas estrictas de Firestore.` : "Modo Demo local. Crea una cuenta para proteger tus datos en la nube."}
+                          {isCloudAccount ? `Sesión autenticada (${user?.email}) con reglas estrictas de Firestore.` : "Modo demo local. Crea una cuenta para proteger tus datos en la nube."}
                         </span>
                       </div>
                     </div>
                     <span className="badge border" style={{ backgroundColor: "var(--bg-card-alt)", color: "var(--text-main)" }}>
-                      {isCloudAccount ? "Nube Firebase" : "Modo Demo"}
+                      {isCloudAccount ? "Nube firebase" : "Modo demo"}
                     </span>
                   </div>
 

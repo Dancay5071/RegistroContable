@@ -330,7 +330,7 @@ export default function PowerBiExportModal() {
                       disabled={loadingData}
                     >
                       <i className="bi bi-file-earmark-arrow-down"></i>
-                      <span>Descargar Dataset Plano (.CSV)</span>
+                      <span>Descargar dataset plano (.CSV)</span>
                     </button>
                   </div>
                 </div>
@@ -432,7 +432,7 @@ export default function PowerBiExportModal() {
                     onClick={handleCopiarTodoDax}
                   >
                     <i className={`bi ${copiedAllDax ? 'bi-check2' : 'bi-clipboard-check'} me-1`}></i>
-                    {copiedAllDax ? "¡Copiadas Todas!" : "Copiar Todas"}
+                    {copiedAllDax ? "¡Copiadas todas!" : "Copiar todas"}
                   </button>
                 </div>
               </div>
@@ -465,7 +465,7 @@ export default function PowerBiExportModal() {
                           onClick={() => handleCopiarDaxIndividual(measure)}
                         >
                           <i className={`bi ${isCopied ? 'bi-check-lg' : 'bi-clipboard'}`}></i>
-                          <span>{isCopied ? "¡Fórmula Copiada!" : "Copiar Medida DAX"}</span>
+                          <span>{isCopied ? "¡Fórmula copiada!" : "Copiar medida DAX"}</span>
                         </button>
                       </div>
                     </div>
@@ -480,7 +480,7 @@ export default function PowerBiExportModal() {
               <div className="p-3 rounded-3 border" style={{ backgroundColor: "var(--bg-card)" }}>
                 <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
                   <div>
-                    <h6 className="fw-bold text-dark mb-1">Script de Carga Power Query (Lenguaje M)</h6>
+                    <h6 className="fw-bold text-dark mb-1">Script de carga Power Query (Lenguaje M)</h6>
                     <p className="text-muted small mb-0">
                       Permite cargar y tipar automáticamente todas las 23 columnas de tu dataset en Power BI Desktop sin intervención manual.
                     </p>
@@ -491,12 +491,12 @@ export default function PowerBiExportModal() {
                     onClick={handleCopiarM}
                   >
                     <i className={`bi ${copiedM ? 'bi-check2' : 'bi-clipboard'} me-1`}></i>
-                    {copiedM ? "¡Código M Copiado!" : "Copiar Script M"}
+                    {copiedM ? "¡Código M copiado!" : "Copiar Script M"}
                   </button>
                 </div>
 
                 <div className="p-2 rounded-2 mb-3 small text-muted" style={{ backgroundColor: "var(--bg-card-alt)", fontSize: "0.78rem" }}>
-                  <strong>Instrucciones:</strong> En Power BI Desktop, ve a <em>Transformar Datos</em> &gt; <em>Nueva Fuente</em> &gt; <em>Consulta en Blanco</em> &gt; <em>Editor Avanzado</em>. Reemplaza el texto con el bloque inferior y actualiza la ruta del archivo local.
+                  <strong>Instrucciones:</strong> En Power BI Desktop, ve a <em>Transformar datos</em> &gt; <em>Nueva fuente</em> &gt; <em>Consulta en blanco</em> &gt; <em>Editor avanzado</em>. Reemplaza el texto con el bloque inferior y actualiza la ruta del archivo local.
                 </div>
 
                 <pre 
@@ -512,7 +512,7 @@ export default function PowerBiExportModal() {
           {activeTab === "guia" && (
             <div className="d-flex flex-column gap-3">
               <div className="p-3 rounded-3 border" style={{ backgroundColor: "var(--bg-card)" }}>
-                <h6 className="fw-bold text-dark mb-1">Guía Paso a Paso: Tu Primer Tablero en Power BI Desktop</h6>
+                <h6 className="fw-bold text-dark mb-1">Guía paso a paso: Tu primer tablero en Power BI Desktop</h6>
                 <p className="text-muted small mb-0">
                   Sigue estos 3 pasos simples para construir un informe financiero profesional en menos de 2 minutos:
                 </p>
