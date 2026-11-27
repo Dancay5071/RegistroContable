@@ -10,6 +10,7 @@ import { useSubscription } from "../context/SubscriptionContext";
 import { useCurrency } from "../context/CurrencyContext";
 import { useDolar } from "../hooks/useDolar";
 import { logActivity } from "../services/auditService";
+import { formatoMoneda } from "../utils/formatters";
 import FinTrackLogo from "./FinTrackLogo";
 
 export default function Navbar() {
