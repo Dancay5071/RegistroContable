@@ -50,7 +50,7 @@ export default function SecurityConfirmModal() {
               <div className="p-3 rounded-3 mb-2 border" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
                 <div className="d-flex align-items-center gap-2 mb-1">
                   <i className="bi bi-info-circle-fill text-primary small"></i>
-                  <strong className="small">Impacto en tus Balances:</strong>
+                  <strong className="small">Impacto en tus balances:</strong>
                 </div>
                 <div className="small text-muted ps-3 border-start border-2 border-primary">
                   {impact}

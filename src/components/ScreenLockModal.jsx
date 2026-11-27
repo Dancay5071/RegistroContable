@@ -97,7 +97,7 @@ export default function ScreenLockModal() {
               className="btn btn-success rounded-pill py-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
             >
               <i className="bi bi-unlock-fill"></i>
-              <span>Desbloquear Sesión</span>
+              <span>Desbloquear sesión</span>
             </button>
 
             <button 

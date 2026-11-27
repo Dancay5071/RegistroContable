@@ -88,7 +88,7 @@ export default function CurrencyModal() {
                   className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold ${currentTab === "principal" ? "btn-primary shadow-sm" : "btn-outline-secondary"}`}
                   onClick={() => setActiveModalTab("principal")}
                 >
-                  <i className="bi bi-wallet2 me-1"></i> Moneda Principal de Cuenta
+                  <i className="bi bi-wallet2 me-1"></i> Moneda principal de cuenta
                 </button>
               </li>
               <li className="nav-item">
@@ -108,7 +108,7 @@ export default function CurrencyModal() {
               <div>
                 <div className="p-3 rounded-3 mb-4 border d-flex align-items-center justify-content-between flex-wrap gap-2" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
                   <div>
-                    <span className="text-muted small d-block">Moneda Principal Seleccionada:</span>
+                    <span className="text-muted small d-block">Moneda principal seleccionada:</span>
                     <strong className="fs-6 text-dark d-flex align-items-center gap-2">
                       <span>{MONEDAS.find((m) => m.id === monedaPrincipal)?.flag}</span>
                       <span>{MONEDAS.find((m) => m.id === monedaPrincipal)?.nombre}</span>
@@ -122,7 +122,7 @@ export default function CurrencyModal() {
                 <div className="mb-4">
                   <div className="d-flex align-items-center gap-2 mb-3">
                     <span className="badge bg-primary bg-opacity-10 text-primary border px-2 py-1 rounded-pill small">
-                      🌎 Región
+                     Región
                     </span>
                     <h6 className="fw-bold mb-0 text-uppercase tracking-wider small text-muted">
                       Monedas de Latinoamérica (LATAM)
@@ -172,10 +172,10 @@ export default function CurrencyModal() {
                 <div className="mb-2">
                   <div className="d-flex align-items-center gap-2 mb-3">
                     <span className="badge bg-info bg-opacity-10 text-info border px-2 py-1 rounded-pill small">
-                      🌐 Internacional
+                    Internacional
                     </span>
                     <h6 className="fw-bold mb-0 text-uppercase tracking-wider small text-muted">
-                      Monedas Globales y Reserva
+                      Monedas globales y reserva
                     </h6>
                   </div>
 
@@ -229,7 +229,7 @@ export default function CurrencyModal() {
                       <span className="small text-muted fw-semibold d-block">¿Qué moneda mostrar en la pastilla superior?</span>
                       <strong className="text-dark">
                         {monedaComparativa === "AUTO" ? (
-                          <span>🌟 Automático — Comparar con mi Moneda Principal ({monedaPrincipal})</span>
+                          <span> Automático — Comparar con mi moneda principal ({monedaPrincipal})</span>
                         ) : (
                           <span>Fijada en: {monedaComparativa}</span>
                         )}
@@ -252,7 +252,7 @@ export default function CurrencyModal() {
                       className={`btn btn-sm rounded-pill px-3 fw-semibold ${monedaComparativa === "AUTO" ? "btn-success shadow-sm" : "btn-outline-secondary"}`}
                       onClick={() => handleSelectComparativa("AUTO")}
                     >
-                      🌟 Seguir mi Moneda Principal ({monedaPrincipal})
+                       Seguir mi moneda principal ({monedaPrincipal})
                     </button>
                     {MONEDAS.filter((m) => m.id !== "USD" && m.id !== "USDT").map((m) => (
                       <button
@@ -326,7 +326,7 @@ export default function CurrencyModal() {
 
                 <div className="p-3 rounded-3 border" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
                   <h6 className="fw-bold mb-2 small text-dark d-flex align-items-center gap-2">
-                    <i className="bi bi-calculator text-success"></i> Calculadora Rápida USD a {monedaPrincipal}
+                    <i className="bi bi-calculator text-success"></i> Calculadora rápida USD a {monedaPrincipal}
                   </h6>
                   <div className="row g-2 align-items-center">
                     <div className="col-12 col-sm-5">

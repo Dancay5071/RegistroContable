@@ -470,7 +470,7 @@ export default function Navbar() {
               >
                 <span className="d-flex align-items-center gap-2">
                   <i className="bi bi-cash-coin text-success"></i>
-                  <span>Moneda y Divisas</span>
+                  <span>Moneda y divisas</span>
                 </span>
                 <span className="badge bg-light text-secondary border small">
                   {monedaInfo?.flag} {monedaPrincipal}
@@ -483,7 +483,7 @@ export default function Navbar() {
               >
                 <span className="d-flex align-items-center gap-2">
                   <i className={`bi ${alertasCount > 0 ? "bi-bell-fill" : "bi-bell"}`}></i>
-                  <span>Vencimientos y Facturas</span>
+                  <span>Vencimientos y facturas</span>
                 </span>
                 {alertasCount > 0 && (
                   <span className="badge rounded-pill bg-light text-dark fw-bold">

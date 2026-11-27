@@ -238,7 +238,7 @@ export default function LoginModal() {
               )}
 
               <div className="mb-3">
-                <label className="form-label small fw-semibold">Correo Electrónico</label>
+                <label className="form-label small fw-semibold">Correo electrónico</label>
                 <input 
                   type="email" 
                   className="form-control" 
@@ -307,7 +307,7 @@ export default function LoginModal() {
 
               {mode === "register" && (
                 <div className="mb-3">
-                  <label className="form-label small fw-semibold">Confirmar Contraseña</label>
+                  <label className="form-label small fw-semibold">Confirmar contraseña</label>
                   <input 
                     type={showPassword ? "text" : "password"} 
                     className="form-control" 

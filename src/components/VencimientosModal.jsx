@@ -83,7 +83,7 @@ export default function VencimientosModal() {
               </div>
               <div>
                 <h5 className="modal-title fw-bold text-dark mb-0 fs-6" id="vencimientos-modal-title">
-                  Vencimientos y Pagos Pendientes
+                  Vencimientos y pagos pendientes
                 </h5>
                 <span className="text-muted small">
                   Monitorea facturas, impuestos y servicios antes de su fecha límite.
@@ -102,7 +102,7 @@ export default function VencimientosModal() {
             <div className="row g-2 mb-3">
               <div className="col-12 col-md-4">
                 <div className="p-3 rounded-3 border" style={{ backgroundColor: "var(--bg-card-alt)", borderColor: "var(--border-subtle)" }}>
-                  <span className="small text-muted d-block mb-1">Total a Pagar</span>
+                  <span className="small text-muted d-block mb-1">Total a pagar</span>
                   <div className={`h5 fw-bold mb-0 text-dark ${isPrivate ? "privacy-masked" : ""}`}>
                     {maskAmount(formatoMoneda(totalPendiente))}
                   </div>
@@ -183,7 +183,7 @@ export default function VencimientosModal() {
                 className="btn btn-sm btn-outline-success rounded-pill px-3 fw-semibold shadow-sm"
                 onClick={handleNuevoVencimiento}
               >
-                <i className="bi bi-plus-lg me-1"></i> Programar Factura
+                <i className="bi bi-plus-lg me-1"></i> Programar factura
               </button>
             </div>
 

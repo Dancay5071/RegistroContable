@@ -292,8 +292,8 @@ export default function SecurityAuditModal() {
                 <i className="bi bi-shield-lock-fill fs-5"></i>
               </div>
               <div>
-                <h5 className="modal-title fw-bold fs-6 mb-0" id="audit-modal-title">Auditoría, Cifrado y Respaldos</h5>
-                <span className="text-muted small">Capa 5 de Seguridad: Protección AES-256, Escudo de Pestaña y Diagnóstico de Salud</span>
+                <h5 className="modal-title fw-bold fs-6 mb-0" id="audit-modal-title">Auditoría, cifrado y respaldos</h5>
+                <span className="text-muted small">Capa 5 de seguridad: Protección AES-256, Escudo de pestaña y diagnóstico de salud</span>
               </div>
             </div>
             <button
@@ -314,7 +314,7 @@ export default function SecurityAuditModal() {
                   onClick={() => setActiveTab("backup")}
                 >
                   <i className="bi bi-database-down me-2"></i>
-                  <span>Copias de Seguridad</span>
+                  <span>Copias de seguridad</span>
                 </button>
               </li>
               <li className="nav-item">
@@ -325,7 +325,7 @@ export default function SecurityAuditModal() {
                   onClick={() => setActiveTab("health")}
                 >
                   <i className="bi bi-shield-check me-2"></i>
-                  <span>Salud de Seguridad ({securityScore}%)</span>
+                  <span>Salud de seguridad ({securityScore}%)</span>
                 </button>
               </li>
               <li className="nav-item">
@@ -336,7 +336,7 @@ export default function SecurityAuditModal() {
                   onClick={() => setActiveTab("audit")}
                 >
                   <i className="bi bi-journal-text me-2"></i>
-                  <span>Bitácora de Auditoría ({logs.length})</span>
+                  <span>Bitácora de auditoría ({logs.length})</span>
                 </button>
               </li>
             </ul>
@@ -354,7 +354,7 @@ export default function SecurityAuditModal() {
                         <i className="bi bi-cloud-arrow-down-fill fs-3"></i>
                       </div>
                       <div>
-                        <h6 className="fw-bold mb-1 fs-6">Descargar Respaldo Completo (JSON)</h6>
+                        <h6 className="fw-bold mb-1 fs-6">Descargar respaldo completo (JSON)</h6>
                         <p className="text-muted small mb-0">
                           Exporta todos tus balances, gastos, ingresos y ahorros en un formato estructurado con suma de verificación.
                         </p>
@@ -430,10 +430,10 @@ export default function SecurityAuditModal() {
                       <i className="bi bi-check2-circle text-success me-1"></i> Formato universal JSON
                     </span>
                     <span className="badge border" style={{ backgroundColor: "var(--bg-card-alt)", color: "var(--text-main)" }}>
-                      <i className="bi bi-shield-lock text-primary me-1"></i> Checksum de Integridad
+                      <i className="bi bi-shield-lock text-primary me-1"></i> Checksum de integridad
                     </span>
                     <span className="badge border" style={{ backgroundColor: "var(--bg-card-alt)", color: "var(--text-main)" }}>
-                      <i className="bi bi-lock-fill text-warning me-1"></i> Cifrado Grado Bancario AES-256
+                      <i className="bi bi-lock-fill text-warning me-1"></i> Cifrado grado bancario AES-256
                     </span>
                   </div>
                 </div>
@@ -444,7 +444,7 @@ export default function SecurityAuditModal() {
                       <i className="bi bi-cloud-arrow-up-fill fs-3"></i>
                     </div>
                     <div>
-                      <h6 className="fw-bold mb-1 fs-6">Restaurar Copia de Seguridad</h6>
+                      <h6 className="fw-bold mb-1 fs-6">Restaurar copia de seguridad</h6>
                       <p className="text-muted small mb-0">
                         Selecciona un archivo <code>FinTrack_Backup_*.json</code> previamente exportado para recuperar tu historial contable.
                       </p>
@@ -465,7 +465,7 @@ export default function SecurityAuditModal() {
                     <div className="p-3 rounded-3 mb-3 border bg-warning-subtle border-warning">
                       <div className="d-flex align-items-center gap-2 mb-2 text-dark fw-bold small">
                         <i className="bi bi-lock-fill text-warning fs-5"></i>
-                        <span>Archivo Protegido con Cifrado AES-256</span>
+                        <span>Archivo protegido con cifrado AES-256</span>
                       </div>
                       <p className="small text-muted mb-2">
                         Este archivo de respaldo se encuentra cifrado. Para verificarlo y restaurarlo, ingresa la contraseña con la que fue creado:
@@ -501,7 +501,7 @@ export default function SecurityAuditModal() {
                           ) : (
                             <>
                               <i className="bi bi-unlock-fill"></i>
-                              <span>Descifrar y Validar</span>
+                              <span>Descifrar y validar</span>
                             </>
                           )}
                         </button>
@@ -518,7 +518,7 @@ export default function SecurityAuditModal() {
                         </div>
                         <div className="row g-2 small text-dark">
                           <div className="col-sm-6">
-                            <strong>Fecha del Respaldo:</strong>{" "}
+                            <strong>Fecha del respaldo:</strong>{" "}
                             {new Date(validationResult.stats.createdAt).toLocaleString("es-AR")}
                           </div>
                           <div className="col-sm-6">
@@ -582,7 +582,7 @@ export default function SecurityAuditModal() {
                         <i className={`bi ${scoreTheme.icon} fs-2`}></i>
                       </div>
                       <div>
-                        <h5 className="fw-bold mb-0 text-dark">Salud General de Seguridad: {securityScore}%</h5>
+                        <h5 className="fw-bold mb-0 text-dark">Salud general de seguridad: {securityScore}%</h5>
                         <span className={`badge bg-${scoreTheme.color} mt-1`}>{scoreTheme.label}</span>
                       </div>
                     </div>
@@ -607,13 +607,13 @@ export default function SecurityAuditModal() {
                 </div>
 
                 <div className="d-flex flex-column gap-3">
-                  <h6 className="fw-bold small text-muted text-uppercase mb-1">Diagnóstico de Capas de Seguridad</h6>
+                  <h6 className="fw-bold small text-muted text-uppercase mb-1">Diagnóstico de capas de seguridad</h6>
 
                   <div className="p-3 rounded-3 border bg-card-alt d-flex align-items-center justify-content-between flex-wrap gap-2">
                     <div className="d-flex align-items-center gap-3">
                       <i className={`bi ${hasPin ? 'bi-check-circle-fill text-success' : 'bi-exclamation-circle-fill text-warning'} fs-4`}></i>
                       <div>
-                        <strong className="d-block text-dark small">Bloqueo Rápido por PIN de 4 dígitos</strong>
+                        <strong className="d-block text-dark small">Bloqueo rápido por PIN de 4 dígitos</strong>
                         <span className="text-muted small">
                           {hasPin ? "PIN de desbloqueo configurado y activo." : "Permite desbloquear la app sin ingresar tu contraseña completa."}
                         </span>
@@ -675,7 +675,7 @@ export default function SecurityAuditModal() {
                     <div className="d-flex align-items-center gap-3">
                       <i className={`bi ${hasTabShield ? 'bi-check-circle-fill text-success' : 'bi-dash-circle text-secondary'} fs-4`}></i>
                       <div>
-                        <strong className="d-block text-dark small">Escudo de Pestaña Oculta (Tab Shield)</strong>
+                        <strong className="d-block text-dark small">Escudo de pestaña oculta (Tab Shield)</strong>
                         <span className="text-muted small">
                           Oculta automáticamente números y saldos al cambiar de pestaña o minimizar el navegador (Anti-shoulder surfing).
                         </span>
@@ -696,7 +696,7 @@ export default function SecurityAuditModal() {
                     <div className="d-flex align-items-center gap-3">
                       <i className={`bi ${hasRecentBackup ? 'bi-check-circle-fill text-success' : 'bi-exclamation-circle-fill text-warning'} fs-4`}></i>
                       <div>
-                        <strong className="d-block text-dark small">Copia de Seguridad Periódica</strong>
+                        <strong className="d-block text-dark small">Copia de seguridad periódica</strong>
                         <span className="text-muted small">
                           {lastBackupDate ? `Última copia: ${new Date(lastBackupDate).toLocaleDateString("es-AR")}` : "Aún no has generado una copia de seguridad."}
                         </span>
@@ -707,7 +707,7 @@ export default function SecurityAuditModal() {
                       className="btn btn-outline-success btn-sm rounded-pill px-3"
                       onClick={() => setActiveTab("backup")}
                     >
-                      Ir a Respaldos
+                      Ir a respaldos
                     </button>
                   </div>
 
@@ -715,7 +715,7 @@ export default function SecurityAuditModal() {
                     <div className="d-flex align-items-center gap-3">
                       <i className="bi bi-check-circle-fill text-success fs-4"></i>
                       <div>
-                        <strong className="d-block text-dark small">Auto-Bloqueo por Inactividad (10 minutos)</strong>
+                        <strong className="d-block text-dark small">Auto-Bloqueo por inactividad (10 minutos)</strong>
                         <span className="text-muted small">
                           Protege tu terminal cerrando la vista activa si te alejas de tu dispositivo.
                         </span>
@@ -728,7 +728,7 @@ export default function SecurityAuditModal() {
                     <div className="d-flex align-items-center gap-3">
                       <i className={`bi ${isCloudAccount ? 'bi-check-circle-fill text-success' : 'bi-info-circle-fill text-primary'} fs-4`}></i>
                       <div>
-                        <strong className="d-block text-dark small">Autenticación y Almacenamiento Cifrado</strong>
+                        <strong className="d-block text-dark small">Autenticación y almacenamiento cifrado</strong>
                         <span className="text-muted small">
                           {isCloudAccount ? `Sesión autenticada (${user?.email}) con reglas estrictas de Firestore.` : "Modo Demo local. Crea una cuenta para proteger tus datos en la nube."}
                         </span>
@@ -756,7 +756,7 @@ export default function SecurityAuditModal() {
                       onChange={(e) => setFilterCategory(e.target.value)}
                     >
                       <option value="TODOS">Todas las actividades</option>
-                      <option value="SEGURIDAD">Seguridad y Sesión</option>
+                      <option value="SEGURIDAD">Seguridad y sesión</option>
                       <option value="GASTOS">Gastos</option>
                       <option value="INGRESOS">Ingresos</option>
                       <option value="AHORROS">Ahorros</option>

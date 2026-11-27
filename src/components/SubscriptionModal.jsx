@@ -196,7 +196,7 @@ export default function SubscriptionModal() {
           {isDemo && (
             <div className="mt-3 pt-2 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
               <span className="small text-muted" style={{ fontSize: "0.75rem" }}>
-                <i className="bi bi-gear me-1"></i> Simulador de Prueba (Modo Demo):
+                <i className="bi bi-gear me-1"></i> Simulador de prueba (Modo Demo):
               </span>
               <div className="btn-group btn-group-sm">
                 <button 
@@ -343,14 +343,14 @@ export default function SubscriptionModal() {
                   onClick={() => setBillingCycle("monthly")}
                   type="button"
                 >
-                  Facturación Mensual
+                  Facturación mensual
                 </button>
                 <button
                   className={`btn btn-sm rounded-pill px-3 py-1 fw-semibold position-relative ${billingCycle === "annual" ? "btn-primary shadow-sm" : "text-muted"}`}
                   onClick={() => setBillingCycle("annual")}
                   type="button"
                 >
-                  Facturación Anual
+                  Facturación anual
                   <span className="badge rounded-pill bg-warning text-dark ms-1" style={{ fontSize: "0.68rem" }}>
                     -32% OFF
                   </span>
@@ -394,7 +394,7 @@ export default function SubscriptionModal() {
                     </li>
                     <li className="d-flex align-items-center gap-2">
                       <i className="bi bi-check2-circle text-success fs-5"></i>
-                      <span>Modo Privacidad y bloqueo de pantalla</span>
+                      <span>Modo privacidad y bloqueo de pantalla</span>
                     </li>
                   </ul>
                   <button
@@ -408,7 +408,7 @@ export default function SubscriptionModal() {
                         <span>Procesando...</span>
                       </>
                     ) : (
-                      <span>Elegir Plan Mensual</span>
+                      <span>Elegir Plan mensual</span>
                     )}
                   </button>
                 </div>
@@ -440,7 +440,7 @@ export default function SubscriptionModal() {
                   <ul className="list-unstyled d-flex flex-column gap-2 small mb-4 flex-grow-1">
                     <li className="d-flex align-items-center gap-2">
                       <i className="bi bi-check2-circle text-success fs-5"></i>
-                      <span><strong>Todo lo del Plan Mensual</strong></span>
+                      <span><strong>Todo lo del Plan mensual</strong></span>
                     </li>
                     <li className="d-flex align-items-center gap-2">
                       <i className="bi bi-check2-circle text-success fs-5"></i>
@@ -470,7 +470,7 @@ export default function SubscriptionModal() {
                         <span>Procesando...</span>
                       </>
                     ) : (
-                      <span>Comenzar con Plan Anual</span>
+                      <span>Comenzar con Plan anual</span>
                     )}
                   </button>
                 </div>

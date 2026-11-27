@@ -118,7 +118,7 @@ export default function CustomizeModal() {
           <div className="modal-body p-4">
             <div className="mb-4">
               <label className="form-label small fw-bold text-uppercase text-muted tracking-wider d-block mb-3">
-                1. Paleta de Colores
+                1. Paleta de colores
               </label>
               <div className="row g-2">
                 {THEMES.map((t) => {

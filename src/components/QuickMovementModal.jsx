@@ -404,7 +404,7 @@ export default function QuickMovementModal() {
                       <div className="mt-2 pt-2 border-top">
                         <div className="mb-2">
                           <label className="form-label text-muted small fw-semibold mb-1">
-                            Fecha Límite
+                            Fecha límite
                           </label>
                           <input 
                             type="date" 
@@ -446,7 +446,7 @@ export default function QuickMovementModal() {
                 <>
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted mb-1 d-block">
-                      Origen del Ingreso
+                      Origen del ingreso
                     </label>
                     <div className="d-flex flex-wrap gap-1 mb-2">
                       {CATEGORIAS_INGRESO.map((cat) => (
@@ -486,7 +486,7 @@ export default function QuickMovementModal() {
                   <div className="mb-3">
                     <div className="d-flex justify-content-between align-items-center mb-1">
                       <label className="form-label small fw-bold text-muted mb-0">
-                        Monto Bruto
+                        Monto bruto
                       </label>
                       <div className="d-flex gap-1">
                         <button type="button" className="quick-amount-pill" onClick={() => addQuickAmount(10000)}>+10k</button>
@@ -520,7 +520,7 @@ export default function QuickMovementModal() {
                   <div className="mb-3">
                     <div className="d-flex justify-content-between align-items-center mb-1">
                       <label className="form-label small fw-bold text-muted mb-0">
-                        Apartar para Ahorro
+                        Apartar para ahorro
                       </label>
                       <div className="btn-group btn-group-sm" role="group">
                         <button
@@ -537,7 +537,7 @@ export default function QuickMovementModal() {
                           onClick={() => setModoAhorroIngreso("monto")}
                           style={{ fontSize: "0.72rem", padding: "0.15rem 0.5rem" }}
                         >
-                          $ Dinero Fijo
+                          $ Dinero fijo
                         </button>
                       </div>
                     </div>
@@ -551,12 +551,12 @@ export default function QuickMovementModal() {
                           disabled={loading}
                         >
                           <option value="0">0% - Sin ahorro</option>
-                          <option value="5">5% para Ahorro</option>
-                          <option value="10">10% para Ahorro</option>
-                          <option value="15">15% para Ahorro</option>
-                          <option value="20">20% para Ahorro</option>
-                          <option value="25">25% para Ahorro</option>
-                          <option value="30">30% para Ahorro</option>
+                          <option value="5">5% para ahorro</option>
+                          <option value="10">10% para ahorro</option>
+                          <option value="15">15% para ahorro</option>
+                          <option value="20">20% para ahorro</option>
+                          <option value="25">25% para ahorro</option>
+                          <option value="30">30% para ahorro</option>
                         </select>
                         {montoNum > 0 && porcentajeAhorro > 0 && (
                           <div className="small text-muted mt-1">
@@ -614,7 +614,7 @@ export default function QuickMovementModal() {
                         onChange={() => setTipoAhorro("agregar")} 
                       />
                       <label className="btn btn-outline-success btn-sm fw-semibold" htmlFor="opcAgregar">
-                        <i className="bi bi-plus-circle me-1"></i> Aportar Ahorro
+                        <i className="bi bi-plus-circle me-1"></i> Aportar ahorro
                       </label>
 
                       <input 
@@ -626,14 +626,14 @@ export default function QuickMovementModal() {
                         onChange={() => setTipoAhorro("extraer")} 
                       />
                       <label className="btn btn-outline-danger btn-sm fw-semibold" htmlFor="opcExtraer">
-                        <i className="bi bi-dash-circle me-1"></i> Extraer de Ahorros
+                        <i className="bi bi-dash-circle me-1"></i> Extraer de ahorros
                       </label>
                     </div>
                   </div>
 
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted mb-1 d-block">
-                      Tipo de Moneda
+                      Tipo de moneda
                     </label>
                     <div className="d-flex flex-wrap gap-2">
                       {MONEDAS.map((m) => (
@@ -654,7 +654,7 @@ export default function QuickMovementModal() {
 
                   <div className="mb-3">
                     <label className="form-label small fw-bold text-muted mb-1 d-block">
-                      Meta / Destino del Ahorro
+                      Meta / Destino del ahorro
                     </label>
                     <div className="d-flex flex-wrap gap-1">
                       {CATEGORIAS_AHORRO.map((cat) => (

@@ -258,7 +258,7 @@ export default function PowerBiExportModal() {
             onClick={() => setActiveTab('guia')}
           >
             <i className="bi bi-info-circle text-info"></i>
-            <span>Guía Rápida (3 Pasos)</span>
+            <span>Guía rápida (3 Pasos)</span>
           </button>
         </div>
 
@@ -269,7 +269,7 @@ export default function PowerBiExportModal() {
                 <div>
                   <div className="fw-bold text-dark small mb-1">
                     <i className="bi bi-sliders me-1 text-primary"></i>
-                    Configuración de Formato Regional y Delimitador
+                    Configuración de formato regional y delimitador
                   </div>
                   <p className="text-muted small mb-0">
                     Ajusta el delimitador según la configuración regional de tu Windows y Microsoft Excel o Power BI Desktop:
@@ -299,7 +299,7 @@ export default function PowerBiExportModal() {
                   <div className="h-100 p-3 p-md-4 rounded-4 border shadow-sm d-flex flex-column justify-content-between position-relative" style={{ backgroundColor: "var(--bg-card)" }}>
                     <div className="position-absolute top-0 end-0 m-3">
                       <span className="badge rounded-pill bg-success bg-opacity-10 text-success border border-success-subtle fw-semibold px-2 py-1">
-                        Más Utilizado
+                        Más utilizado
                       </span>
                     </div>
 
@@ -308,7 +308,7 @@ export default function PowerBiExportModal() {
                         <div className="rounded-3 d-flex align-items-center justify-content-center text-primary bg-primary bg-opacity-10" style={{ width: "36px", height: "36px" }}>
                           <i className="bi bi-table fs-5"></i>
                         </div>
-                        <h6 className="fw-bold text-dark mb-0">Dataset Plano Unificado</h6>
+                        <h6 className="fw-bold text-dark mb-0">Dataset plano unificado</h6>
                       </div>
 
                       <p className="text-muted small mb-3">
@@ -348,7 +348,7 @@ export default function PowerBiExportModal() {
                         <div className="rounded-3 d-flex align-items-center justify-content-center text-warning bg-warning bg-opacity-10" style={{ width: "36px", height: "36px" }}>
                           <i className="bi bi-diagram-3-fill fs-5"></i>
                         </div>
-                        <h6 className="fw-bold text-dark mb-0">Modelo Dimensional Estrella</h6>
+                        <h6 className="fw-bold text-dark mb-0">Modelo dimensional estrella</h6>
                       </div>
 
                       <p className="text-muted small mb-3">
@@ -395,7 +395,7 @@ export default function PowerBiExportModal() {
                       disabled={loadingData}
                     >
                       <i className="bi bi-folder-symlink"></i>
-                      <span>Descargar Paquete Completo (3 Archivos)</span>
+                      <span>Descargar paquete completo (3 Archivos)</span>
                     </button>
                   </div>
                 </div>
@@ -547,7 +547,7 @@ export default function PowerBiExportModal() {
                   <div className="p-3 rounded-4 border shadow-sm h-100 d-flex flex-column" style={{ backgroundColor: "var(--bg-card)" }}>
                     <div className="d-flex align-items-center gap-2 mb-2">
                       <span className="badge rounded-circle bg-success text-white fw-bold d-flex align-items-center justify-content-center" style={{ width: "28px", height: "28px" }}>3</span>
-                      <h6 className="fw-bold text-dark mb-0">Crear Visualizaciones</h6>
+                      <h6 className="fw-bold text-dark mb-0">Crear visualizaciones</h6>
                     </div>
                     <p className="text-muted small mb-0">
                       Copia las <strong>Medidas DAX</strong> de la pestaña 2 y pégalas como nuevas medidas. ¡Arrastra tus gráficos de barras, matriz de categorías o tarjetas KPI para ver tu flujo de fondos en tiempo real!
@@ -559,7 +559,7 @@ export default function PowerBiExportModal() {
               <div className="p-3 rounded-3 border d-flex align-items-center gap-3" style={{ backgroundColor: "var(--bg-card)" }}>
                 <i className="bi bi-lightbulb-fill text-warning fs-3"></i>
                 <div className="small text-muted">
-                  <strong className="text-dark">Consejo Senior de Arquitectura:</strong> Si utilizas Power BI Service o Fabric y quieres programar actualizaciones automáticas, puedes sincronizar la carpeta donde guardas el CSV con Microsoft OneDrive o Google Drive y apuntar tu Power BI a la ruta cloud.
+                  <strong className="text-dark">Consejo senior de arquitectura:</strong> Si utilizas Power BI Service o Fabric y quieres programar actualizaciones automáticas, puedes sincronizar la carpeta donde guardas el CSV con Microsoft OneDrive o Google Drive y apuntar tu Power BI a la ruta cloud.
                 </div>
               </div>
             </div>
